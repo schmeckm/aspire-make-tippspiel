@@ -1,0 +1,541 @@
+<template>
+  <div>
+    <div class="page-header">
+      <h1>{{ t('nationalTeams.title') }}</h1>
+      <span class="text-muted">{{ t('nationalTeams.subtitle') }}</span>
+    </div>
+
+    <div class="filter-bar mb-3">
+      <button
+        v-for="tab in tabs"
+        :key="tab.id"
+        type="button"
+        :class="['filter-btn', { active: activeTab === tab.id }]"
+        @click="switchTab(tab.id)"
+      >
+        {{ tab.label }}
+      </button>
+    </div>
+
+    <AlertMessage v-if="error" :message="error" type="error" />
+
+    <!-- Teams & squads -->
+    <template v-if="activeTab === 'teams'">
+      <LoadingSpinner v-if="loadingTeams" />
+      <div v-else class="national-teams-layout">
+        <div class="card national-teams-list">
+          <div class="card-body">
+            <input
+              v-model="search"
+              type="search"
+              class="form-control mb-3"
+              :placeholder="t('nationalTeams.searchPlaceholder')"
+            />
+            <div class="national-team-grid">
+              <button
+                v-for="team in filteredTeams"
+                :key="team.id"
+                type="button"
+                class="national-team-card"
+                :class="{ active: selectedTeam?.id === team.id }"
+                @click="selectTeam(team)"
+              >
+                <img v-if="team.crest" :src="team.crest" :alt="team.name" class="national-team-crest" />
+                <span v-else class="national-team-crest-fallback">⚽</span>
+                <span class="national-team-name">{{ team.name }}</span>
+                <span class="national-team-meta">{{ team.squadSize }} {{ t('nationalTeams.players') }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card national-team-detail">
+          <div v-if="!selectedTeam" class="card-body text-muted text-center">
+            {{ t('nationalTeams.selectHint') }}
+          </div>
+          <div v-else class="card-body">
+            <div class="national-team-detail-header">
+              <img v-if="selectedTeam.crest" :src="selectedTeam.crest" :alt="selectedTeam.name" class="national-team-detail-crest" />
+              <div>
+                <h2>{{ selectedTeam.name }}</h2>
+                <p v-if="selectedTeam.coach" class="text-muted">
+                  {{ t('nationalTeams.coach') }}: {{ selectedTeam.coach.name }}
+                  <span v-if="selectedTeam.coach.nationality">({{ selectedTeam.coach.nationality }})</span>
+                </p>
+                <p class="text-muted">{{ selectedTeam.squad.length }} {{ t('nationalTeams.players') }}</p>
+              </div>
+            </div>
+            <div v-for="group in squadGroups" :key="group.position" class="squad-group">
+              <h3>{{ positionLabel(group.position) }}</h3>
+              <div class="table-wrapper">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>{{ t('nationalTeams.player') }}</th>
+                      <th>{{ t('nationalTeams.nationality') }}</th>
+                      <th>{{ t('nationalTeams.birthDate') }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="player in group.players" :key="player.id">
+                      <td>
+                        <div class="player-name-cell">
+                          <PlayerAvatar
+                            :image-url="player.imageUrl"
+                            :name="player.name"
+                            :attribution-text="player.imageAttribution"
+                            :image-source="player.imageSource"
+                            size="xs"
+                          />
+                          <strong>{{ player.name }}</strong>
+                        </div>
+                      </td>
+                      <td>{{ player.nationality || '–' }}</td>
+                      <td>{{ formatBirthDate(player.dateOfBirth) }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Standings -->
+    <template v-else-if="activeTab === 'standings'">
+      <LoadingSpinner v-if="loadingStandings" />
+      <div v-else-if="standings.length === 0" class="empty-state">
+        <p>{{ t('nationalTeams.standingsEmpty') }}</p>
+      </div>
+      <div v-else class="standings-stack">
+        <div v-for="(block, idx) in standings" :key="idx" class="card mb-3">
+          <div class="card-header">
+            <h3>{{ standingTitle(block) }}</h3>
+          </div>
+          <div class="card-body">
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>{{ t('nationalTeams.team') }}</th>
+                    <th>{{ t('nationalTeams.played') }}</th>
+                    <th>{{ t('nationalTeams.wdl') }}</th>
+                    <th>{{ t('nationalTeams.goals') }}</th>
+                    <th>{{ t('nationalTeams.points') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="row in block.table" :key="row.team.id || row.position">
+                    <td>{{ row.position }}</td>
+                    <td>
+                      <span class="standing-team">
+                        <img v-if="row.team.crest" :src="row.team.crest" :alt="row.team.name" class="standing-crest" />
+                        {{ row.team.name }}
+                      </span>
+                    </td>
+                    <td>{{ row.playedGames }}</td>
+                    <td>{{ row.won }}-{{ row.draw }}-{{ row.lost }}</td>
+                    <td>{{ row.goalsFor }}:{{ row.goalsAgainst }}</td>
+                    <td><strong>{{ row.points }}</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Top scorers -->
+    <template v-else-if="activeTab === 'scorers'">
+      <LoadingSpinner v-if="loadingScorers" />
+      <div v-else-if="scorers.length === 0" class="empty-state">
+        <p>{{ t('nationalTeams.scorersEmpty') }}</p>
+      </div>
+      <div v-else class="card">
+        <div class="card-body">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>{{ t('nationalTeams.player') }}</th>
+                  <th>{{ t('nationalTeams.team') }}</th>
+                  <th>{{ t('nationalTeams.goals') }}</th>
+                  <th>{{ t('nationalTeams.assists') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(entry, idx) in scorers" :key="entry.player.id || idx">
+                  <td>{{ idx + 1 }}</td>
+                  <td>
+                    <div class="player-name-cell">
+                      <PlayerAvatar
+                        :image-url="entry.player.imageUrl"
+                        :name="entry.player.name"
+                        :attribution-text="entry.player.imageAttribution"
+                        :image-source="entry.player.imageSource"
+                        size="xs"
+                      />
+                      <strong>{{ entry.player.name }}</strong>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="standing-team">
+                      <img v-if="entry.team.crest" :src="entry.team.crest" :alt="entry.team.name" class="standing-crest" />
+                      {{ entry.team.name }}
+                    </span>
+                  </td>
+                  <td>{{ entry.goals }}</td>
+                  <td>{{ entry.assists ?? '–' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Live API matches -->
+    <template v-else-if="activeTab === 'live'">
+      <div class="filter-bar mb-3">
+        <button
+          v-for="f in matchFilters"
+          :key="f.value"
+          type="button"
+          :class="['filter-btn', { active: liveFilter === f.value }]"
+          @click="setLiveFilter(f.value)"
+        >
+          {{ f.label }}
+        </button>
+      </div>
+      <LoadingSpinner v-if="loadingLive" />
+      <div v-else-if="liveMatches.length === 0" class="empty-state">
+        <p>{{ t('nationalTeams.liveEmpty') }}</p>
+      </div>
+      <div v-else class="card">
+        <div class="card-body">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>{{ t('matchTable.date') }}</th>
+                  <th>{{ t('matchTable.stage') }}</th>
+                  <th>{{ t('matchTable.home') }}</th>
+                  <th>{{ t('matchTable.result') }}</th>
+                  <th>{{ t('matchTable.away') }}</th>
+                  <th>{{ t('matchTable.status') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="match in liveMatches" :key="match.id">
+                  <td>{{ formatDateTime(match.utcDate) }}</td>
+                  <td>{{ match.stage }}<span v-if="match.group"> ({{ match.group }})</span></td>
+                  <td>
+                    <router-link :to="{ path: '/national-teams', query: { team: match.homeTeam.name, tab: 'teams' } }">
+                      {{ match.homeTeam.name }}
+                    </router-link>
+                  </td>
+                  <td>
+                    <span v-if="match.score.home != null">{{ match.score.home }} : {{ match.score.away }}</span>
+                    <span v-else>–</span>
+                  </td>
+                  <td>
+                    <router-link :to="{ path: '/national-teams', query: { team: match.awayTeam.name, tab: 'teams' } }">
+                      {{ match.awayTeam.name }}
+                    </router-link>
+                  </td>
+                  <td><span class="badge badge-info">{{ match.status }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import api from '../services/api';
+import LoadingSpinner from '../components/LoadingSpinner.vue';
+import AlertMessage from '../components/AlertMessage.vue';
+import PlayerAvatar from '../components/PlayerAvatar.vue';
+import { useFormatters } from '../composables/useFormatters';
+
+const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
+const { formatDate, formatTime } = useFormatters();
+
+const activeTab = ref('teams');
+const teams = ref([]);
+const selectedTeam = ref(null);
+const standings = ref([]);
+const scorers = ref([]);
+const liveMatches = ref([]);
+const loadingTeams = ref(true);
+const loadingStandings = ref(false);
+const loadingScorers = ref(false);
+const loadingLive = ref(false);
+const error = ref('');
+const search = ref('');
+const liveFilter = ref('today');
+
+const tabs = computed(() => [
+  { id: 'teams', label: t('nationalTeams.tabs.teams') },
+  { id: 'standings', label: t('nationalTeams.tabs.standings') },
+  { id: 'scorers', label: t('nationalTeams.tabs.scorers') },
+  { id: 'live', label: t('nationalTeams.tabs.live') },
+]);
+
+const matchFilters = computed(() => [
+  { value: 'today', label: t('nationalTeams.liveFilters.today') },
+  { value: 'scheduled', label: t('nationalTeams.liveFilters.scheduled') },
+  { value: 'live', label: t('nationalTeams.liveFilters.live') },
+  { value: 'finished', label: t('nationalTeams.liveFilters.finished') },
+]);
+
+const filteredTeams = computed(() => {
+  const q = search.value.trim().toLowerCase();
+  if (!q) return teams.value;
+  return teams.value.filter((team) => (
+    team.name.toLowerCase().includes(q)
+    || team.shortName?.toLowerCase().includes(q)
+    || team.tla?.toLowerCase().includes(q)
+  ));
+});
+
+const squadGroups = computed(() => {
+  if (!selectedTeam.value?.squad?.length) return [];
+  const order = ['Goalkeeper', 'Defence', 'Midfield', 'Offence', 'Offense'];
+  const grouped = new Map();
+  for (const player of selectedTeam.value.squad) {
+    const pos = player.position || 'Other';
+    if (!grouped.has(pos)) grouped.set(pos, []);
+    grouped.get(pos).push(player);
+  }
+  const groups = [...grouped.entries()].map(([position, players]) => ({
+    position,
+    players: players.sort((a, b) => a.name.localeCompare(b.name)),
+  }));
+  groups.sort((a, b) => {
+    const ai = order.indexOf(a.position);
+    const bi = order.indexOf(b.position);
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
+  return groups;
+});
+
+function positionLabel(position) {
+  const key = {
+    Goalkeeper: 'goalkeeper',
+    Defence: 'defence',
+    Midfield: 'midfield',
+    Offence: 'offence',
+    Offense: 'offence',
+  }[position];
+  return key ? t(`nationalTeams.positions.${key}`) : position;
+}
+
+function standingTitle(block) {
+  if (block.group) return `${t('nationalTeams.group')} ${block.group}`;
+  if (block.type === 'TOTAL') return t('nationalTeams.overallTable');
+  return block.stage || block.type || t('nationalTeams.tabs.standings');
+}
+
+function formatBirthDate(value) {
+  if (!value) return '–';
+  return formatDate(value);
+}
+
+function formatDateTime(value) {
+  if (!value) return '–';
+  return `${formatDate(value)} ${formatTime(value)}`;
+}
+
+async function loadTeams() {
+  loadingTeams.value = true;
+  error.value = '';
+  try {
+    const { data } = await api.get('/football/teams');
+    teams.value = data;
+    const teamQuery = route.query.team;
+    if (teamQuery) {
+      const { data: detail } = await api.get('/football/teams', { params: { name: String(teamQuery) } });
+      selectedTeam.value = detail;
+    }
+  } catch (err) {
+    error.value = err.response?.data?.error || t('nationalTeams.loadFailed');
+  } finally {
+    loadingTeams.value = false;
+  }
+}
+
+async function loadTeamDetail(team) {
+  if (team.squad?.length) {
+    selectedTeam.value = team;
+    return;
+  }
+  const { data } = await api.get(`/football/teams/${team.id}`);
+  selectedTeam.value = data;
+}
+
+async function selectTeam(team) {
+  try {
+    await loadTeamDetail(team);
+    router.replace({ query: { ...route.query, team: team.name, tab: 'teams' } });
+  } catch (err) {
+    error.value = err.response?.data?.error || t('nationalTeams.loadFailed');
+  }
+}
+
+async function loadStandings() {
+  loadingStandings.value = true;
+  error.value = '';
+  try {
+    const { data } = await api.get('/football/standings');
+    standings.value = data;
+  } catch (err) {
+    error.value = err.response?.data?.error || t('nationalTeams.loadFailed');
+  } finally {
+    loadingStandings.value = false;
+  }
+}
+
+async function loadScorers() {
+  loadingScorers.value = true;
+  error.value = '';
+  try {
+    const { data } = await api.get('/football/scorers', { params: { limit: 20 } });
+    scorers.value = data;
+  } catch (err) {
+    error.value = err.response?.data?.error || t('nationalTeams.loadFailed');
+  } finally {
+    loadingScorers.value = false;
+  }
+}
+
+async function loadLiveMatches() {
+  loadingLive.value = true;
+  error.value = '';
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const params = liveFilter.value === 'today'
+      ? { dateFrom: today, dateTo: today }
+      : { status: liveFilter.value.toUpperCase(), limit: 50 };
+    const { data } = await api.get('/football/matches', { params });
+    liveMatches.value = data;
+  } catch (err) {
+    error.value = err.response?.data?.error || t('nationalTeams.loadFailed');
+  } finally {
+    loadingLive.value = false;
+  }
+}
+
+function setLiveFilter(value) {
+  liveFilter.value = value;
+  loadLiveMatches();
+}
+
+async function switchTab(tabId) {
+  activeTab.value = tabId;
+  router.replace({ query: { ...route.query, tab: tabId } });
+  if (tabId === 'standings' && !standings.value.length) await loadStandings();
+  if (tabId === 'scorers' && !scorers.value.length) await loadScorers();
+  if (tabId === 'live' && !liveMatches.value.length) await loadLiveMatches();
+}
+
+watch(() => route.query.team, async (name) => {
+  if (!name || loadingTeams.value) return;
+  const match = teams.value.find((item) => item.name.toLowerCase() === String(name).toLowerCase());
+  if (match) await selectTeam(match);
+});
+
+onMounted(async () => {
+  if (route.query.tab) activeTab.value = String(route.query.tab);
+  await loadTeams();
+  if (activeTab.value === 'standings') await loadStandings();
+  if (activeTab.value === 'scorers') await loadScorers();
+  if (activeTab.value === 'live') await loadLiveMatches();
+});
+</script>
+
+<style scoped>
+.national-teams-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.national-team-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.national-team-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: white;
+  cursor: pointer;
+  text-align: left;
+}
+
+.national-team-card.active,
+.national-team-card:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.national-team-crest { width: 28px; height: 28px; object-fit: contain; }
+.national-team-crest-fallback { width: 28px; text-align: center; }
+.national-team-name { font-weight: 600; font-size: 0.9rem; }
+.national-team-meta { font-size: 0.75rem; color: var(--color-text-muted); }
+
+.national-team-detail-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.national-team-detail-crest { width: 72px; height: 72px; object-fit: contain; }
+.squad-group + .squad-group { margin-top: 1.25rem; }
+.squad-group h3 { margin-bottom: 0.5rem; font-size: 1rem; }
+
+.standing-team {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.standing-crest {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.player-name-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .national-teams-layout { grid-template-columns: 1fr; }
+}
+</style>

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.docker.example
+*.sqlite
+*.sqlite-journal
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/backups/*
+!backend/backups/.gitkeep
+.DS_Store
+.history/
+*.log

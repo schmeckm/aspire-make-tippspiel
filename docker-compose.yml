@@ -1,0 +1,95 @@
+x-backend-env: &backend-env
+  PORT: ${PORT:-3000}
+  JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+  JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+  DB_DIALECT: ${DB_DIALECT:-sqlite}
+  DB_PATH: ${DB_PATH:-./database/wm2026.sqlite}
+  OPEN_REGISTRATION: ${OPEN_REGISTRATION:-true}
+  FOOTBALL_API_PROVIDER: ${FOOTBALL_API_PROVIDER:-football-data}
+  FOOTBALL_API_BASE_URL: ${FOOTBALL_API_BASE_URL:-https://api.football-data.org/v4}
+  FOOTBALL_API_KEY: ${FOOTBALL_API_KEY:-}
+  FOOTBALL_API_COMPETITION_ID: ${FOOTBALL_API_COMPETITION_ID:-WC}
+  FOOTBALL_API_COMPETITION_NUMERIC_ID: ${FOOTBALL_API_COMPETITION_NUMERIC_ID:-2000}
+  FOOTBALL_API_SEASON: ${FOOTBALL_API_SEASON:-2026}
+  FOOTBALL_API_TIMEZONE: ${FOOTBALL_API_TIMEZONE:-Europe/Zurich}
+  FOOTBALL_API_SYNC_ENABLED: ${FOOTBALL_API_SYNC_ENABLED:-true}
+  FOOTBALL_API_RESULT_SYNC_ENABLED: ${FOOTBALL_API_RESULT_SYNC_ENABLED:-true}
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+  AI_FEATURES_ENABLED: ${AI_FEATURES_ENABLED:-true}
+  AI_CACHE_ENABLED: ${AI_CACHE_ENABLED:-true}
+  AI_MAX_TOKENS: ${AI_MAX_TOKENS:-800}
+  AI_TEMPERATURE: ${AI_TEMPERATURE:-0.4}
+  AI_ADMIN_FEATURES_ENABLED: ${AI_ADMIN_FEATURES_ENABLED:-true}
+  AI_USER_COACH_ENABLED: ${AI_USER_COACH_ENABLED:-true}
+  AI_MATCH_PREVIEW_ENABLED: ${AI_MATCH_PREVIEW_ENABLED:-true}
+  AI_LEADERBOARD_COMMENTARY_ENABLED: ${AI_LEADERBOARD_COMMENTARY_ENABLED:-true}
+  APP_URL: ${APP_URL:-http://localhost:8080}
+  SMTP_HOST: ${SMTP_HOST:-}
+  SMTP_PORT: ${SMTP_PORT:-465}
+  SMTP_SECURE: ${SMTP_SECURE:-true}
+  SMTP_USER: ${SMTP_USER:-}
+  SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+  SMTP_FROM: ${SMTP_FROM:-}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME:-wm2026}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    profiles:
+      - postgres
+
+  backend:
+    build: ./backend
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      <<: *backend-env
+    volumes:
+      - backend-data:/app/database
+      - backend-uploads:/app/uploads
+    restart: unless-stopped
+
+  backend-postgres:
+    build: ./backend
+    ports:
+      - "${BACKEND_PG_PORT:-3001}:3000"
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      <<: *backend-env
+      DB_DIALECT: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-wm2026}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+    depends_on:
+      - postgres
+    profiles:
+      - postgres
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend-data:
+  backend-uploads:
+  postgres-data:

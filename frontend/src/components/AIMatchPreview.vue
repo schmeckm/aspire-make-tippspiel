@@ -1,0 +1,66 @@
+<template>
+  <div class="ai-preview">
+    <button v-if="!content && !loading" class="btn btn-secondary btn-sm" @click="loadPreview">
+      🤖 {{ t('ai.showPreview') }}
+    </button>
+    <LoadingSpinner v-if="loading" />
+    <div v-if="content" class="ai-card">
+      <div class="ai-card-header">
+        <h4>🤖 {{ t('ai.matchPreviewTitle') }}</h4>
+        <button class="modal-close" :aria-label="t('common.close')" @click="content = null">&times;</button>
+      </div>
+      <div class="ai-card-body">{{ content }}</div>
+      <div class="ai-disclaimer">{{ disclaimer }}</div>
+    </div>
+    <AlertMessage v-if="error" :message="error" type="error" />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import api from '../services/api';
+import LoadingSpinner from './LoadingSpinner.vue';
+import AlertMessage from './AlertMessage.vue';
+
+const { t } = useI18n();
+
+const props = defineProps({
+  matchId: { type: Number, required: true },
+});
+
+const content = ref(null);
+const disclaimer = ref('');
+const loading = ref(false);
+const error = ref('');
+
+async function loadPreview() {
+  loading.value = true;
+  error.value = '';
+  try {
+    const { data } = await api.post(`/ai/match-preview/${props.matchId}`);
+    content.value = data.content;
+    disclaimer.value = data.disclaimer || t('ai.disclaimer');
+  } catch (err) {
+    error.value = err.response?.data?.error || t('ai.previewUnavailable');
+  } finally {
+    loading.value = false;
+  }
+}
+</script>
+
+<style scoped>
+.ai-preview { margin-top: 0.75rem; }
+.ai-card {
+  background: linear-gradient(135deg, #f0f4f3 0%, #e8f5e9 100%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+.ai-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.ai-card-header h4 { margin: 0; font-size: 0.9rem; color: var(--color-primary); }
+.ai-card-body { font-size: 0.875rem; line-height: 1.6; white-space: pre-wrap; }
+.ai-disclaimer { font-size: 0.7rem; color: var(--color-text-muted); margin-top: 0.75rem; font-style: italic; }
+.modal-close { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--color-text-muted); }
+</style>

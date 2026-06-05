@@ -1,0 +1,1223 @@
+:root {
+  /* SAP Fiori Horizon Morning – design tokens */
+  --sapBrandColor: #0070F2;
+  --sapHighlightColor: #0064D9;
+  --sapBackgroundColor: #F5F6F7;
+  --sapShellColor: #FFFFFF;
+  --sapTileBackground: #FFFFFF;
+  --sapTitleColor: #131E29;
+  --sapContentLabelColor: #556B82;
+  --sapContentBorderColor: #D9D9D9;
+  --sapListSelectionBackground: #EBF8FF;
+  --sapSuccessBackground: #F5FAE5;
+  --sapSuccessColor: #256F3A;
+  --sapErrorBackground: #FFEAF4;
+  --sapErrorColor: #AA0808;
+  --sapWarningBackground: #FFF8D6;
+  --sapWarningColor: #B44F00;
+  --sapInformationBackground: #E1F4FF;
+  --sapInformationColor: #0064D9;
+
+  --color-primary: var(--sapBrandColor);
+  --color-primary-light: #1B87FF;
+  --color-primary-dark: var(--sapHighlightColor);
+  --color-primary-soft: var(--sapListSelectionBackground);
+  --color-accent: var(--sapBrandColor);
+  --color-accent-dark: var(--sapHighlightColor);
+  --color-bg: var(--sapBackgroundColor);
+  --color-surface: var(--sapShellColor);
+  --color-text: var(--sapTitleColor);
+  --color-text-muted: var(--sapContentLabelColor);
+  --color-border: var(--sapContentBorderColor);
+  --color-danger: var(--sapErrorColor);
+  --color-success: var(--sapSuccessColor);
+  --color-warning: var(--sapWarningColor);
+  --color-info: var(--sapInformationColor);
+  --shadow-sm: 0 0 0.125rem 0 rgba(85, 107, 130, 0.2);
+  --shadow-md: 0 0.125rem 0.5rem 0 rgba(85, 107, 130, 0.16);
+  --shadow-lg: 0 0.25rem 1rem 0 rgba(85, 107, 130, 0.2);
+  --radius: 1rem;
+  --radius-sm: 0.5rem;
+  --sidebar-width: 16rem;
+  --shell-height: 2.75rem;
+  --sidebar-bg: #1a4536;
+  --sidebar-bg-bottom: #0f2e24;
+  --sidebar-text: rgba(255, 255, 255, 0.88);
+  --sidebar-text-muted: rgba(255, 255, 255, 0.55);
+  --sidebar-hover: rgba(255, 255, 255, 0.08);
+  --sidebar-active: rgba(255, 255, 255, 0.14);
+  --sidebar-accent: var(--color-primary-light);
+  --sidebar-icon-bg: rgba(255, 255, 255, 0.1);
+  --sidebar-icon-active-bg: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.12);
+
+  --auth-bg: #0f1f18;
+  --auth-overlay: linear-gradient(
+    135deg,
+    rgba(15, 35, 28, 0.78) 0%,
+    rgba(20, 48, 38, 0.58) 50%,
+    rgba(10, 25, 20, 0.84) 100%
+  );
+}
+
+[data-theme="dark"] {
+  --sapBackgroundColor: #1a1f24;
+  --sapShellColor: #242a30;
+  --sapTileBackground: #2a3138;
+  --sapTitleColor: #e8eef2;
+  --sapContentLabelColor: #9aa8b4;
+  --sapContentBorderColor: #3a424a;
+  --sapListSelectionBackground: #1a3a5c;
+  --sapSuccessBackground: #1e3a24;
+  --sapErrorBackground: #3a1a24;
+  --sapWarningBackground: #3a3018;
+  --sapInformationBackground: #1a2a3a;
+  --shadow-sm: 0 0 0.125rem 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 0.125rem 0.5rem 0 rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 0.25rem 1rem 0 rgba(0, 0, 0, 0.45);
+  --sidebar-bg: #142e24;
+  --sidebar-bg-bottom: #0a1f18;
+  --sidebar-text: rgba(255, 255, 255, 0.9);
+  --sidebar-text-muted: rgba(255, 255, 255, 0.5);
+  --sidebar-hover: rgba(255, 255, 255, 0.07);
+  --sidebar-active: rgba(255, 255, 255, 0.12);
+  --sidebar-icon-bg: rgba(255, 255, 255, 0.08);
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+}
+
+.match-locked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  min-height: 100vh;
+  font-size: 0.875rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--sapTitleColor);
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: 1.625rem; }
+h2 { font-size: 1.125rem; }
+h3 { font-size: 1rem; }
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+/* Layout */
+.layout-public {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+.layout-public-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.layout-public--immersive {
+  background: var(--auth-bg);
+}
+
+.layout-public--immersive .layout-public-content {
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+}
+
+.layout-app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.layout-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.layout-content {
+  flex: 1;
+  padding: 1rem 2rem 2rem;
+  max-width: 90rem;
+  width: 100%;
+  margin: 0 auto;
+  overflow-y: auto;
+}
+
+/* Fiori Side Navigation */
+.sidebar {
+  width: var(--sidebar-width);
+  background: linear-gradient(180deg, var(--sidebar-bg) 0%, var(--sidebar-bg-bottom) 100%);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid var(--sidebar-border);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-brand {
+  padding: 1rem;
+  border-bottom: 1px solid var(--sidebar-border);
+  min-height: var(--shell-height);
+  display: flex;
+  align-items: center;
+}
+
+.sidebar .app-brand-copy strong {
+  color: #fff;
+}
+
+.sidebar .app-brand-copy span {
+  color: var(--sidebar-text-muted);
+}
+
+.sidebar .app-brand-icon {
+  background: var(--sidebar-icon-bg);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: none;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 0.625rem 0.5rem;
+}
+
+.sidebar-section {
+  padding: 1rem 0.75rem 0.375rem;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sidebar-text-muted);
+  font-weight: 600;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.625rem;
+  margin: 0.125rem 0;
+  min-height: 2.625rem;
+  color: var(--sidebar-text);
+  transition: background 0.15s ease, color 0.15s ease;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+}
+
+.sidebar-link:hover {
+  background: var(--sidebar-hover);
+  color: #fff;
+  text-decoration: none;
+}
+
+.sidebar-link.active {
+  background: var(--sidebar-active);
+  color: #fff;
+  border-left-color: var(--sidebar-accent);
+  font-weight: 600;
+}
+
+.sidebar-link .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  background: var(--sidebar-icon-bg);
+  color: rgba(255, 255, 255, 0.9);
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sidebar-link:hover .icon {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.sidebar-link.active .icon {
+  background: var(--sidebar-icon-active-bg);
+  color: var(--color-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.sidebar-footer {
+  padding: 0.875rem 1rem;
+  border-top: 1px solid var(--sidebar-border);
+}
+
+.sidebar-footer-name {
+  font-size: 0.75rem;
+  color: var(--sidebar-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Fiori Shell Bar */
+.navbar {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 1rem;
+  min-height: var(--shell-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: none;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-shell-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-left: 0.5rem;
+}
+
+.navbar-shell-title--mobile {
+  display: none;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar-user-info {
+  text-align: right;
+}
+
+.navbar-user-name {
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+
+.navbar-user-team {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* Fiori Tiles / Cards */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-bg);
+}
+
+.card-header h2, .card-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.card-body {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+/* Fiori Analytical tiles */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-card .stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.1;
+}
+
+.stat-card .stat-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.375rem;
+  font-weight: 400;
+}
+
+.stat-card.accent .stat-value {
+  color: var(--color-primary);
+}
+
+/* Fiori Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.4375rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  font-family: inherit;
+  line-height: 1.4285714286;
+  min-height: 2.25rem;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+.btn-accent {
+  background: var(--sapListSelectionBackground);
+  color: var(--color-primary-dark);
+  border-color: var(--color-primary);
+}
+
+.btn-accent:hover:not(:disabled) {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: #BCC3CA;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-bg);
+  border-color: var(--color-text-muted);
+}
+
+.btn-danger {
+  background: var(--sapErrorColor);
+  color: #fff;
+  border-color: var(--sapErrorColor);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #840606;
+}
+
+.btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.btn-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.btn-sm {
+  padding: 0.3125rem 0.625rem;
+  font-size: 0.8125rem;
+  min-height: 1.75rem;
+}
+
+/* Fiori Forms */
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin-bottom: 0.375rem;
+  color: var(--color-text-muted);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.4375rem 0.625rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-family: inherit;
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-height: 2.25rem;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.0625rem var(--color-primary);
+}
+
+.form-control:hover:not(:focus):not(:disabled) {
+  border-color: #89919A;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-inline {
+  display: flex;
+  gap: 0.5rem;
+  align-items: end;
+}
+
+select.form-control {
+  cursor: pointer;
+}
+
+/* Auth – Fiori sign-in panel */
+.auth-card {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+  padding: 2rem;
+  width: 100%;
+  max-width: 26rem;
+}
+
+.auth-card .auth-logo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-card .auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* Tables */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+/* Fiori Table */
+thead {
+  background: var(--color-bg);
+}
+
+th {
+  padding: 0.625rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+td {
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+  font-size: 0.875rem;
+}
+
+tbody tr:hover {
+  background: var(--sapListSelectionBackground);
+}
+
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sortable-th:hover,
+.sortable-th.active {
+  color: var(--color-text);
+}
+
+.sortable-th-icon {
+  margin-left: 0.25rem;
+  font-size: 0.625rem;
+}
+
+.predictions-table .col-match-ref,
+.match-table-ref {
+  min-width: 4.5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.match-ref-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.125rem;
+  line-height: 1.2;
+}
+
+.match-ref-internal {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.match-ref-external {
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  opacity: 0.85;
+}
+
+.match-card-header-end {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.match-card-ref {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.0625rem;
+  line-height: 1.15;
+}
+
+.match-ref {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.predictions-table .col-date,
+.predictions-table .col-round,
+.predictions-table .col-score,
+.predictions-table .col-points {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.predictions-table .col-score {
+  text-align: center;
+}
+
+.predictions-table .col-points {
+  text-align: right;
+}
+
+/* Fiori Object Status / Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.badge-scheduled { background: var(--sapInformationBackground); color: var(--sapInformationColor); }
+.badge-locked { background: var(--sapWarningBackground); color: var(--sapWarningColor); }
+.badge-finished { background: var(--sapSuccessBackground); color: var(--sapSuccessColor); }
+.badge-success { background: var(--sapSuccessBackground); color: var(--sapSuccessColor); }
+.badge-warning { background: var(--sapWarningBackground); color: var(--sapWarningColor); }
+.badge-danger { background: var(--sapErrorBackground); color: var(--sapErrorColor); }
+.badge-info { background: var(--sapInformationBackground); color: var(--sapInformationColor); }
+.badge-admin { background: var(--sapInformationBackground); color: var(--sapInformationColor); }
+
+/* Fiori Message Strip / Alerts */
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  border-left: 0.25rem solid transparent;
+}
+
+.alert-success { background: var(--sapSuccessBackground); color: var(--sapSuccessColor); border-left-color: var(--sapSuccessColor); }
+.alert-error { background: var(--sapErrorBackground); color: var(--sapErrorColor); border-left-color: var(--sapErrorColor); }
+.alert-info { background: var(--sapInformationBackground); color: var(--sapInformationColor); border-left-color: var(--sapInformationColor); }
+.alert-warning { background: var(--sapWarningBackground); color: var(--sapWarningColor); border-left-color: var(--sapWarningColor); }
+
+.toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  width: min(22rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  border-left: 0.25rem solid transparent;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  pointer-events: auto;
+}
+
+.toast-success {
+  background: var(--sapSuccessBackground);
+  color: var(--sapSuccessColor);
+  border-left-color: var(--sapSuccessColor);
+}
+
+.toast-error {
+  background: var(--sapErrorBackground);
+  color: var(--sapErrorColor);
+  border-left-color: var(--sapErrorColor);
+}
+
+.toast-info {
+  background: var(--sapInformationBackground);
+  color: var(--sapInformationColor);
+  border-left-color: var(--sapInformationColor);
+}
+
+.toast-warning {
+  background: var(--sapWarningBackground);
+  color: var(--sapWarningColor);
+  border-left-color: var(--sapWarningColor);
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.toast-message {
+  flex: 1;
+  margin: 0;
+  word-break: break-word;
+}
+
+.toast-close {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.7;
+  font-size: 1.125rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.toast-close:hover {
+  opacity: 1;
+}
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(1rem);
+}
+
+.toast-move {
+  transition: transform 0.2s ease;
+}
+
+/* Fiori Filter chips */
+.filter-btn {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  color: var(--color-text);
+  min-height: 2rem;
+}
+
+.filter-btn.active {
+  background: var(--sapListSelectionBackground);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Fiori content tiles */
+.match-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease;
+}
+
+.match-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.match-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.match-teams {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.match-team {
+  flex: 1;
+  text-align: center;
+}
+
+.match-team-name {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.match-score-display {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  min-width: 80px;
+  text-align: center;
+}
+
+.match-meta {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+.match-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Prediction form inline */
+.prediction-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.prediction-inputs input {
+  width: 60px;
+  text-align: center;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: inherit;
+}
+
+.prediction-separator {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+/* Loading */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Fiori Dynamic Page header */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.page-header h1 {
+  color: var(--sapTitleColor);
+  font-size: 1.625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Icon button (shell bar, toolbar) */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  text-decoration: none;
+}
+
+.icon-btn:hover {
+  background: var(--color-bg);
+  color: var(--color-primary);
+  border-color: var(--color-border);
+  text-decoration: none;
+}
+
+/* Fiori Dialog */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(34, 53, 72, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: 1rem 1.25rem;
+  min-height: 2.75rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.modal-body {
+  padding: 1.25rem;
+}
+
+.modal-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* Filters */
+.filter-bar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.filter-btn:hover {
+  border-color: var(--color-primary);
+  background: var(--color-bg);
+}
+
+/* Rank highlight */
+.rank-1 { color: #ffd700; font-weight: 800; }
+.rank-2 { color: #c0c0c0; font-weight: 800; }
+.rank-3 { color: #cd7f32; font-weight: 800; }
+
+/* Mobile menu toggle */
+.mobile-menu-btn {
+  display: none;
+}
+
+.mobile-menu-btn.icon-btn {
+  color: var(--color-text);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 998;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    z-index: 999;
+    transition: left 0.3s;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  .navbar-shell-title--mobile {
+    display: inline;
+  }
+
+  .layout-content {
+    padding: 1rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-card {
+    padding: 1.5rem;
+  }
+}
+
+/* Utility */
+.text-muted { color: var(--color-text-muted); }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mb-2 { margin-bottom: 1rem; }
+.gap-1 { gap: 0.5rem; }
+.flex { display: flex; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
+}
+
+.empty-state .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* App brand mark */
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.app-brand.centered {
+  flex-direction: column;
+  text-align: center;
+  gap: 1rem;
+}
+
+.app-brand-icon {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.app-brand.compact .app-brand-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+}
+
+.app-brand-copy strong {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--sapTitleColor);
+  line-height: 1.2;
+}
+
+.app-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.app-brand-copy span {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+
+.app-brand.centered .app-brand-copy span {
+  font-size: 0.875rem;
+}
+
+.app-brand.centered .app-brand-copy strong {
+  font-size: 1.375rem;
+}
