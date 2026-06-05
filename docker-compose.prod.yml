@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
 
   backend:
-    build: ./backend
+    image: ${BACKEND_IMAGE:-ghcr.io/schmeckm/aspire-make-tippspiel-backend:latest}
     environment:
       NODE_ENV: production
       PORT: 3000
@@ -67,7 +67,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    image: ${FRONTEND_IMAGE:-ghcr.io/schmeckm/aspire-make-tippspiel-frontend:latest}
     ports:
       - "${FRONTEND_PORT:-8080}:80"
     depends_on:
