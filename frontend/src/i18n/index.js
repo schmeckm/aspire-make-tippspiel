@@ -24,11 +24,33 @@ export function setStoredLocale(locale) {
   return normalized;
 }
 
+/** vue-i18n v9: @ starts linked messages — escape literal @ in emails etc. */
+export function escapeI18nAtSign(text) {
+  if (typeof text !== 'string' || text.includes("{'@'}")) return text;
+  return text.replace(/@(?![:.])/g, "{'@'}");
+}
+
+export function preprocessLocaleMessages(messages) {
+  if (typeof messages === 'string') return escapeI18nAtSign(messages);
+  if (Array.isArray(messages)) return messages.map(preprocessLocaleMessages);
+  if (messages && typeof messages === 'object') {
+    return Object.fromEntries(
+      Object.entries(messages).map(([key, value]) => [key, preprocessLocaleMessages(value)]),
+    );
+  }
+  return messages;
+}
+
 const i18n = createI18n({
   legacy: false,
   locale: getStoredLocale(),
   fallbackLocale: DEFAULT_LOCALE,
-  messages: { de, en, es, fr },
+  messages: {
+    de: preprocessLocaleMessages(de),
+    en: preprocessLocaleMessages(en),
+    es: preprocessLocaleMessages(es),
+    fr: preprocessLocaleMessages(fr),
+  },
 });
 
 export default i18n;
