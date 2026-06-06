@@ -3,6 +3,10 @@ const theSportsDbPlayerImageProvider = require('./providers/theSportsDbPlayerIma
 const { getTheSportsDbApiKey, getTheSportsDbBaseUrl } = require('./providers/theSportsDbClient');
 const wikidataPlayerImageProvider = require('./providers/wikidataPlayerImageProvider');
 const wikipediaPlayerImageProvider = require('./providers/wikipediaPlayerImageProvider');
+const {
+  isWikimediaEnabled,
+  getSuggestedRateLimitCooldownMs,
+} = require('./providers/wikimediaClient');
 
 const EXTERNAL_PROVIDERS = [
   theSportsDbPlayerImageProvider,
@@ -20,14 +24,42 @@ let externalProviderCooldownUntil = 0;
 
 function isRateLimitError(error) {
   const message = error?.message || '';
-  return message.includes('429') || /too many requests/i.test(message);
+  return error?.status === 429
+    || error?.status === 503
+    || message.includes('429')
+    || message.includes('503')
+    || /too many requests/i.test(message);
 }
 
-function markExternalProvidersRateLimited() {
+function markExternalProvidersRateLimited(cooldownMs = RATE_LIMIT_COOLDOWN_MS) {
   externalProviderCooldownUntil = Math.max(
     externalProviderCooldownUntil,
-    Date.now() + RATE_LIMIT_COOLDOWN_MS,
+    Date.now() + cooldownMs,
   );
+}
+
+function handleProviderError(error) {
+  if (!isRateLimitError(error)) return false;
+  const retryMs = getSuggestedRateLimitCooldownMs(error) || RATE_LIMIT_COOLDOWN_MS;
+  markExternalProvidersRateLimited(retryMs);
+  console.warn(
+    `Player image providers rate-limited; pausing external lookups until ${new Date(externalProviderCooldownUntil).toISOString()}`,
+  );
+  return true;
+}
+
+function filterExternalProviders(includeSources = null) {
+  return EXTERNAL_PROVIDERS.filter((provider) => {
+    if (includeSources && !includeSources.includes(provider.name)) return false;
+    if ((provider.name === wikidataPlayerImageProvider.name
+      || provider.name === wikipediaPlayerImageProvider.name) && !isWikimediaEnabled()) {
+      return false;
+    }
+    if (provider.name === theSportsDbPlayerImageProvider.name && !isTheSportsDbConfigured()) {
+      return false;
+    }
+    return true;
+  });
 }
 
 function isExternalProviderPaused() {
@@ -109,6 +141,11 @@ async function fetchFromProvider(provider, params) {
     return theSportsDbPlayerImageProvider.fetchPlayerImage(config, params);
   }
 
+  if (provider.name === wikidataPlayerImageProvider.name
+    || provider.name === wikipediaPlayerImageProvider.name) {
+    return provider.fetchPlayerImage(params);
+  }
+
   await throttleExternalCall();
   return provider.fetchPlayerImage(params);
 }
@@ -116,26 +153,14 @@ async function fetchFromProvider(provider, params) {
 async function resolveFromExternalProviders(params, { includeSources = null } = {}) {
   if (isExternalProviderPaused()) return null;
 
-  const providers = EXTERNAL_PROVIDERS.filter((provider) => {
-    if (includeSources && !includeSources.includes(provider.name)) return false;
-    if (provider.name === theSportsDbPlayerImageProvider.name && !isTheSportsDbConfigured()) {
-      return false;
-    }
-    return true;
-  });
+  const providers = filterExternalProviders(includeSources);
 
   for (const provider of providers) {
     try {
       const result = await fetchFromProvider(provider, params);
       if (result?.imageUrl) return result;
     } catch (error) {
-      if (isRateLimitError(error)) {
-        markExternalProvidersRateLimited();
-        console.warn(
-          `Player image providers rate-limited; pausing external lookups until ${new Date(externalProviderCooldownUntil).toISOString()}`,
-        );
-        break;
-      }
+      if (handleProviderError(error)) break;
       console.warn(`Player image provider ${provider.name} failed:`, error.message);
     }
   }
@@ -155,20 +180,14 @@ async function searchAllProviders(params) {
     return results;
   }
 
-  for (const provider of EXTERNAL_PROVIDERS) {
-    if (provider.name === theSportsDbPlayerImageProvider.name && !isTheSportsDbConfigured()) {
-      continue;
-    }
+  for (const provider of filterExternalProviders()) {
     try {
       const result = await fetchFromProvider(provider, params);
       if (result?.imageUrl) {
         results.push({ ...result, provider: provider.name });
       }
     } catch (error) {
-      if (isRateLimitError(error)) {
-        markExternalProvidersRateLimited();
-        break;
-      }
+      if (handleProviderError(error)) break;
       console.warn(`Player image search ${provider.name} failed:`, error.message);
     }
   }

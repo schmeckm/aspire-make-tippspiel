@@ -1,9 +1,10 @@
-const { fetchJson } = require('./providerUtils');
+const { fetchWikimediaJson, isWikimediaEnabled } = require('./wikimediaClient');
 
 const NAME = 'wikipedia';
-const USER_AGENT = 'ai-football-agent/2.5 (player-image; contact: local-admin)';
 
 async function searchPage(playerName, teamName) {
+  if (!isWikimediaEnabled()) return null;
+
   const searchTerm = teamName
     ? `${playerName.trim()} ${teamName.trim()} footballer`
     : `${playerName.trim()} footballer`;
@@ -16,7 +17,7 @@ async function searchPage(playerName, teamName) {
   searchUrl.searchParams.set('format', 'json');
   searchUrl.searchParams.set('origin', '*');
 
-  const searchData = await fetchJson(searchUrl.toString(), { 'User-Agent': USER_AGENT });
+  const searchData = await fetchWikimediaJson(searchUrl.toString());
   const results = searchData.query?.search || [];
   if (!results.length) return null;
 
@@ -31,7 +32,7 @@ async function searchPage(playerName, teamName) {
   pageUrl.searchParams.set('format', 'json');
   pageUrl.searchParams.set('origin', '*');
 
-  const pageData = await fetchJson(pageUrl.toString(), { 'User-Agent': USER_AGENT });
+  const pageData = await fetchWikimediaJson(pageUrl.toString());
   const pages = pageData.query?.pages || {};
   const page = Object.values(pages)[0];
   if (!page?.thumbnail?.source) return null;

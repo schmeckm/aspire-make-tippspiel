@@ -1,7 +1,6 @@
-const { fetchJson } = require('./providerUtils');
+const { fetchWikimediaJson, isWikimediaEnabled } = require('./wikimediaClient');
 
 const NAME = 'wikidata';
-const USER_AGENT = 'ai-football-agent/2.5 (player-image; contact: local-admin)';
 
 function buildCommonsUrl(filename) {
   const clean = String(filename).replace(/^File:/i, '').trim();
@@ -9,6 +8,8 @@ function buildCommonsUrl(filename) {
 }
 
 async function searchEntity(playerName) {
+  if (!isWikimediaEnabled()) return [];
+
   const url = new URL('https://www.wikidata.org/w/api.php');
   url.searchParams.set('action', 'wbsearchentities');
   url.searchParams.set('search', playerName.trim());
@@ -18,7 +19,7 @@ async function searchEntity(playerName) {
   url.searchParams.set('format', 'json');
   url.searchParams.set('origin', '*');
 
-  const data = await fetchJson(url.toString(), { 'User-Agent': USER_AGENT });
+  const data = await fetchWikimediaJson(url.toString());
   return data.search || [];
 }
 
@@ -30,7 +31,7 @@ async function getEntityClaims(entityId) {
   url.searchParams.set('format', 'json');
   url.searchParams.set('origin', '*');
 
-  const data = await fetchJson(url.toString(), { 'User-Agent': USER_AGENT });
+  const data = await fetchWikimediaJson(url.toString());
   return data.entities?.[entityId] || null;
 }
 
