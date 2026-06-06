@@ -47,7 +47,7 @@
               v-for="match in upcomingMatches"
               :key="match.id"
               :match="match"
-              :show-form="false"
+              @saved="loadDashboardData"
             />
           </div>
         </div>
@@ -104,15 +104,19 @@ const upcomingMatches = computed(() => {
 
 const top5 = computed(() => leaderboard.value.slice(0, 5));
 
+async function loadDashboardData() {
+  const [matchesRes, leaderboardRes] = await Promise.all([
+    api.get('/matches'),
+    api.get('/leaderboard'),
+  ]);
+  matches.value = matchesRes.data;
+  leaderboard.value = leaderboardRes.data;
+}
+
 onMounted(async () => {
   error.value = '';
   try {
-    const [matchesRes, leaderboardRes] = await Promise.all([
-      api.get('/matches'),
-      api.get('/leaderboard'),
-    ]);
-    matches.value = matchesRes.data;
-    leaderboard.value = leaderboardRes.data;
+    await loadDashboardData();
   } catch (err) {
     error.value = err.response?.data?.error || t('dashboard.loadFailed');
   } finally {

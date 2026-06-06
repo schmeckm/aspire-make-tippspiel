@@ -352,6 +352,7 @@
     "nationality": "Nationalität",
     "birthDate": "Geburtsdatum",
     "loadFailed": "Mannschaften konnten nicht geladen werden.",
+    "squadEmpty": "Kader konnte nicht geladen werden. Bitte später erneut versuchen.",
     "standingsEmpty": "Noch keine Tabellendaten verfügbar.",
     "scorersEmpty": "Noch keine Torschützen – startet mit dem Turnier.",
     "liveEmpty": "Keine Spiele für diesen Filter.",

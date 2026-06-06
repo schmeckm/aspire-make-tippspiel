@@ -1,13 +1,27 @@
 const footballTeamService = require('./footballTeamService');
 const { logAudit } = require('./auditService');
-const { startSyncLog, finishSyncLog, failSyncLog, emptySummary } = require('./syncLogService');
+const {
+  startSyncLog,
+  finishSyncLog,
+  failSyncLog,
+  updateSyncProgress,
+  emptySummary,
+} = require('./syncLogService');
 const {
   findRecord,
   resolveImage,
 } = require('./playerImageService');
 const { isEnabled } = require('./playerImageProviderService');
 
-async function syncPlayerImages({ userId = null, req = null, forceRefresh = false } = {}) {
+const PROGRESS_UPDATE_EVERY = 10;
+const STALE_RUNNING_MS = 30 * 60 * 1000;
+
+async function syncPlayerImages({
+  userId = null,
+  req = null,
+  forceRefresh = false,
+  log: existingLog = null,
+} = {}) {
   if (!isEnabled()) {
     return { skipped: true, message: 'Spielerbilder sind deaktiviert (PLAYER_IMAGE_ENABLED=false).' };
   }
@@ -19,7 +33,7 @@ async function syncPlayerImages({ userId = null, req = null, forceRefresh = fals
     };
   }
 
-  const log = await startSyncLog('player_images', 'thesportsdb+wikidata');
+  const log = existingLog || await startSyncLog('player_images', 'thesportsdb+wikidata');
   const summary = emptySummary();
 
   try {
@@ -36,6 +50,7 @@ async function syncPlayerImages({ userId = null, req = null, forceRefresh = fals
       };
     }
 
+    let processed = 0;
     for (const player of players) {
       try {
         const existing = await findRecord(player.playerName, player.teamName);
@@ -50,10 +65,7 @@ async function syncPlayerImages({ userId = null, req = null, forceRefresh = fals
 
         if (!result?.imageUrl) {
           summary.skippedCount++;
-          continue;
-        }
-
-        if (!hadImage) {
+        } else if (!hadImage) {
           summary.createdCount++;
         } else if (existing.imageUrl !== result.imageUrl) {
           summary.updatedCount++;
@@ -68,6 +80,12 @@ async function syncPlayerImages({ userId = null, req = null, forceRefresh = fals
           team: player.teamName,
           message: err.message,
         });
+      }
+
+      processed++;
+      if (processed % PROGRESS_UPDATE_EVERY === 0) {
+        summary.processedCount = processed;
+        await updateSyncProgress(log, summary);
       }
     }
 
@@ -96,4 +114,14 @@ async function syncPlayerImages({ userId = null, req = null, forceRefresh = fals
   }
 }
 
-module.exports = { syncPlayerImages };
+function isStaleRunningLog(log) {
+  if (!log || log.status !== 'running') return false;
+  const age = Date.now() - new Date(log.startedAt).getTime();
+  return age >= STALE_RUNNING_MS;
+}
+
+module.exports = {
+  syncPlayerImages,
+  isStaleRunningLog,
+  STALE_RUNNING_MS,
+};

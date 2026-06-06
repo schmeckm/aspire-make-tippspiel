@@ -329,6 +329,7 @@
     "nationality": "Nacionalidad",
     "birthDate": "Fecha de nacimiento",
     "loadFailed": "No se pudieron cargar las selecciones.",
+    "squadEmpty": "No se pudo cargar la plantilla. Inténtalo de nuevo más tarde.",
     "standingsEmpty": "Aún no hay datos de clasificación.",
     "scorersEmpty": "Aún no hay goleadores – comienza con el torneo.",
     "liveEmpty": "No hay partidos para este filtro.",

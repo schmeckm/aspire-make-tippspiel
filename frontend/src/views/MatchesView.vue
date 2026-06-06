@@ -46,7 +46,7 @@
       </div>
       <div v-else class="card">
         <div class="card-body">
-          <MatchTable :matches="matches" show-prediction />
+          <MatchTable :matches="matches" show-prediction @saved="loadMatches" />
         </div>
       </div>
     </template>

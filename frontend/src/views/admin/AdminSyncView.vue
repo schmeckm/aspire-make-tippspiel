@@ -43,7 +43,7 @@
           </p>
           <p class="hint text-muted">
             Spielerbilder werden aus TheSportsDB, Wikidata und Wikipedia geladen und lokal zwischengespeichert.
-            Beim ersten Lauf kann der Vorgang mehrere Minuten dauern (Rate-Limit der APIs).
+            Der erste Lauf läuft im Hintergrund (~20 Min. für alle Kader, Rate-Limit der APIs) — Fortschritt in den Sync-Logs.
           </p>
           <div class="btn-group">
             <button class="btn btn-accent btn-sm" :disabled="syncing" @click="testTheSportsDb">
@@ -54,7 +54,7 @@
             </button>
             <button
               class="btn btn-primary btn-sm"
-              :disabled="syncing || !status.apiConfigured"
+              :disabled="syncingPlayerImages || !status.apiConfigured"
               @click="syncPlayerImages"
             >
               {{ syncingPlayerImages ? 'Lade Bilder...' : 'Spielerbilder laden (WM-Kader)' }}
@@ -205,20 +205,68 @@ async function enrichVenues() {
   }
 }
 
+function playerImageProgressMessage(log) {
+  const resolved = (log.createdCount || 0) + (log.updatedCount || 0);
+  let details = {};
+  try {
+    details = typeof log.detailsJson === 'string'
+      ? JSON.parse(log.detailsJson)
+      : (log.detailsJson || {});
+  } catch {
+    details = {};
+  }
+  const total = details.totalPlayers;
+  const processed = details.processedCount;
+  const progress = processed && total ? ` (${processed}/${total})` : '';
+  return `Lade Spielerbilder… ${resolved} mit Bild, ${log.skippedCount || 0} übersprungen${progress}`;
+}
+
+async function pollPlayerImageSync(logId) {
+  const maxPolls = 500;
+  for (let i = 0; i < maxPolls; i += 1) {
+    await new Promise((resolve) => { setTimeout(resolve, 3000); });
+    const { data: logs } = await api.get('/admin/sync/logs', {
+      params: { syncType: 'player_images', limit: 5 },
+    });
+    const log = logs.find((entry) => entry.id === logId) || logs[0];
+    if (!log) continue;
+
+    if (log.status === 'running') {
+      message.value = playerImageProgressMessage(log);
+      messageType.value = 'success';
+      await load();
+      continue;
+    }
+
+    if (log.status === 'success') {
+      message.value = `Spielerbilder fertig: ${log.createdCount || 0} neu, ${log.updatedCount || 0} aktualisiert.`;
+      messageType.value = 'success';
+    } else {
+      message.value = log.errorMessage || 'Spielerbild-Sync mit Fehlern beendet.';
+      messageType.value = 'warning';
+    }
+    await load();
+    return;
+  }
+  error.value = 'Spielerbild-Sync dauert länger als erwartet — bitte Sync-Logs prüfen.';
+}
+
 async function syncPlayerImages() {
-  syncing.value = true;
   syncingPlayerImages.value = true;
   error.value = '';
   message.value = '';
   try {
-    const { data } = await api.post('/admin/sync/player-images', {}, { timeout: 0 });
-    message.value = data.message || 'Spielerbilder synchronisiert.';
-    messageType.value = data.errorCount > 0 ? 'warning' : (data.skipped ? 'warning' : 'success');
-    await load();
+    const { data } = await api.post('/admin/sync/player-images', {}, { timeout: 30000 });
+    message.value = data.message || 'Spielerbild-Sync gestartet.';
+    messageType.value = 'success';
+    if (data.logId && (data.started || data.running)) {
+      await pollPlayerImageSync(data.logId);
+    } else {
+      await load();
+    }
   } catch (e) {
     error.value = e.response?.data?.error || 'Spielerbild-Sync fehlgeschlagen.';
   } finally {
-    syncing.value = false;
     syncingPlayerImages.value = false;
   }
 }
@@ -267,7 +315,25 @@ async function recalculate() {
   }
 }
 
-onMounted(load);
+async function resumeRunningPlayerImageSync() {
+  const running = logs.value.find(
+    (log) => log.syncType === 'player_images' && log.status === 'running',
+  );
+  if (!running) return;
+  syncingPlayerImages.value = true;
+  message.value = playerImageProgressMessage(running);
+  messageType.value = 'success';
+  try {
+    await pollPlayerImageSync(running.id);
+  } finally {
+    syncingPlayerImages.value = false;
+  }
+}
+
+onMounted(async () => {
+  await load();
+  await resumeRunningPlayerImageSync();
+});
 </script>
 
 <style scoped>

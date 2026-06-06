@@ -81,7 +81,16 @@
                     <TeamFlag v-if="pred.match?.awayTeam" :name="pred.match.awayTeam" inline />
                   </div>
                 </td>
-                <td class="col-score">{{ pred.predictedHomeScore }} : {{ pred.predictedAwayScore }}</td>
+                <td class="col-score">
+                  <PredictionForm
+                    v-if="pred.match?.canPredict"
+                    :match="pred.match"
+                    :prediction="pred"
+                    compact
+                    @saved="loadPredictions"
+                  />
+                  <span v-else>{{ pred.predictedHomeScore }} : {{ pred.predictedAwayScore }}</span>
+                </td>
                 <td class="col-score">
                   <span v-if="pred.match?.status === 'finished'">
                     {{ pred.match.homeScore }} : {{ pred.match.awayScore }}
@@ -125,6 +134,7 @@ import LoadingSpinner from '../components/LoadingSpinner.vue';
 import SortableTh from '../components/SortableTh.vue';
 import TeamFlag from '../components/TeamFlag.vue';
 import MatchRefCell from '../components/MatchRefCell.vue';
+import PredictionForm from '../components/PredictionForm.vue';
 import { useFormatters } from '../composables/useFormatters';
 import { useMatchMeta } from '../composables/useMatchMeta';
 import { useTableSort } from '../composables/useTableSort';
@@ -173,10 +183,14 @@ function statusLabel(status) {
   return t(`matchStatus.${status}`, status);
 }
 
+async function loadPredictions() {
+  const { data } = await api.get('/predictions/my');
+  predictions.value = data;
+}
+
 onMounted(async () => {
   try {
-    const { data } = await api.get('/predictions/my');
-    predictions.value = data;
+    await loadPredictions();
   } finally {
     loading.value = false;
   }

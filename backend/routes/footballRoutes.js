@@ -40,7 +40,9 @@ router.get('/teams', async (req, res) => {
 
     const { name } = req.query;
     if (name) {
-      const team = await findTeamByName(String(name));
+      const summary = await findTeamByName(String(name));
+      if (!summary) return sendError(res, req, 404, 'errors.footballTeamNotFound');
+      const team = await getTeamById(summary.id);
       if (!team) return sendError(res, req, 404, 'errors.footballTeamNotFound');
       return res.json(team);
     }
@@ -60,7 +62,11 @@ router.get('/teams/:id', async (req, res) => {
     }
 
     const resolveImages = req.query.resolveImages === '1' || req.query.resolveImages === 'true';
-    const team = await getTeamById(req.params.id, { resolveImages });
+    const maxResolve = Math.min(
+      Math.max(parseInt(req.query.maxResolve, 10) || 8, 1),
+      20,
+    );
+    const team = await getTeamById(req.params.id, { resolveImages, maxResolve });
     if (!team) return sendError(res, req, 404, 'errors.footballTeamNotFound');
     res.json(team);
   } catch (error) {

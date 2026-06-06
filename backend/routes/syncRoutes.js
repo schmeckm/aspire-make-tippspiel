@@ -10,7 +10,15 @@ const { syncResults } = require('../services/resultSyncService');
 const { syncLiveScores } = require('../services/liveScoreSyncService');
 const { recalculateAllPoints } = require('../services/leaderboardService');
 const footballProviderService = require('../services/footballProviderService');
-const { getSyncLogs, getSyncStatusSummary, getSyncErrors } = require('../services/syncLogService');
+const {
+  getSyncLogs,
+  getSyncStatusSummary,
+  getSyncErrors,
+  getLastSync,
+  startSyncLog,
+  failSyncLog,
+} = require('../services/syncLogService');
+const { isStaleRunningLog } = require('../services/playerImageSyncService');
 const { getSetting } = require('../services/settingsService');
 
 const router = express.Router();
@@ -134,13 +142,38 @@ router.post('/test-thesportsdb', async (req, res) => {
 
 router.post('/player-images', async (req, res) => {
   try {
+    const running = await getLastSync('player_images');
+    if (running?.status === 'running') {
+      if (!isStaleRunningLog(running)) {
+        const resolved = (running.createdCount || 0) + (running.updatedCount || 0);
+        return res.json({
+          started: false,
+          running: true,
+          logId: running.id,
+          message: `Spielerbild-Sync läuft bereits (${resolved} Bilder, ${running.skippedCount || 0} übersprungen)…`,
+        });
+      }
+      await failSyncLog(running, new Error('Vorheriger Sync nach Timeout abgebrochen.'));
+    }
+
     const forceRefresh = req.body?.forceRefresh === true;
-    const result = await syncPlayerImages({
+    const log = await startSyncLog('player_images', 'thesportsdb+wikidata');
+
+    res.json({
+      started: true,
+      running: true,
+      logId: log.id,
+      message: 'Spielerbild-Sync im Hintergrund gestartet (~20 Min. für alle Kader). Fortschritt in den Sync-Logs.',
+    });
+
+    syncPlayerImages({
       userId: req.user.id,
       req,
       forceRefresh,
+      log,
+    }).catch((error) => {
+      console.error('Background player image sync failed:', error);
     });
-    res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

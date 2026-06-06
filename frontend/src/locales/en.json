@@ -341,6 +341,7 @@
     "nationality": "Nationality",
     "birthDate": "Date of birth",
     "loadFailed": "Could not load teams.",
+    "squadEmpty": "Squad could not be loaded. Please try again later.",
     "standingsEmpty": "No standings data available yet.",
     "scorersEmpty": "No scorers yet – starts when the tournament begins.",
     "liveEmpty": "No matches for this filter.",

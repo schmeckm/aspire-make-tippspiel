@@ -33,27 +33,46 @@ async function listTeams() {
   })).sort((a, b) => a.name.localeCompare(b.name));
 }
 
-async function resolveMissingSquadImages(squad, teamName) {
+async function resolveMissingSquadImages(squad, teamName, {
+  maxResolve = 8,
+  timeBudgetMs = 60000,
+} = {}) {
   if (!isPlayerImageEnabled() || !squad?.length) return squad;
 
   const enriched = [...squad];
+  const startedAt = Date.now();
+  let resolvedCount = 0;
+
   for (const player of enriched) {
     if (player.imageUrl) continue;
-    const resolved = await resolveImage({
-      playerName: player.name,
-      teamName,
-      countryCode: player.nationality || null,
-    });
-    if (!resolved?.imageUrl) continue;
-    player.imageUrl = resolved.imageUrl;
-    player.imageSource = resolved.source || null;
-    player.imageAttribution = resolved.attributionText || null;
-    player.imageLicense = resolved.licenseInfo || null;
+    if (resolvedCount >= maxResolve) break;
+    if (Date.now() - startedAt >= timeBudgetMs) break;
+
+    try {
+      const resolved = await resolveImage({
+        playerName: player.name,
+        teamName,
+        countryCode: player.nationality || null,
+      });
+      if (!resolved?.imageUrl) continue;
+      player.imageUrl = resolved.imageUrl;
+      player.imageSource = resolved.source || null;
+      player.imageAttribution = resolved.attributionText || null;
+      player.imageLicense = resolved.licenseInfo || null;
+      resolvedCount += 1;
+    } catch (error) {
+      console.warn(`resolveMissingSquadImages (${teamName}/${player.name}):`, error.message);
+    }
   }
+
   return enriched;
 }
 
-async function getTeamById(teamId, { resolveImages = false } = {}) {
+async function getTeamById(teamId, {
+  resolveImages = false,
+  maxResolve = 8,
+  resolveTimeBudgetMs = 60000,
+} = {}) {
   const id = parseInt(teamId, 10);
   if (!Number.isFinite(id)) return null;
 
@@ -69,14 +88,34 @@ async function getTeamById(teamId, { resolveImages = false } = {}) {
   }
 
   if (team?.squad?.length) {
-    let squad = await enrichPlayersWithImages(team.squad.map((p) => ({
+    let squad = team.squad.map((p) => ({
       ...p,
       teamName: team.name,
-    })));
-    if (resolveImages) {
-      squad = await resolveMissingSquadImages(squad, team.name);
+    }));
+    try {
+      squad = await enrichPlayersWithImages(squad);
+    } catch (error) {
+      console.warn(`enrichPlayersWithImages failed for team ${team.id}:`, error.message);
     }
-    team = { ...team, squad };
+    const missingBefore = squad.filter((p) => !p.imageUrl).length;
+    if (resolveImages && missingBefore > 0) {
+      squad = await resolveMissingSquadImages(squad, team.name, {
+        maxResolve,
+        timeBudgetMs: resolveTimeBudgetMs,
+      });
+    }
+    const missingAfter = squad.filter((p) => !p.imageUrl).length;
+    team = {
+      ...team,
+      squad,
+      ...(resolveImages ? {
+        imageResolve: {
+          remaining: missingAfter,
+          resolvedThisRequest: Math.max(0, missingBefore - missingAfter),
+          complete: missingAfter === 0,
+        },
+      } : {}),
+    };
   }
 
   return team;
@@ -124,8 +163,7 @@ async function listPlayers(search = '') {
     ))
     : players;
 
-  const sorted = filtered.sort((a, b) => a.name.localeCompare(b.name));
-  return enrichPlayersWithImages(sorted);
+  return filtered.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 async function getAllSquadPlayers() {

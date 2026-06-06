@@ -53,7 +53,6 @@
           <div v-if="!selectedTeam" class="card-body text-muted text-center">
             {{ t('nationalTeams.selectHint') }}
           </div>
-          <LoadingSpinner v-else-if="loadingTeamDetail" />
           <div v-else class="card-body">
             <div class="national-team-detail-header">
               <img v-if="selectedTeam.crest" :src="selectedTeam.crest" :alt="selectedTeam.name" class="national-team-detail-crest" />
@@ -63,9 +62,15 @@
                   {{ t('nationalTeams.coach') }}: {{ selectedTeam.coach.name }}
                   <span v-if="selectedTeam.coach.nationality">({{ selectedTeam.coach.nationality }})</span>
                 </p>
-                <p class="text-muted">{{ selectedTeam.squad.length }} {{ t('nationalTeams.players') }}</p>
+                <p class="text-muted">
+                  {{ selectedTeam.squad?.length || selectedTeam.squadSize || 0 }} {{ t('nationalTeams.players') }}
+                </p>
               </div>
             </div>
+            <LoadingSpinner v-if="loadingTeamDetail && !squadGroups.length" />
+            <p v-else-if="!loadingTeamDetail && !squadGroups.length" class="text-muted text-center">
+              {{ t('nationalTeams.squadEmpty') }}
+            </p>
             <div v-for="group in squadGroups" :key="group.position" class="squad-group">
               <h3>{{ positionLabel(group.position) }}</h3>
               <div class="table-wrapper">
@@ -361,6 +366,43 @@ function formatDateTime(value) {
   return `${formatDate(value)} ${formatTime(value)}`;
 }
 
+function findTeamInList(name) {
+  const key = String(name || '').trim().toLowerCase();
+  if (!key) return null;
+  return teams.value.find((item) => (
+    item.name.toLowerCase() === key
+    || item.shortName?.toLowerCase() === key
+    || item.tla?.toLowerCase() === key
+  )) || null;
+}
+
+function applyTeamDetail(data) {
+  if (!data?.id || !Array.isArray(data.squad) || !data.squad.length) return false;
+  selectedTeam.value = data;
+  return true;
+}
+
+function mergeTeamImageUpdates(data) {
+  if (!data?.id || selectedTeam.value?.id !== data.id || !Array.isArray(data.squad) || !data.squad.length) {
+    return;
+  }
+  const byId = new Map(data.squad.map((player) => [player.id, player]));
+  selectedTeam.value = {
+    ...selectedTeam.value,
+    squad: selectedTeam.value.squad.map((player) => {
+      const updated = byId.get(player.id);
+      if (!updated) return player;
+      return {
+        ...player,
+        imageUrl: updated.imageUrl || player.imageUrl,
+        imageSource: updated.imageSource || player.imageSource,
+        imageAttribution: updated.imageAttribution || player.imageAttribution,
+        imageLicense: updated.imageLicense || player.imageLicense,
+      };
+    }),
+  };
+}
+
 async function loadTeams() {
   loadingTeams.value = true;
   error.value = '';
@@ -369,8 +411,8 @@ async function loadTeams() {
     teams.value = data;
     const teamQuery = route.query.team;
     if (teamQuery) {
-      const { data: detail } = await api.get('/football/teams', { params: { name: String(teamQuery) } });
-      selectedTeam.value = detail;
+      const match = findTeamInList(teamQuery);
+      if (match) await selectTeam(match, { replaceRoute: false });
     }
   } catch (err) {
     error.value = err.response?.data?.error || t('nationalTeams.loadFailed');
@@ -381,23 +423,55 @@ async function loadTeams() {
 
 async function loadTeamDetail(team) {
   loadingTeamDetail.value = true;
+  error.value = '';
   try {
-    const { data } = await api.get(`/football/teams/${team.id}`, {
-      params: { resolveImages: '1' },
-      timeout: 0,
-    });
-    selectedTeam.value = data;
+    const { data } = await api.get(`/football/teams/${team.id}`, { timeout: 60000 });
+    if (!applyTeamDetail(data)) {
+      error.value = t('nationalTeams.squadEmpty');
+    }
+  } catch (err) {
+    error.value = err.response?.data?.error || t('nationalTeams.loadFailed');
   } finally {
     loadingTeamDetail.value = false;
   }
+  resolveTeamImagesInBackground(team.id);
 }
 
-async function selectTeam(team) {
-  try {
-    await loadTeamDetail(team);
+async function resolveTeamImagesInBackground(teamId) {
+  const maxRounds = 30;
+  for (let round = 0; round < maxRounds; round += 1) {
+    const missing = selectedTeam.value?.squad?.filter((p) => !p.imageUrl).length || 0;
+    if (missing === 0 || selectedTeam.value?.id !== teamId) return;
+
+    try {
+      const { data } = await api.get(`/football/teams/${teamId}`, {
+        params: { resolveImages: '1', maxResolve: 6 },
+        timeout: 90000,
+      });
+      mergeTeamImageUpdates(data);
+      if (data.imageResolve?.complete || (data.imageResolve?.resolvedThisRequest || 0) === 0) {
+        return;
+      }
+    } catch {
+      return;
+    }
+  }
+}
+
+async function selectTeam(team, { replaceRoute = true } = {}) {
+  error.value = '';
+  selectedTeam.value = {
+    id: team.id,
+    name: team.name,
+    shortName: team.shortName,
+    tla: team.tla,
+    crest: team.crest,
+    squadSize: team.squadSize,
+    squad: [],
+  };
+  await loadTeamDetail(team);
+  if (replaceRoute) {
     router.replace({ query: { ...route.query, team: team.name, tab: 'teams' } });
-  } catch (err) {
-    error.value = err.response?.data?.error || t('nationalTeams.loadFailed');
   }
 }
 
@@ -459,8 +533,10 @@ async function switchTab(tabId) {
 
 watch(() => route.query.team, async (name) => {
   if (!name || loadingTeams.value) return;
-  const match = teams.value.find((item) => item.name.toLowerCase() === String(name).toLowerCase());
-  if (match) await selectTeam(match);
+  const match = findTeamInList(name);
+  if (match && selectedTeam.value?.id !== match.id) {
+    await selectTeam(match, { replaceRoute: false });
+  }
 });
 
 onMounted(async () => {

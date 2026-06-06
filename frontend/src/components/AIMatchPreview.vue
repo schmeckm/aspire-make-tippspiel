@@ -1,13 +1,13 @@
 <template>
   <div class="ai-preview">
-    <button v-if="!content && !loading" class="btn btn-secondary btn-sm" @click="loadPreview">
+    <button v-if="!content && !loading" class="btn btn-secondary btn-sm" @click="loadPreview()">
       🤖 {{ t('ai.showPreview') }}
     </button>
     <LoadingSpinner v-if="loading" />
     <div v-if="content" class="ai-card">
       <div class="ai-card-header">
         <h4>🤖 {{ t('ai.matchPreviewTitle') }}</h4>
-        <button class="modal-close" :aria-label="t('common.close')" @click="content = null">&times;</button>
+        <button class="modal-close" :aria-label="t('common.close')" @click="resetPreview">&times;</button>
       </div>
       <div class="ai-card-body">{{ content }}</div>
       <div class="ai-disclaimer">{{ disclaimer }}</div>
@@ -17,11 +17,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
-import api from '../services/api';
 import LoadingSpinner from './LoadingSpinner.vue';
 import AlertMessage from './AlertMessage.vue';
+import { useMatchPreview } from '../composables/useMatchPreview';
 
 const { t } = useI18n();
 
@@ -29,24 +29,14 @@ const props = defineProps({
   matchId: { type: Number, required: true },
 });
 
-const content = ref(null);
-const disclaimer = ref('');
-const loading = ref(false);
-const error = ref('');
-
-async function loadPreview() {
-  loading.value = true;
-  error.value = '';
-  try {
-    const { data } = await api.post(`/ai/match-preview/${props.matchId}`);
-    content.value = data.content;
-    disclaimer.value = data.disclaimer || t('ai.disclaimer');
-  } catch (err) {
-    error.value = err.response?.data?.error || t('ai.previewUnavailable');
-  } finally {
-    loading.value = false;
-  }
-}
+const {
+  content,
+  disclaimer,
+  loading,
+  error,
+  loadPreview,
+  resetPreview,
+} = useMatchPreview(toRef(props, 'matchId'));
 </script>
 
 <style scoped>

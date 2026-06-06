@@ -39,6 +39,18 @@ async function finishSyncLog(log, summary, rateLimitJson = null) {
   return log;
 }
 
+async function updateSyncProgress(log, summary) {
+  if (!log) return log;
+  await log.update({
+    createdCount: summary.createdCount || 0,
+    updatedCount: summary.updatedCount || 0,
+    skippedCount: summary.skippedCount || 0,
+    errorCount: summary.errorCount || 0,
+    detailsJson: JSON.stringify(summary),
+  });
+  return log;
+}
+
 async function failSyncLog(log, error, summary = null) {
   const base = summary || emptySummary();
   base.errorCount = (base.errorCount || 0) + 1;
@@ -133,6 +145,7 @@ module.exports = {
   emptySummary,
   startSyncLog,
   finishSyncLog,
+  updateSyncProgress,
   failSyncLog,
   getSyncLogs,
   getLastSuccessfulSync,

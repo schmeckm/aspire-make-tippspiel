@@ -3,7 +3,7 @@ const { UniqueConstraintError } = require('sequelize');
 const { sendError, translate } = require('../utils/apiResponse');
 const { Prediction, Match, sequelize } = require('../models');
 const authMiddleware = require('../middleware/authMiddleware');
-const { canEditPrediction } = require('../services/matchLockService');
+const { canEditPrediction, isMatchEditable } = require('../services/matchLockService');
 const { calculatePoints } = require('../services/pointsCalculationService');
 const { getScoringRules, saveLeaderboardSnapshot } = require('../services/leaderboardService');
 const { validatePredictionScores } = require('../utils/predictionValidation');
@@ -17,7 +17,13 @@ router.get('/my', authMiddleware, async (req, res) => {
       include: [{ model: Match, as: 'match' }],
       order: [[{ model: Match, as: 'match' }, 'kickoffTime', 'ASC']],
     });
-    res.json(predictions);
+    res.json(predictions.map((prediction) => {
+      const json = prediction.toJSON();
+      if (json.match) {
+        json.match.canPredict = isMatchEditable(prediction.match);
+      }
+      return json;
+    }));
   } catch (error) {
     sendError(res, req, 500, 'errors.predictionsLoadFailed');
   }

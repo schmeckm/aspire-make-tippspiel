@@ -1,5 +1,5 @@
 <template>
-  <form v-if="!isLocked" @submit.prevent="handleSubmit" class="prediction-inputs">
+  <form v-if="!isLocked" @submit.prevent="handleSubmit" :class="['prediction-inputs', { 'prediction-inputs--compact': compact }]">
     <input
       v-model.number="homeScore"
       type="number"
@@ -7,7 +7,7 @@
       max="20"
       required
       class="form-control"
-      style="width: 60px; text-align: center;"
+      :style="{ width: compact ? '48px' : '60px', textAlign: 'center' }"
       :placeholder="t('predictions.home')"
     />
     <span class="prediction-separator">:</span>
@@ -18,7 +18,7 @@
       max="20"
       required
       class="form-control"
-      style="width: 60px; text-align: center;"
+      :style="{ width: compact ? '48px' : '60px', textAlign: 'center' }"
       :placeholder="t('predictions.away')"
     />
     <button type="submit" class="btn btn-primary btn-sm" :disabled="loading">
@@ -47,6 +47,7 @@ const props = defineProps({
   match: { type: Object, required: true },
   prediction: { type: Object, default: null },
   locked: { type: Boolean, default: null },
+  compact: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['saved']);
@@ -104,4 +105,19 @@ async function handleSubmit() {
   padding: 0.5rem;
 }
 .prediction-lock-icon { font-size: 1rem; opacity: 0.85; }
+
+.prediction-inputs--compact {
+  justify-content: flex-start;
+  gap: 0.35rem;
+}
+
+.prediction-inputs--compact :deep(input) {
+  width: 48px;
+  padding: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.prediction-inputs--compact .prediction-separator {
+  font-size: 1rem;
+}
 </style>

@@ -329,6 +329,7 @@
     "nationality": "Nationalité",
     "birthDate": "Date de naissance",
     "loadFailed": "Impossible de charger les équipes.",
+    "squadEmpty": "Impossible de charger l'effectif. Réessayez plus tard.",
     "standingsEmpty": "Pas encore de données de classement.",
     "scorersEmpty": "Pas encore de buteurs – début du tournoi.",
     "liveEmpty": "Aucun match pour ce filtre.",

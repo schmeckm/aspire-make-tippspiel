@@ -31,7 +31,14 @@
           </td>
           <td><span :class="['badge', `badge-${match.status}`]">{{ statusLabel(match.status) }}</span></td>
           <td v-if="showPrediction">
-            <span v-if="match.prediction">{{ match.prediction.predictedHomeScore }} : {{ match.prediction.predictedAwayScore }}</span>
+            <PredictionForm
+              v-if="editable && match.canPredict"
+              :match="match"
+              :prediction="match.prediction"
+              compact
+              @saved="$emit('saved', match)"
+            />
+            <span v-else-if="match.prediction">{{ match.prediction.predictedHomeScore }} : {{ match.prediction.predictedAwayScore }}</span>
             <span v-else class="text-muted">–</span>
           </td>
           <td v-if="showPrediction">
@@ -66,15 +73,17 @@ import { useFormatters } from '../composables/useFormatters';
 import { useMatchMeta } from '../composables/useMatchMeta';
 import TeamFlag from './TeamFlag.vue';
 import MatchRefCell from './MatchRefCell.vue';
+import PredictionForm from './PredictionForm.vue';
 
 const props = defineProps({
   matches: { type: Array, default: () => [] },
   showPrediction: { type: Boolean, default: false },
   showActions: { type: Boolean, default: false },
   showMatchRef: { type: Boolean, default: true },
+  editable: { type: Boolean, default: true },
 });
 
-defineEmits(['edit', 'delete']);
+defineEmits(['edit', 'delete', 'saved']);
 
 const { t } = useI18n();
 const { formatDate, formatTime, formatPoints } = useFormatters();
