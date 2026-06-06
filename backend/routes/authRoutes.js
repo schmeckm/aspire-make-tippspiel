@@ -10,8 +10,12 @@ const { generateToken, expiresInHours } = require('../services/authTokenService'
 const { sendVerificationEmail, sendPasswordResetEmail } = require('../services/authEmailService');
 const emailService = require('../services/emailService');
 const { blacklistToken } = require('../services/tokenBlacklistService');
+const { authLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
+const sensitiveAuthLimiter = process.env.NODE_ENV === 'test'
+  ? (_req, _res, next) => next()
+  : authLimiter;
 
 async function isRegistrationOpen() {
   return getSetting('registrationEnabled', true);
@@ -25,7 +29,7 @@ function issueToken(user) {
   );
 }
 
-router.post('/register', async (req, res) => {
+router.post('/register', sensitiveAuthLimiter, async (req, res) => {
   try {
     const open = await isRegistrationOpen();
     if (!open) {
@@ -116,7 +120,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', sensitiveAuthLimiter, async (req, res) => {
   try {
     const { email, password, language } = req.body;
 
@@ -163,7 +167,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.post('/verify-email', async (req, res) => {
+router.post('/verify-email', sensitiveAuthLimiter, async (req, res) => {
   try {
     const { token } = req.body;
     if (!token) {
@@ -201,7 +205,7 @@ router.post('/verify-email', async (req, res) => {
   }
 });
 
-router.post('/resend-verification', async (req, res) => {
+router.post('/resend-verification', sensitiveAuthLimiter, async (req, res) => {
   try {
     const { email, language } = req.body;
     if (!email) {
@@ -238,7 +242,7 @@ router.post('/resend-verification', async (req, res) => {
   }
 });
 
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', sensitiveAuthLimiter, async (req, res) => {
   try {
     const { email, language } = req.body;
     if (!email) {
@@ -269,7 +273,7 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
-router.post('/reset-password', async (req, res) => {
+router.post('/reset-password', sensitiveAuthLimiter, async (req, res) => {
   try {
     const { token, password } = req.body;
     if (!token || !password) {

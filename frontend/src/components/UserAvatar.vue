@@ -6,17 +6,24 @@
     class="user-avatar"
     :class="sizeClass"
   />
-  <span v-else class="user-avatar user-avatar-fallback" :class="sizeClass">
+  <span
+    v-else
+    class="user-avatar user-avatar-fallback"
+    :class="sizeClass"
+    :style="fallbackStyle"
+  >
     {{ initials }}
   </span>
 </template>
 
 <script setup>
 import { computed } from 'vue';
+import { resolveAvatarColorStyle } from '../utils/avatarColors';
 
 const props = defineProps({
   imageUrl: { type: String, default: null },
   imageCache: { type: Number, default: 0 },
+  avatarColor: { type: String, default: 'default' },
   firstName: { type: String, default: '' },
   lastName: { type: String, default: '' },
   name: { type: String, default: '' },
@@ -50,6 +57,8 @@ const initials = computed(() => {
 });
 
 const sizeClass = computed(() => `user-avatar-${props.size}`);
+
+const fallbackStyle = computed(() => resolveAvatarColorStyle(props.avatarColor));
 </script>
 
 <style scoped>

@@ -16,6 +16,7 @@ const {
 } = require('../services/userImageService');
 const { validateImageFile } = require('../utils/fileValidation');
 const { deleteUserAccount } = require('../services/userAccountService');
+const { normalizeAvatarColor } = require('../services/avatarColorService');
 
 const router = express.Router();
 
@@ -208,7 +209,7 @@ router.put('/:id', async (req, res) => {
     const {
       firstName, lastName, email, password, role, teamId, language,
       favoriteNationalTeamId, favoriteNationalTeamName,
-      topScorerPlayerId, topScorerPlayerName,
+      topScorerPlayerId, topScorerPlayerName, avatarColor,
     } = req.body;
 
     if (firstName) user.firstName = firstName.trim();
@@ -242,6 +243,9 @@ router.put('/:id', async (req, res) => {
     }
     if (topScorerPlayerName !== undefined) {
       user.topScorerPlayerName = topScorerPlayerName?.trim() || null;
+    }
+    if (avatarColor !== undefined) {
+      user.avatarColor = normalizeAvatarColor(avatarColor);
     }
 
     await user.save();

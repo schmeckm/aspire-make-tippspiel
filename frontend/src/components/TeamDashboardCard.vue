@@ -39,6 +39,7 @@
               <span class="colleague-name">
                 <UserAvatar
                   :image-url="member.imageUrl"
+                  :avatar-color="member.avatarColor"
                   :first-name="member.firstName"
                   :last-name="member.lastName"
                   size="xs"

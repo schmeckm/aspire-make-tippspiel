@@ -2,6 +2,7 @@ import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import i18n, { getStoredLocale, setStoredLocale, normalizeLocale } from '../i18n';
 import api from '../services/api';
+import { useAuthStore } from './authStore';
 
 export const useLocaleStore = defineStore('locale', () => {
   const locale = ref(getStoredLocale());
@@ -18,7 +19,8 @@ export const useLocaleStore = defineStore('locale', () => {
     const normalized = applyLocale(code);
     if (persistProfile && userId) {
       try {
-        await api.put(`/users/${userId}`, { language: normalized });
+        const { data } = await api.put(`/users/${userId}`, { language: normalized });
+        useAuthStore().syncUser(data);
       } catch {
         // localStorage still holds preference
       }

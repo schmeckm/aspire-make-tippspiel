@@ -84,6 +84,7 @@ async function buildUserLeaderboardEntry(user, scoringRules, options = {}) {
     firstName: user.firstName,
     lastName: user.lastName,
     imageUrl: user.imageUrl || null,
+    avatarColor: user.avatarColor || 'default',
     teamId: user.teamId,
     teamName: user.team ? user.team.name : null,
     matchPoints,

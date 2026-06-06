@@ -3,7 +3,10 @@ const authMiddleware = require('../middleware/authMiddleware');
 const { aiRateLimitMiddleware } = require('../middleware/aiRateLimiter');
 const { generateMatchPreview } = require('../services/aiMatchPreviewService');
 const { askUserCoach } = require('../services/aiUserCoachService');
-const { getLatestLeaderboardSummary } = require('../services/aiLeaderboardService');
+const { generateLeaderboardSummary } = require('../services/aiLeaderboardService');
+const { getCachedCommentary } = require('../services/aiMatchPreviewService');
+const { buildDisclaimer } = require('../services/aiGuardrailService');
+const { checkRateLimit } = require('../middleware/aiRateLimiter');
 const { getDashboardInsights } = require('../services/aiDashboardInsightsService');
 const { isAiEnabled, isApiKeyConfigured, getAiConfig } = require('../services/llmService');
 const { sendError } = require('../utils/apiResponse');
@@ -46,11 +49,39 @@ router.post('/user-coach', authMiddleware, aiRateLimitMiddleware('user_coach'), 
   }
 });
 
-router.get('/leaderboard-summary', authMiddleware, aiRateLimitMiddleware('leaderboard_summary'), async (req, res) => {
+router.get('/leaderboard-summary', authMiddleware, async (req, res) => {
   try {
     const language = resolveLanguage(req);
-    const result = await getLatestLeaderboardSummary(req.user.id, language);
-    res.json(result);
+    const cached = await getCachedCommentary('leaderboard_summary');
+    if (cached) {
+      return res.json({
+        content: cached.content,
+        disclaimer: buildDisclaimer('leaderboard_summary', language),
+        cached: true,
+        createdAt: cached.createdAt,
+      });
+    }
+
+    const rateResult = await checkRateLimit(req.user.id, 'leaderboard_summary', language);
+    if (!rateResult.allowed) {
+      return res.status(429).json({ error: rateResult.error, code: 'AI_RATE_LIMIT' });
+    }
+
+    try {
+      const result = await generateLeaderboardSummary(req.user.id, { language });
+      return res.json(result);
+    } catch (error) {
+      if (['LLM_ERROR', 'NO_API_KEY', 'AI_DISABLED', 'FEATURE_DISABLED'].includes(error.code)) {
+        return res.json({
+          content: null,
+          unavailable: true,
+          error: error.message,
+          disclaimer: buildDisclaimer('leaderboard_summary', language),
+          cached: false,
+        });
+      }
+      throw error;
+    }
   } catch (error) {
     handleAiError(error, req, res);
   }

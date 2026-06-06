@@ -7,7 +7,7 @@ const fs = require('fs');
 const { sequelize } = require('./models');
 
 const requestLogger = require('./middleware/requestLogger');
-const { authLimiter, apiLimiter } = require('./middleware/rateLimiter');
+const { apiLimiter } = require('./middleware/rateLimiter');
 const { seedDefaultSettings } = require('./services/settingsService');
 const { isAiEnabled, isApiKeyConfigured, getAiConfig } = require('./services/llmService');
 
@@ -101,11 +101,7 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-if (process.env.NODE_ENV !== 'test') {
-  app.use('/api/auth', authLimiter, authRoutes);
-} else {
-  app.use('/api/auth', authRoutes);
-}
+app.use('/api/auth', authRoutes);
 
 app.use('/api/users', userRoutes);
 app.use('/api/teams', teamRoutes);

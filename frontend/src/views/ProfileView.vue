@@ -13,6 +13,7 @@
           <UserAvatar
             :image-url="previewUrl || authStore.user?.imageUrl"
             :image-cache="previewUrl ? 0 : authStore.profileImageCache"
+            :avatar-color="form.avatarColor"
             :first-name="form.firstName"
             :last-name="form.lastName"
             size="lg"
@@ -37,6 +38,26 @@
             >
               {{ t('profile.removeImage') }}
             </button>
+          </div>
+        </div>
+
+        <div v-if="!previewUrl && !authStore.user?.imageUrl" class="profile-avatar-colors">
+          <label class="profile-avatar-colors-label">{{ t('profile.avatarColor') }}</label>
+          <p class="text-muted profile-avatar-colors-hint">{{ t('profile.avatarColorHint') }}</p>
+          <div class="profile-avatar-colors-grid" role="radiogroup" :aria-label="t('profile.avatarColor')">
+            <button
+              v-for="option in avatarColorOptions"
+              :key="option.id"
+              type="button"
+              class="profile-avatar-color-btn"
+              :class="{ active: form.avatarColor === option.id }"
+              :style="option.bg ? { backgroundColor: option.bg } : undefined"
+              :title="t(option.labelKey)"
+              :aria-label="t(option.labelKey)"
+              :aria-checked="form.avatarColor === option.id"
+              role="radio"
+              @click="form.avatarColor = option.id"
+            />
           </div>
         </div>
 
@@ -200,12 +221,15 @@ import api from '../services/api';
 import AlertMessage from '../components/AlertMessage.vue';
 import LocalePicker from '../components/LocalePicker.vue';
 import UserAvatar from '../components/UserAvatar.vue';
+import { AVATAR_COLOR_OPTIONS } from '../utils/avatarColors';
 
 const { t } = useI18n();
 const router = useRouter();
 const authStore = useAuthStore();
 const themeStore = useThemeStore();
 const localeStore = useLocaleStore();
+
+const avatarColorOptions = AVATAR_COLOR_OPTIONS;
 
 const form = ref({
   firstName: '',
@@ -215,6 +239,7 @@ const form = ref({
   language: localeStore.locale,
   favoriteNationalTeamId: null,
   topScorerPlayerId: null,
+  avatarColor: 'default',
   password: '',
 });
 const teams = ref([]);
@@ -248,6 +273,7 @@ function applyFormFromUser(user) {
     language: user.language || localeStore.locale,
     favoriteNationalTeamId: normalizeOptionalId(user.favoriteNationalTeamId),
     topScorerPlayerId: normalizePlayerId(user.topScorerPlayerId),
+    avatarColor: user.avatarColor || 'default',
     password: '',
   };
 }
@@ -419,6 +445,7 @@ async function handleSave() {
       favoriteNationalTeamName: favoriteTeam?.name || null,
       topScorerPlayerId: playerId,
       topScorerPlayerName: topScorer?.name || (playerId ? authStore.user?.topScorerPlayerName : null) || null,
+      avatarColor: form.value.avatarColor,
     };
     if (form.value.password) payload.password = form.value.password;
     if (selectedImage.value) {
@@ -461,6 +488,42 @@ async function handleSave() {
   cursor: pointer;
   margin: 0;
   width: fit-content;
+}
+
+.profile-avatar-colors {
+  margin-bottom: 1.25rem;
+}
+
+.profile-avatar-colors-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.profile-avatar-colors-hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+}
+
+.profile-avatar-colors-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.profile-avatar-color-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  background: var(--color-primary-bg, #e8f4fd);
+  padding: 0;
+}
+
+.profile-avatar-color-btn.active {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .profile-image-input {

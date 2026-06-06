@@ -30,9 +30,6 @@ async function onSelect(code) {
     persistProfile: authStore.isAuthenticated,
     userId: authStore.user?.id,
   });
-  if (authStore.isAuthenticated) {
-    await authStore.fetchMe();
-  }
 }
 </script>
 

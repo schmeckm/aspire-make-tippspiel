@@ -81,6 +81,11 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  avatarColor: {
+    type: DataTypes.STRING(16),
+    allowNull: false,
+    defaultValue: 'default',
+  },
 }, {
   hooks: {
     beforeCreate: async (user) => {

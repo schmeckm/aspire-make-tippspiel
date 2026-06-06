@@ -1,5 +1,5 @@
 <template>
-  <div v-if="content || loading" class="ai-leaderboard-summary">
+  <div v-if="content || loading || error" class="ai-leaderboard-summary">
     <LoadingSpinner v-if="loading" />
     <div v-else-if="content" class="ai-summary-card">
       <div class="summary-header">
@@ -9,7 +9,7 @@
       <p class="summary-text">{{ content }}</p>
       <p class="ai-disclaimer">{{ disclaimer }}</p>
     </div>
-    <AlertMessage v-if="error" :message="error" type="warning" />
+    <AlertMessage v-else-if="error" :message="error" type="warning" inline />
   </div>
 </template>
 
@@ -31,11 +31,20 @@ const error = ref('');
 onMounted(async () => {
   try {
     const { data } = await api.get('/ai/leaderboard-summary');
+    if (data.unavailable || !data.content) {
+      error.value = data.error || t('ai.leaderboardSummaryUnavailable');
+      return;
+    }
     content.value = data.content;
     disclaimer.value = data.disclaimer || t('ai.disclaimer');
     cached.value = data.cached;
   } catch (err) {
-    error.value = err.response?.data?.error || '';
+    const status = err.response?.status;
+    if (status === 429) {
+      error.value = err.response?.data?.error || t('ai.leaderboardSummaryRateLimit');
+    } else {
+      error.value = err.response?.data?.error || t('ai.leaderboardSummaryUnavailable');
+    }
   } finally {
     loading.value = false;
   }

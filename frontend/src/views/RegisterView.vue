@@ -1,12 +1,26 @@
 <template>
   <AuthImmersiveLayout
-    :title="t('auth.createAccount')"
-    :welcome-text="t('auth.registerWelcomeText')"
+    :title="registrationComplete ? t('auth.registerSuccessTitle') : t('auth.createAccount')"
+    :welcome-text="registrationComplete ? t('auth.registerSuccessWelcomeText') : t('auth.registerWelcomeText')"
   >
-    <AlertMessage v-if="success" :message="success" type="success" class="auth-immersive-alert" />
-    <AlertMessage v-if="error" :message="error" type="error" class="auth-immersive-alert" />
+    <AlertMessage v-if="error" :message="error" type="error" inline class="auth-immersive-alert" />
 
-    <form v-if="!success" class="auth-immersive-form" @submit.prevent="handleRegister">
+    <div v-if="registrationComplete" class="auth-register-success">
+      <p class="auth-register-success-lead">
+        {{ registrationEmailSent ? t('auth.registerSuccessIntro', { email: registeredEmail }) : t('auth.registerSuccessNoEmail', { email: registeredEmail }) }}
+      </p>
+      <ol class="auth-register-success-steps">
+        <li>{{ t('auth.registerSuccessStep1') }}</li>
+        <li>{{ t('auth.registerSuccessStep2') }}</li>
+        <li>{{ t('auth.registerSuccessStep3') }}</li>
+      </ol>
+      <p class="auth-register-success-hint">{{ t('auth.registerSuccessSpamHint') }}</p>
+      <router-link to="/login" class="auth-immersive-submit auth-register-success-login">
+        {{ t('auth.registerSuccessLoginCta') }}
+      </router-link>
+    </div>
+
+    <form v-else class="auth-immersive-form" @submit.prevent="handleRegister">
       <div class="auth-immersive-form-row">
         <div class="auth-immersive-field">
           <label for="firstName">{{ t('auth.firstName') }}</label>
@@ -111,7 +125,7 @@
       </button>
     </form>
 
-    <template #footer>
+    <template v-if="!registrationComplete" #footer>
       {{ t('auth.hasAccount') }}
       <router-link to="/login">{{ t('auth.toLogin') }}</router-link>
     </template>
@@ -147,7 +161,9 @@ const showConfirmPassword = ref(false);
 const teams = ref([]);
 const loading = ref(false);
 const error = ref('');
-const success = ref('');
+const registrationComplete = ref(false);
+const registeredEmail = ref('');
+const registrationEmailSent = ref(true);
 
 onMounted(async () => {
   try {
@@ -169,7 +185,7 @@ async function handleRegister() {
   }
   loading.value = true;
   error.value = '';
-  success.value = '';
+  registrationComplete.value = false;
   try {
     const data = await authStore.register({
       ...form.value,
@@ -177,7 +193,10 @@ async function handleRegister() {
       language: localeStore.locale,
     });
     if (data.requiresVerification) {
-      success.value = data.message || t('auth.registerVerifyEmail');
+      localeStore.applyLocale(form.value.language);
+      registeredEmail.value = data.email || form.value.email;
+      registrationEmailSent.value = data.emailSent !== false;
+      registrationComplete.value = true;
       return;
     }
     router.push('/dashboard');
@@ -188,3 +207,41 @@ async function handleRegister() {
   }
 }
 </script>
+
+<style scoped>
+.auth-register-success {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-register-success-lead {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.auth-register-success-steps {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.auth-register-success-hint {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.auth-register-success-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  margin-top: 0.25rem;
+}
+</style>

@@ -34,6 +34,7 @@
               <div class="leaderboard-name-cell">
                 <UserAvatar
                   :image-url="entry.imageUrl"
+                  :avatar-color="entry.avatarColor"
                   :first-name="entry.firstName"
                   :last-name="entry.lastName"
                   size="xs"
@@ -70,6 +71,7 @@
           <div class="leaderboard-name-cell">
             <UserAvatar
               :image-url="entry.imageUrl"
+              :avatar-color="entry.avatarColor"
               :first-name="entry.firstName"
               :last-name="entry.lastName"
               size="xs"

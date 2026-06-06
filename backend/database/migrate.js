@@ -15,6 +15,7 @@ const USER_COLUMNS = [
   { name: 'passwordResetToken', spec: { type: DataTypes.STRING, allowNull: true } },
   { name: 'passwordResetExpires', spec: { type: DataTypes.DATE, allowNull: true } },
   { name: 'imageUrl', spec: { type: DataTypes.STRING, allowNull: true } },
+  { name: 'avatarColor', spec: { type: DataTypes.STRING(16), allowNull: false, defaultValue: 'default' } },
 ];
 
 async function runMigrations(sequelize) {
