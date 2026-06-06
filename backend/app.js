@@ -79,10 +79,6 @@ if (process.env.NODE_ENV !== 'test') {
 
 app.use('/api', localeMiddleware);
 
-if (process.env.NODE_ENV !== 'test') {
-  app.use('/api', apiLimiter);
-}
-
 app.get('/api/health', async (req, res) => {
   try {
     await sequelize.authenticate();
@@ -105,6 +101,10 @@ app.get('/api/health', async (req, res) => {
     res.status(503).json({ status: 'error', message: translate(req, 'errors.databaseUnavailable') });
   }
 });
+
+if (process.env.NODE_ENV !== 'test') {
+  app.use('/api', apiLimiter);
+}
 
 app.use('/api/auth', authRoutes);
 

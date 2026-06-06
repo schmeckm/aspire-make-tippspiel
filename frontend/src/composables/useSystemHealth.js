@@ -48,11 +48,29 @@ export function useSystemHealth() {
     },
   ]);
 
+  function isTransientHealthError(error) {
+    const status = error?.response?.status;
+    return !status || status === 502 || status === 503 || status === 504 || error?.code === 'ECONNABORTED';
+  }
+
+  async function fetchHealth() {
+    return api.get('/health', { timeout: 8000 });
+  }
+
   async function checkHealth() {
     frontendState.value = 'online';
 
     try {
-      const { data } = await api.get('/health', { timeout: 8000 });
+      let response;
+      try {
+        response = await fetchHealth();
+      } catch (firstError) {
+        if (!isTransientHealthError(firstError)) throw firstError;
+        await new Promise((resolve) => { setTimeout(resolve, 2500); });
+        response = await fetchHealth();
+      }
+
+      const { data } = response;
       backendState.value = data?.status === 'ok' ? 'online' : 'offline';
       aiBackendState.value = data?.ai?.active ? 'online' : 'offline';
     } catch {

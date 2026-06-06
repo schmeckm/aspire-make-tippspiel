@@ -12,6 +12,7 @@ const authLimiter = rateLimit({
 const apiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,
   max: 300,
+  skip: (req) => req.path === '/health',
   message: { error: 'Rate limit erreicht.' },
   standardHeaders: true,
   legacyHeaders: false,
