@@ -22,6 +22,12 @@ function normalizeTeamName(name) {
   return (name || '').trim();
 }
 
+function normalizeCountryCode(value) {
+  if (value == null || value === '') return null;
+  const trimmed = String(value).trim();
+  return trimmed ? trimmed.slice(0, 64) : null;
+}
+
 function toPublicRecord(record) {
   if (!record) return null;
   return {
@@ -72,7 +78,7 @@ async function upsertRecord(data) {
   const payload = {
     playerName,
     teamName,
-    countryCode: data.countryCode || null,
+    countryCode: normalizeCountryCode(data.countryCode),
     imageUrl: data.imageUrl || null,
     source: data.source || 'placeholder',
     sourceId: data.sourceId || null,
@@ -100,7 +106,7 @@ async function resolveImage({ playerName, teamName, countryCode, forceRefresh = 
   const params = {
     playerName: normalizedName,
     teamName: normalizeTeamName(teamName) || null,
-    countryCode: countryCode || null,
+    countryCode: normalizeCountryCode(countryCode),
   };
 
   if (!forceRefresh) {
@@ -464,6 +470,7 @@ async function deleteImageRecord(id, userId, req) {
 module.exports = {
   normalizePlayerName,
   normalizeTeamName,
+  normalizeCountryCode,
   toPublicRecord,
   resolveImage,
   batchResolveImages,

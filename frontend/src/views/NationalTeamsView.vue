@@ -519,7 +519,7 @@ async function resolveTeamImagesInBackground(teamId) {
       }
 
       const { data } = await api.get(`/football/teams/${teamId}`, {
-        params: { resolveImages: '1', maxResolve: 4 },
+        params: { resolveImages: '1', maxResolve: 2 },
         signal: controller.signal,
         timeout: 20000,
       });

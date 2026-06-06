@@ -52,6 +52,22 @@ async function runMigrations(sequelize) {
     type: DataTypes.STRING,
     allowNull: true,
   });
+
+  let playerImageTableInfo;
+  try {
+    playerImageTableInfo = await queryInterface.describeTable('PlayerImages');
+  } catch {
+    return;
+  }
+
+  const countryCodeColumn = playerImageTableInfo.countryCode;
+  if (countryCodeColumn && /\(3\)/.test(String(countryCodeColumn.type || ''))) {
+    await queryInterface.changeColumn('PlayerImages', 'countryCode', {
+      type: DataTypes.STRING(64),
+      allowNull: true,
+    });
+    console.log('Migration: PlayerImages.countryCode auf VARCHAR(64) erweitert.');
+  }
 }
 
 module.exports = { runMigrations, ensureColumn };

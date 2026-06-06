@@ -16,7 +16,7 @@ const PlayerImage = sequelize.define('PlayerImage', {
     allowNull: true,
   },
   countryCode: {
-    type: DataTypes.STRING(3),
+    type: DataTypes.STRING(64),
     allowNull: true,
   },
   imageUrl: {

@@ -1,7 +1,7 @@
 const footballDataProvider = require('./providers/footballDataProvider');
 const { getProviderConfig, assertApiConfigured, isApiConfigured } = require('./footballProviderService');
-const { enrichPlayersWithImages, resolveImage } = require('./playerImageService');
-const { isEnabled: isPlayerImageEnabled } = require('./playerImageProviderService');
+const { enrichPlayersWithImages, resolveImage, normalizeCountryCode } = require('./playerImageService');
+const { isEnabled: isPlayerImageEnabled, isExternalProviderPaused } = require('./playerImageProviderService');
 
 const CACHE_TTL_MS = 60 * 60 * 1000;
 let cache = { teams: null, fetchedAt: 0 };
@@ -28,6 +28,7 @@ function releaseImageResolveSlot() {
 }
 
 const DEFAULT_RESOLVE_TIME_BUDGET_MS = 12000;
+const RESOLVE_DELAY_MS = 500;
 
 async function loadTeams(force = false) {
   if (!force && cache.teams && Date.now() - cache.fetchedAt < CACHE_TTL_MS) {
@@ -57,10 +58,11 @@ async function listTeams() {
 }
 
 async function resolveMissingSquadImages(squad, teamName, {
-  maxResolve = 4,
+  maxResolve = 2,
   timeBudgetMs = DEFAULT_RESOLVE_TIME_BUDGET_MS,
 } = {}) {
   if (!isPlayerImageEnabled() || !squad?.length) return squad;
+  if (isExternalProviderPaused()) return squad;
 
   const enriched = [...squad];
   const startedAt = Date.now();
@@ -70,12 +72,17 @@ async function resolveMissingSquadImages(squad, teamName, {
     if (player.imageUrl) continue;
     if (resolvedCount >= maxResolve) break;
     if (Date.now() - startedAt >= timeBudgetMs) break;
+    if (isExternalProviderPaused()) break;
 
     try {
+      if (resolvedCount > 0) {
+        await new Promise((resolve) => { setTimeout(resolve, RESOLVE_DELAY_MS); });
+      }
+
       const resolved = await resolveImage({
         playerName: player.name,
         teamName,
-        countryCode: player.nationality || null,
+        countryCode: normalizeCountryCode(player.nationality),
       });
       if (!resolved?.imageUrl) continue;
       player.imageUrl = resolved.imageUrl;
@@ -93,7 +100,7 @@ async function resolveMissingSquadImages(squad, teamName, {
 
 async function getTeamById(teamId, {
   resolveImages = false,
-  maxResolve = 4,
+  maxResolve = 2,
   resolveTimeBudgetMs = DEFAULT_RESOLVE_TIME_BUDGET_MS,
 } = {}) {
   const id = parseInt(teamId, 10);
@@ -204,7 +211,7 @@ async function getAllSquadPlayers() {
       players.push({
         playerName: player.name,
         teamName: team.name,
-        countryCode: player.nationality || team.area?.code || null,
+        countryCode: normalizeCountryCode(player.nationality || team.area?.code || null),
       });
     }
   }

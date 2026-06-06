@@ -63,8 +63,8 @@ router.get('/teams/:id', async (req, res) => {
 
     const resolveImages = req.query.resolveImages === '1' || req.query.resolveImages === 'true';
     const maxResolve = Math.min(
-      Math.max(parseInt(req.query.maxResolve, 10) || 4, 1),
-      10,
+      Math.max(parseInt(req.query.maxResolve, 10) || 2, 1),
+      6,
     );
     const team = await getTeamById(req.params.id, { resolveImages, maxResolve });
     if (!team) return sendError(res, req, 404, 'errors.footballTeamNotFound');

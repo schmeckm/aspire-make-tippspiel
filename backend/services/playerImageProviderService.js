@@ -10,8 +10,29 @@ const EXTERNAL_PROVIDERS = [
   wikipediaPlayerImageProvider,
 ];
 
-const RATE_LIMIT_MS = parseInt(process.env.PLAYER_IMAGE_RATE_LIMIT_MS || '1000', 10);
+const RATE_LIMIT_MS = parseInt(process.env.PLAYER_IMAGE_RATE_LIMIT_MS || '3000', 10);
+const RATE_LIMIT_COOLDOWN_MS = parseInt(
+  process.env.PLAYER_IMAGE_RATE_LIMIT_COOLDOWN_MS || String(15 * 60 * 1000),
+  10,
+);
 let lastExternalCallAt = 0;
+let externalProviderCooldownUntil = 0;
+
+function isRateLimitError(error) {
+  const message = error?.message || '';
+  return message.includes('429') || /too many requests/i.test(message);
+}
+
+function markExternalProvidersRateLimited() {
+  externalProviderCooldownUntil = Math.max(
+    externalProviderCooldownUntil,
+    Date.now() + RATE_LIMIT_COOLDOWN_MS,
+  );
+}
+
+function isExternalProviderPaused() {
+  return Date.now() < externalProviderCooldownUntil;
+}
 
 function isEnabled() {
   return process.env.PLAYER_IMAGE_ENABLED !== 'false';
@@ -79,6 +100,8 @@ function getSupportedProviders() {
 }
 
 async function fetchFromProvider(provider, params) {
+  if (isExternalProviderPaused()) return null;
+
   if (provider.name === theSportsDbPlayerImageProvider.name) {
     const config = getTheSportsDbConfig();
     if (!config.apiKey) return null;
@@ -91,6 +114,8 @@ async function fetchFromProvider(provider, params) {
 }
 
 async function resolveFromExternalProviders(params, { includeSources = null } = {}) {
+  if (isExternalProviderPaused()) return null;
+
   const providers = EXTERNAL_PROVIDERS.filter((provider) => {
     if (includeSources && !includeSources.includes(provider.name)) return false;
     if (provider.name === theSportsDbPlayerImageProvider.name && !isTheSportsDbConfigured()) {
@@ -104,6 +129,13 @@ async function resolveFromExternalProviders(params, { includeSources = null } = 
       const result = await fetchFromProvider(provider, params);
       if (result?.imageUrl) return result;
     } catch (error) {
+      if (isRateLimitError(error)) {
+        markExternalProvidersRateLimited();
+        console.warn(
+          `Player image providers rate-limited; pausing external lookups until ${new Date(externalProviderCooldownUntil).toISOString()}`,
+        );
+        break;
+      }
       console.warn(`Player image provider ${provider.name} failed:`, error.message);
     }
   }
@@ -119,6 +151,10 @@ async function searchAllProviders(params) {
     results.push({ ...manual, provider: manualPlayerImageProvider.name });
   }
 
+  if (isExternalProviderPaused()) {
+    return results;
+  }
+
   for (const provider of EXTERNAL_PROVIDERS) {
     if (provider.name === theSportsDbPlayerImageProvider.name && !isTheSportsDbConfigured()) {
       continue;
@@ -129,6 +165,10 @@ async function searchAllProviders(params) {
         results.push({ ...result, provider: provider.name });
       }
     } catch (error) {
+      if (isRateLimitError(error)) {
+        markExternalProvidersRateLimited();
+        break;
+      }
       console.warn(`Player image search ${provider.name} failed:`, error.message);
     }
   }
@@ -147,6 +187,7 @@ module.exports = {
   isTheSportsDbConfigured,
   getCacheTtlMs,
   getSupportedProviders,
+  isExternalProviderPaused,
   resolveFromExternalProviders,
   searchAllProviders,
   testTheSportsDbConnection,
