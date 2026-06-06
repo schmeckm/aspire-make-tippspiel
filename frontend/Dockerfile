@@ -2,6 +2,9 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
+ARG APP_VERSION
+ENV VITE_APP_VERSION=$APP_VERSION
+
 COPY package*.json ./
 RUN npm install
 

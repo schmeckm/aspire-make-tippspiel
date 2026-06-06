@@ -1,5 +1,6 @@
 require('./config/loadEnv');
 const express = require('express');
+const { getAppVersion } = require('./utils/appVersion');
 const cors = require('cors');
 const { getCorsOptions } = require('./config/corsConfig');
 const path = require('path');
@@ -86,7 +87,7 @@ app.get('/api/health', async (req, res) => {
     const aiKeyConfigured = isApiKeyConfigured();
     res.json({
       status: 'ok',
-      version: '2.5.0',
+      version: getAppVersion(),
       message: translate(req, 'messages.healthOk'),
       database: process.env.DB_DIALECT || 'sqlite',
       uptime: process.uptime(),

@@ -1,16 +1,19 @@
 <template>
   <footer class="system-status-bar" role="status" :aria-label="t('systemHealth.title')">
     <div class="system-status-bar-inner">
-      <div
-        v-for="item in items"
-        :key="item.key"
-        class="system-status-item"
-        :class="item.state"
-      >
-        <span class="system-status-label">{{ item.label }}</span>
-        <span class="system-status-dot" aria-hidden="true"></span>
-        <span class="system-status-value">{{ item.text }}</span>
+      <div class="system-status-items">
+        <div
+          v-for="item in items"
+          :key="item.key"
+          class="system-status-item"
+          :class="item.state"
+        >
+          <span class="system-status-label">{{ item.label }}</span>
+          <span class="system-status-dot" aria-hidden="true"></span>
+          <span class="system-status-value">{{ item.text }}</span>
+        </div>
       </div>
+      <span v-if="version" class="system-status-version">v{{ version }}</span>
     </div>
   </footer>
 </template>
@@ -20,7 +23,7 @@ import { useI18n } from 'vue-i18n';
 import { useSystemHealth } from '../composables/useSystemHealth';
 
 const { t } = useI18n();
-const { items } = useSystemHealth();
+const { items, version } = useSystemHealth();
 </script>
 
 <style scoped>
@@ -39,6 +42,23 @@ const { items } = useSystemHealth();
   justify-content: space-between;
   gap: 1.5rem;
   width: 100%;
+}
+
+.system-status-items {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.system-status-version {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .system-status-item {
@@ -107,6 +127,14 @@ const { items } = useSystemHealth();
 
   .system-status-bar-inner {
     gap: 0.75rem;
+  }
+
+  .system-status-items {
+    gap: 0.75rem;
+  }
+
+  .system-status-version {
+    font-size: 0.65rem;
   }
 
   .system-status-item {

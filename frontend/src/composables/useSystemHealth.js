@@ -12,6 +12,7 @@ export function useSystemHealth() {
   const frontendState = ref('checking');
   const aiBackendState = ref('checking');
   const aiFrontendState = ref(frontendAiEnabled ? 'online' : 'offline');
+  const version = ref(import.meta.env.VITE_APP_VERSION || null);
 
   function stateText(state, type = 'connection') {
     if (state === 'checking') return t('systemHealth.checking');
@@ -73,6 +74,7 @@ export function useSystemHealth() {
       const { data } = response;
       backendState.value = data?.status === 'ok' ? 'online' : 'offline';
       aiBackendState.value = data?.ai?.active ? 'online' : 'offline';
+      if (data?.version) version.value = data.version;
     } catch {
       backendState.value = 'offline';
       aiBackendState.value = 'offline';
@@ -90,5 +92,5 @@ export function useSystemHealth() {
     if (intervalId) clearInterval(intervalId);
   });
 
-  return { items };
+  return { items, version };
 }

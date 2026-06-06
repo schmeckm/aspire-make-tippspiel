@@ -1,5 +1,6 @@
 const { describe, it, before } = require('node:test');
 const assert = require('node:assert/strict');
+const { getAppVersion } = require('../../utils/appVersion');
 const { setupTestDb, adminToken } = require('../helpers/testApp');
 
 describe('GET /api/health', () => {
@@ -13,7 +14,7 @@ describe('GET /api/health', () => {
     const res = await api.get('/api/health');
     assert.equal(res.status, 200);
     assert.equal(res.body.status, 'ok');
-    assert.equal(res.body.version, '2.5.0');
+    assert.equal(res.body.version, getAppVersion());
   });
 });
 

@@ -9,6 +9,7 @@ const emailService = require('../services/emailService');
 const { getSetting } = require('../services/settingsService');
 const footballProviderService = require('../services/footballProviderService');
 const socketService = require('../services/socketService');
+const { getAppVersion } = require('../utils/appVersion');
 
 const router = express.Router();
 
@@ -33,7 +34,7 @@ router.get('/', async (req, res) => {
     });
 
     res.json({
-      version: '2.5.0',
+      version: getAppVersion(),
       database: { status: dbStatus, dialect: process.env.DB_DIALECT || 'sqlite' },
       api: {
         provider: apiConfig.provider,
