@@ -22,9 +22,10 @@ describe('Auth API – registration & verification', () => {
       lastName: 'Team',
       email: 'noteam@example.com',
       password: 'test123',
+      passwordConfirm: 'test123',
     });
     assert.equal(res.status, 400);
-    assert.match(res.body.error, /Team/i);
+    assert.match(res.body.error, /Team|team/i);
   });
 
   it('registers user and requires email verification', async () => {
@@ -33,6 +34,7 @@ describe('Auth API – registration & verification', () => {
       lastName: 'User',
       email: 'newuser@example.com',
       password: 'test123',
+      passwordConfirm: 'test123',
       teamId,
     });
     assert.equal(res.status, 201);
@@ -77,6 +79,7 @@ describe('Auth API – registration & verification', () => {
       lastName: 'User',
       email: 'pending@example.com',
       password: 'test123',
+      passwordConfirm: 'test123',
       teamId,
     });
 
