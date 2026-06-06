@@ -55,7 +55,14 @@ if (!fs.existsSync(userUploadsDir)) fs.mkdirSync(userUploadsDir, { recursive: tr
 const playerUploadsDir = path.join(uploadsDir, 'players');
 if (!fs.existsSync(playerUploadsDir)) fs.mkdirSync(playerUploadsDir, { recursive: true });
 
-app.use('/uploads', express.static(uploadsDir));
+app.use('/uploads', express.static(uploadsDir, {
+  etag: false,
+  lastModified: true,
+  maxAge: 0,
+  setHeaders(res) {
+    res.setHeader('Cache-Control', 'no-cache');
+  },
+}));
 
 app.use(cors(getCorsOptions()));
 app.use(express.json());

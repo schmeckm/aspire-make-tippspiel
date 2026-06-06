@@ -16,6 +16,7 @@ import { computed } from 'vue';
 
 const props = defineProps({
   imageUrl: { type: String, default: null },
+  imageCache: { type: Number, default: 0 },
   firstName: { type: String, default: '' },
   lastName: { type: String, default: '' },
   name: { type: String, default: '' },
@@ -27,7 +28,15 @@ const displayName = computed(() => {
   return `${props.firstName} ${props.lastName}`.trim();
 });
 
-const imageSrc = computed(() => props.imageUrl || null);
+const imageSrc = computed(() => {
+  if (!props.imageUrl) return null;
+  if (props.imageUrl.startsWith('blob:') || props.imageUrl.startsWith('data:')) {
+    return props.imageUrl;
+  }
+  if (!props.imageCache) return props.imageUrl;
+  const separator = props.imageUrl.includes('?') ? '&' : '?';
+  return `${props.imageUrl}${separator}v=${props.imageCache}`;
+});
 
 const initials = computed(() => {
   const first = props.firstName?.trim();

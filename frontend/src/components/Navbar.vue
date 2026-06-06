@@ -25,6 +25,7 @@
       <div class="navbar-user-block">
         <UserAvatar
           :image-url="authStore.user?.imageUrl"
+          :image-cache="authStore.profileImageCache"
           :first-name="authStore.user?.firstName"
           :last-name="authStore.user?.lastName"
           size="sm"

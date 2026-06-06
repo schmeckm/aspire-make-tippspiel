@@ -12,6 +12,7 @@
         <div class="profile-image-section">
           <UserAvatar
             :image-url="previewUrl || authStore.user?.imageUrl"
+            :image-cache="previewUrl ? 0 : authStore.profileImageCache"
             :first-name="form.firstName"
             :last-name="form.lastName"
             size="lg"
@@ -361,7 +362,7 @@ async function uploadImage() {
   const formData = new FormData();
   formData.append('image', selectedImage.value);
   const { data } = await api.post(`/users/${authStore.user.id}/image`, formData);
-  authStore.syncUser(data);
+  authStore.syncUser(data, { bumpImage: true });
   selectedImage.value = null;
   if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
   previewUrl.value = '';
@@ -372,7 +373,7 @@ async function removeImage() {
   error.value = '';
   try {
     const { data } = await api.delete(`/users/${authStore.user.id}/image`);
-    authStore.syncUser(data);
+    authStore.syncUser(data, { bumpImage: true });
     success.value = t('profile.imageRemoved');
   } catch (err) {
     error.value = err.response?.data?.error || t('profile.imageUploadFailed');

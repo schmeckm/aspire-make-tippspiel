@@ -8,6 +8,7 @@ import { useLocaleStore } from './localeStore';
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || null);
   const user = ref(JSON.parse(localStorage.getItem('user') || 'null'));
+  const profileImageCache = ref(0);
 
   const isAuthenticated = computed(() => !!token.value);
   const isAdmin = computed(() => user.value?.role === 'admin');
@@ -16,9 +17,14 @@ export const useAuthStore = defineStore('auth', () => {
     return `${user.value.firstName} ${user.value.lastName}`;
   });
 
+  function bumpProfileImageCache() {
+    profileImageCache.value = Date.now();
+  }
+
   function setAuth(newToken, newUser) {
     token.value = newToken;
     user.value = newUser;
+    profileImageCache.value = newUser?.imageUrl ? Date.now() : 0;
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
 
@@ -31,6 +37,7 @@ export const useAuthStore = defineStore('auth', () => {
   function clearLocalAuth() {
     token.value = null;
     user.value = null;
+    profileImageCache.value = 0;
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   }
@@ -105,10 +112,13 @@ export const useAuthStore = defineStore('auth', () => {
     return data;
   }
 
-  function syncUser(updatedUser) {
+  function syncUser(updatedUser, options = {}) {
     user.value = updatedUser;
     localStorage.setItem('user', JSON.stringify(updatedUser));
     useLocaleStore().syncFromUser(updatedUser);
+    if (options.bumpImage) {
+      bumpProfileImageCache();
+    }
   }
 
   async function deleteAccount(password) {
@@ -119,6 +129,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     token,
     user,
+    profileImageCache,
     isAuthenticated,
     isAdmin,
     fullName,
