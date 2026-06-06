@@ -1,6 +1,7 @@
 const footballDataProvider = require('./providers/footballDataProvider');
 const { getProviderConfig, assertApiConfigured, isApiConfigured } = require('./footballProviderService');
-const { enrichPlayersWithImages } = require('./playerImageService');
+const { enrichPlayersWithImages, resolveImage } = require('./playerImageService');
+const { isEnabled: isPlayerImageEnabled } = require('./playerImageProviderService');
 
 const CACHE_TTL_MS = 60 * 60 * 1000;
 let cache = { teams: null, fetchedAt: 0 };
@@ -32,7 +33,27 @@ async function listTeams() {
   })).sort((a, b) => a.name.localeCompare(b.name));
 }
 
-async function getTeamById(teamId) {
+async function resolveMissingSquadImages(squad, teamName) {
+  if (!isPlayerImageEnabled() || !squad?.length) return squad;
+
+  const enriched = [...squad];
+  for (const player of enriched) {
+    if (player.imageUrl) continue;
+    const resolved = await resolveImage({
+      playerName: player.name,
+      teamName,
+      countryCode: player.nationality || null,
+    });
+    if (!resolved?.imageUrl) continue;
+    player.imageUrl = resolved.imageUrl;
+    player.imageSource = resolved.source || null;
+    player.imageAttribution = resolved.attributionText || null;
+    player.imageLicense = resolved.licenseInfo || null;
+  }
+  return enriched;
+}
+
+async function getTeamById(teamId, { resolveImages = false } = {}) {
   const id = parseInt(teamId, 10);
   if (!Number.isFinite(id)) return null;
 
@@ -48,13 +69,14 @@ async function getTeamById(teamId) {
   }
 
   if (team?.squad?.length) {
-    team = {
-      ...team,
-      squad: await enrichPlayersWithImages(team.squad.map((p) => ({
-        ...p,
-        teamName: team.name,
-      }))),
-    };
+    let squad = await enrichPlayersWithImages(team.squad.map((p) => ({
+      ...p,
+      teamName: team.name,
+    })));
+    if (resolveImages) {
+      squad = await resolveMissingSquadImages(squad, team.name);
+    }
+    team = { ...team, squad };
   }
 
   return team;

@@ -12,3 +12,5 @@ backend/backups/*
 .DS_Store
 .history/
 *.log
+backend/data/wiki-full.json
+backend/data/wiki-section.json

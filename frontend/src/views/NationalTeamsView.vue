@@ -53,6 +53,7 @@
           <div v-if="!selectedTeam" class="card-body text-muted text-center">
             {{ t('nationalTeams.selectHint') }}
           </div>
+          <LoadingSpinner v-else-if="loadingTeamDetail" />
           <div v-else class="card-body">
             <div class="national-team-detail-header">
               <img v-if="selectedTeam.crest" :src="selectedTeam.crest" :alt="selectedTeam.name" class="national-team-detail-crest" />
@@ -280,6 +281,7 @@ const standings = ref([]);
 const scorers = ref([]);
 const liveMatches = ref([]);
 const loadingTeams = ref(true);
+const loadingTeamDetail = ref(false);
 const loadingStandings = ref(false);
 const loadingScorers = ref(false);
 const loadingLive = ref(false);
@@ -378,12 +380,16 @@ async function loadTeams() {
 }
 
 async function loadTeamDetail(team) {
-  if (team.squad?.length) {
-    selectedTeam.value = team;
-    return;
+  loadingTeamDetail.value = true;
+  try {
+    const { data } = await api.get(`/football/teams/${team.id}`, {
+      params: { resolveImages: '1' },
+      timeout: 0,
+    });
+    selectedTeam.value = data;
+  } finally {
+    loadingTeamDetail.value = false;
   }
-  const { data } = await api.get(`/football/teams/${team.id}`);
-  selectedTeam.value = data;
 }
 
 async function selectTeam(team) {

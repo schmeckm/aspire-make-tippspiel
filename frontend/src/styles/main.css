@@ -901,12 +901,13 @@ tbody tr:hover {
 }
 
 .match-stadium-thumb {
-  width: 2.5rem;
-  height: 1.5rem;
+  width: 3.25rem;
+  height: 2rem;
   object-fit: cover;
   border-radius: 0.25rem;
   border: 1px solid var(--color-border);
   flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
 }
 
 .match-actions {

@@ -59,7 +59,8 @@ router.get('/teams/:id', async (req, res) => {
       return sendError(res, req, 503, 'errors.footballApiNotConfigured');
     }
 
-    const team = await getTeamById(req.params.id);
+    const resolveImages = req.query.resolveImages === '1' || req.query.resolveImages === 'true';
+    const team = await getTeamById(req.params.id, { resolveImages });
     if (!team) return sendError(res, req, 404, 'errors.footballTeamNotFound');
     res.json(team);
   } catch (error) {

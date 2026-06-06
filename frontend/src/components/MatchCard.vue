@@ -37,6 +37,7 @@
           :src="match.stadiumImageUrl"
           :alt="match.stadium"
           class="match-stadium-thumb"
+          :title="match.stadium"
           loading="lazy"
           decoding="async"
         />

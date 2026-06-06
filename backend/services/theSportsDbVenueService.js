@@ -1,6 +1,7 @@
 const { Match } = require('../models');
 const { fetchTheSportsDb, isVenueEnrichmentEnabled, getTheSportsDbApiKey } = require('./providers/theSportsDbClient');
 const { resolveCityFromStadium, shouldReplaceCity } = require('../data/wm2026Venues');
+const { resolveVenueFromWm2026Schedule } = require('../data/wm2026ScheduleLookup');
 
 const DEFAULT_LEAGUE_ID = '4429';
 const DEFAULT_SEASON = '2026';
@@ -74,10 +75,12 @@ async function fetchWorldCupEvents(config = {}) {
 
 function buildVenueUpdates(match, event = null) {
   const updates = {};
-  const stadium = match.stadium || event?.strVenue?.trim() || null;
+  const scheduleVenue = resolveVenueFromWm2026Schedule(match.homeTeam, match.awayTeam);
 
   if (!match.stadium && event?.strVenue) {
     updates.stadium = event.strVenue.trim();
+  } else if (!match.stadium && scheduleVenue?.stadium) {
+    updates.stadium = scheduleVenue.stadium;
   }
 
   const stadiumForLookup = updates.stadium || match.stadium;
@@ -86,6 +89,8 @@ function buildVenueUpdates(match, event = null) {
 
   if (cityFromLookup && shouldReplaceCity(stadiumForLookup, currentCity)) {
     updates.city = cityFromLookup;
+  } else if (!currentCity && scheduleVenue?.city) {
+    updates.city = scheduleVenue.city;
   } else if (!currentCity && event?.strCountry && !cityFromLookup) {
     updates.city = event.strCountry.trim();
   }
