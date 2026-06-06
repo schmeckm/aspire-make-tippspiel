@@ -9,21 +9,23 @@
   <span
     v-else
     class="user-avatar user-avatar-fallback"
-    :class="sizeClass"
+    :class="[sizeClass, { 'user-avatar-emoji': faceEmoji }]"
     :style="fallbackStyle"
   >
-    {{ initials }}
+    {{ faceEmoji || initials }}
   </span>
 </template>
 
 <script setup>
 import { computed } from 'vue';
 import { resolveAvatarColorStyle } from '../utils/avatarColors';
+import { resolveAvatarFaceEmoji } from '../utils/avatarFaces';
 
 const props = defineProps({
   imageUrl: { type: String, default: null },
   imageCache: { type: Number, default: 0 },
   avatarColor: { type: String, default: 'default' },
+  avatarEmoji: { type: String, default: null },
   firstName: { type: String, default: '' },
   lastName: { type: String, default: '' },
   name: { type: String, default: '' },
@@ -44,6 +46,8 @@ const imageSrc = computed(() => {
   const separator = props.imageUrl.includes('?') ? '&' : '?';
   return `${props.imageUrl}${separator}v=${props.imageCache}`;
 });
+
+const faceEmoji = computed(() => resolveAvatarFaceEmoji(props.avatarEmoji));
 
 const initials = computed(() => {
   const first = props.firstName?.trim();
@@ -79,6 +83,11 @@ const fallbackStyle = computed(() => resolveAvatarColorStyle(props.avatarColor))
   background: var(--color-primary-bg, #e8f4fd);
 }
 
+.user-avatar-emoji {
+  font-weight: normal;
+  line-height: 1;
+}
+
 .user-avatar-xs {
   width: 1.5rem;
   height: 1.5rem;
@@ -101,5 +110,21 @@ const fallbackStyle = computed(() => resolveAvatarColorStyle(props.avatarColor))
   width: 5rem;
   height: 5rem;
   font-size: 1.1rem;
+}
+
+.user-avatar-emoji.user-avatar-xs {
+  font-size: 0.85rem;
+}
+
+.user-avatar-emoji.user-avatar-sm {
+  font-size: 1.1rem;
+}
+
+.user-avatar-emoji.user-avatar-md {
+  font-size: 1.6rem;
+}
+
+.user-avatar-emoji.user-avatar-lg {
+  font-size: 2.6rem;
 }
 </style>

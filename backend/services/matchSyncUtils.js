@@ -31,7 +31,7 @@ function shouldApplyFixtureUpdate(match, fixture) {
   return { allowed: true };
 }
 
-function buildFixtureUpdateData(fixture, config) {
+function buildFixtureUpdateData(fixture, config, existingMatch = null) {
   return {
     stage: fixture.stage,
     groupName: fixture.groupName,
@@ -39,8 +39,8 @@ function buildFixtureUpdateData(fixture, config) {
     awayTeam: fixture.awayTeam,
     kickoffTime: new Date(fixture.kickoffTime),
     timezone: fixture.timezone || config.timezone || null,
-    stadium: fixture.stadium,
-    city: fixture.city,
+    stadium: fixture.stadium || existingMatch?.stadium || null,
+    city: fixture.city || existingMatch?.city || null,
     externalApiId: fixture.externalApiId,
     dataSource: fixture.dataSource || 'api',
     apiProvider: fixture.apiProvider || config.provider,

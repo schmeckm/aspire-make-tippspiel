@@ -172,7 +172,42 @@
     "removeImage": "Supprimer la photo de profil",
     "imageTooLarge": "L'image est trop grande (max. 2 Mo).",
     "imageRemoved": "Photo de profil supprimée.",
-    "imageUploadFailed": "Impossible de téléverser la photo de profil."
+    "imageUploadFailed": "Impossible de téléverser la photo de profil.",
+    "avatarCustomize": "Avatar sans photo de profil",
+    "avatarCustomizeHint": "Choisissez une couleur de fond et optionnellement un visage amusant à la place de vos initiales.",
+    "avatarColor": "Couleur de fond",
+    "avatarColorHint": "Choisissez une couleur pour votre avatar aux initiales.",
+    "avatarColorWithImage": "Affiché sans photo de profil. Supprimez l'image ou enregistrez votre choix.",
+    "avatarFace": "Visage amusant",
+    "avatarFaceHint": "Optionnel à la place des initiales — combiné avec la couleur choisie.",
+    "avatarPreview": "Aperçu",
+    "avatarColors": {
+      "default": "Par défaut",
+      "forest": "Vert forêt",
+      "ocean": "Bleu océan",
+      "sunset": "Coucher de soleil",
+      "berry": "Baie",
+      "violet": "Violet",
+      "slate": "Ardoise",
+      "gold": "Or",
+      "coral": "Corail"
+    },
+    "avatarFaces": {
+      "initials": "Initiales",
+      "grin": "Sourire",
+      "cool": "Cool",
+      "party": "Fête",
+      "wink": "Clin d'œil",
+      "tongue": "Langue",
+      "star": "Étoile",
+      "thinking": "Réflexion",
+      "soccer": "Football",
+      "trophy": "Trophée",
+      "lion": "Lion",
+      "clown": "Clown",
+      "nerd": "Nerd",
+      "fire": "Feu"
+    }
   },
   "privacy": {
     "title": "Politique de confidentialité",

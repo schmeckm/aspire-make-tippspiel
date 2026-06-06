@@ -1,5 +1,6 @@
 const manualPlayerImageProvider = require('./providers/manualPlayerImageProvider');
 const theSportsDbPlayerImageProvider = require('./providers/theSportsDbPlayerImageProvider');
+const { getTheSportsDbApiKey, getTheSportsDbBaseUrl } = require('./providers/theSportsDbClient');
 const wikidataPlayerImageProvider = require('./providers/wikidataPlayerImageProvider');
 const wikipediaPlayerImageProvider = require('./providers/wikipediaPlayerImageProvider');
 
@@ -18,14 +19,13 @@ function isEnabled() {
 
 function getTheSportsDbConfig() {
   return {
-    apiKey: process.env.PLAYER_IMAGE_THESPORTSDB_API_KEY || process.env.THESPORTSDB_API_KEY || '',
-    baseUrl: process.env.PLAYER_IMAGE_THESPORTSDB_BASE_URL
-      || theSportsDbPlayerImageProvider.defaultBaseUrl,
+    apiKey: getTheSportsDbApiKey(),
+    baseUrl: getTheSportsDbBaseUrl(),
   };
 }
 
 function isTheSportsDbConfigured() {
-  return !!getTheSportsDbConfig().apiKey;
+  return !!getTheSportsDbApiKey();
 }
 
 function getCacheTtlMs() {
@@ -138,11 +138,6 @@ async function searchAllProviders(params) {
 
 async function testTheSportsDbConnection() {
   const config = getTheSportsDbConfig();
-  if (!config.apiKey) {
-    const err = new Error('PLAYER_IMAGE_THESPORTSDB_API_KEY is not configured.');
-    err.code = 'NO_API_KEY';
-    throw err;
-  }
   return theSportsDbPlayerImageProvider.testConnection(config);
 }
 

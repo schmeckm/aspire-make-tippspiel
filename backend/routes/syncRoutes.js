@@ -3,6 +3,8 @@ const { sendError, translate } = require('../utils/apiResponse');
 const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
 const { syncFixtures } = require('../services/fixtureSyncService');
+const { enrichMatchVenuesFromTheSportsDb } = require('../services/theSportsDbVenueService');
+const { testTheSportsDbConnection } = require('../services/playerImageProviderService');
 const { syncResults } = require('../services/resultSyncService');
 const { syncLiveScores } = require('../services/liveScoreSyncService');
 const { recalculateAllPoints } = require('../services/leaderboardService');
@@ -99,6 +101,24 @@ router.post('/live-scores', async (req, res) => {
     res.json(result);
   } catch (error) {
     handleSyncError(error, res);
+  }
+});
+
+router.post('/enrich-venues', async (req, res) => {
+  try {
+    const result = await enrichMatchVenuesFromTheSportsDb();
+    res.json(result);
+  } catch (error) {
+    handleSyncError(error, res);
+  }
+});
+
+router.post('/test-thesportsdb', async (req, res) => {
+  try {
+    const result = await testTheSportsDbConnection();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

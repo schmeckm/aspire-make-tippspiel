@@ -27,6 +27,7 @@
           :image-url="authStore.user?.imageUrl"
           :image-cache="authStore.profileImageCache"
           :avatar-color="authStore.user?.avatarColor"
+          :avatar-emoji="authStore.user?.avatarEmoji"
           :first-name="authStore.user?.firstName"
           :last-name="authStore.user?.lastName"
           size="sm"

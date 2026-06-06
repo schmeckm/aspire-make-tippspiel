@@ -14,6 +14,7 @@
             :image-url="previewUrl || authStore.user?.imageUrl"
             :image-cache="previewUrl ? 0 : authStore.profileImageCache"
             :avatar-color="form.avatarColor"
+            :avatar-emoji="form.avatarEmoji === 'initials' ? null : form.avatarEmoji"
             :first-name="form.firstName"
             :last-name="form.lastName"
             size="lg"
@@ -41,9 +42,13 @@
           </div>
         </div>
 
-        <div v-if="!previewUrl && !authStore.user?.imageUrl" class="profile-avatar-colors">
+        <div class="profile-avatar-customize">
+          <h3 class="profile-avatar-customize-title">{{ t('profile.avatarCustomize') }}</h3>
+          <p class="text-muted profile-avatar-customize-hint">
+            {{ hasProfileImage ? t('profile.avatarColorWithImage') : t('profile.avatarCustomizeHint') }}
+          </p>
+
           <label class="profile-avatar-colors-label">{{ t('profile.avatarColor') }}</label>
-          <p class="text-muted profile-avatar-colors-hint">{{ t('profile.avatarColorHint') }}</p>
           <div class="profile-avatar-colors-grid" role="radiogroup" :aria-label="t('profile.avatarColor')">
             <button
               v-for="option in avatarColorOptions"
@@ -57,6 +62,39 @@
               :aria-checked="form.avatarColor === option.id"
               role="radio"
               @click="form.avatarColor = option.id"
+            />
+          </div>
+
+          <label class="profile-avatar-colors-label profile-avatar-face-label">{{ t('profile.avatarFace') }}</label>
+          <p class="text-muted profile-avatar-face-hint">{{ t('profile.avatarFaceHint') }}</p>
+          <div class="profile-avatar-faces-grid" role="radiogroup" :aria-label="t('profile.avatarFace')">
+            <button
+              v-for="option in avatarFaceOptions"
+              :key="option.id"
+              type="button"
+              class="profile-avatar-face-btn"
+              :class="{ active: form.avatarEmoji === option.id }"
+              :style="faceButtonStyle"
+              :title="t(option.labelKey)"
+              :aria-label="t(option.labelKey)"
+              :aria-checked="form.avatarEmoji === option.id"
+              role="radio"
+              @click="form.avatarEmoji = option.id"
+            >
+              <span v-if="option.emoji" class="profile-avatar-face-emoji">{{ option.emoji }}</span>
+              <span v-else class="profile-avatar-face-initials">{{ previewInitials }}</span>
+            </button>
+          </div>
+
+          <div class="profile-avatar-preview-row">
+            <span class="text-muted">{{ t('profile.avatarPreview') }}</span>
+            <UserAvatar
+              :image-url="null"
+              :avatar-color="form.avatarColor"
+              :avatar-emoji="form.avatarEmoji === 'initials' ? null : form.avatarEmoji"
+              :first-name="form.firstName"
+              :last-name="form.lastName"
+              size="md"
             />
           </div>
         </div>
@@ -221,7 +259,8 @@ import api from '../services/api';
 import AlertMessage from '../components/AlertMessage.vue';
 import LocalePicker from '../components/LocalePicker.vue';
 import UserAvatar from '../components/UserAvatar.vue';
-import { AVATAR_COLOR_OPTIONS } from '../utils/avatarColors';
+import { AVATAR_COLOR_OPTIONS, resolveAvatarColorStyle } from '../utils/avatarColors';
+import { AVATAR_FACE_OPTIONS } from '../utils/avatarFaces';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -230,6 +269,7 @@ const themeStore = useThemeStore();
 const localeStore = useLocaleStore();
 
 const avatarColorOptions = AVATAR_COLOR_OPTIONS;
+const avatarFaceOptions = AVATAR_FACE_OPTIONS;
 
 const form = ref({
   firstName: '',
@@ -240,7 +280,23 @@ const form = ref({
   favoriteNationalTeamId: null,
   topScorerPlayerId: null,
   avatarColor: 'default',
+  avatarEmoji: 'initials',
   password: '',
+});
+
+const previewInitials = computed(() => {
+  const first = form.value.firstName?.trim();
+  const last = form.value.lastName?.trim();
+  if (first && last) return `${first[0]}${last[0]}`.toUpperCase();
+  return '??';
+});
+
+const faceButtonStyle = computed(() => {
+  const style = resolveAvatarColorStyle(form.value.avatarColor);
+  return style || {
+    backgroundColor: 'var(--color-primary-bg, #e8f4fd)',
+    color: 'var(--color-primary)',
+  };
 });
 const teams = ref([]);
 const nationalTeams = ref([]);
@@ -254,6 +310,9 @@ const error = ref('');
 const showPassword = ref(false);
 const selectedImage = ref(null);
 const previewUrl = ref('');
+const hasProfileImage = computed(
+  () => Boolean(previewUrl.value || authStore.user?.imageUrl),
+);
 const imageBusy = ref(false);
 const deletePassword = ref('');
 const deletingAccount = ref(false);
@@ -274,6 +333,7 @@ function applyFormFromUser(user) {
     favoriteNationalTeamId: normalizeOptionalId(user.favoriteNationalTeamId),
     topScorerPlayerId: normalizePlayerId(user.topScorerPlayerId),
     avatarColor: user.avatarColor || 'default',
+    avatarEmoji: user.avatarEmoji || 'initials',
     password: '',
   };
 }
@@ -446,6 +506,7 @@ async function handleSave() {
       topScorerPlayerId: playerId,
       topScorerPlayerName: topScorer?.name || (playerId ? authStore.user?.topScorerPlayerName : null) || null,
       avatarColor: form.value.avatarColor,
+      avatarEmoji: form.value.avatarEmoji === 'initials' ? null : form.value.avatarEmoji,
     };
     if (form.value.password) payload.password = form.value.password;
     if (selectedImage.value) {
@@ -490,19 +551,35 @@ async function handleSave() {
   width: fit-content;
 }
 
-.profile-avatar-colors {
-  margin-bottom: 1.25rem;
+.profile-avatar-customize {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.profile-avatar-customize-title {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.profile-avatar-customize-hint {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
 }
 
 .profile-avatar-colors-label {
   display: block;
   font-weight: 600;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
 }
 
-.profile-avatar-colors-hint {
+.profile-avatar-face-label {
+  margin-top: 1rem;
+}
+
+.profile-avatar-face-hint {
   margin: 0 0 0.75rem;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .profile-avatar-colors-grid {
@@ -524,6 +601,47 @@ async function handleSave() {
 .profile-avatar-color-btn.active {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+
+.profile-avatar-faces-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.profile-avatar-face-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+}
+
+.profile-avatar-face-btn.active {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.profile-avatar-face-emoji {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.profile-avatar-face-initials {
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.profile-avatar-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 
 .profile-image-input {

@@ -34,6 +34,24 @@
         </div>
       </div>
 
+      <div class="card mb-2">
+        <div class="card-header"><h3>TheSportsDB (Stadion &amp; Spielerbilder)</h3></div>
+        <div class="card-body provider-form">
+          <p class="hint text-muted">
+            Kostenloser Key <code>123</code> — ergänzt fehlende Stadien und Länder/Ort für WM-Spiele
+            (Liga <code>4429</code>, Saison <code>2026</code>). Spielerbilder nutzen dieselbe API.
+          </p>
+          <div class="btn-group">
+            <button class="btn btn-accent btn-sm" :disabled="syncing" @click="testTheSportsDb">
+              TheSportsDB testen
+            </button>
+            <button class="btn btn-secondary btn-sm" :disabled="syncing" @click="enrichVenues">
+              {{ syncing ? 'Sync...' : 'Stadien anreichern' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="btn-group mb-2">
         <button class="btn btn-primary" :disabled="syncing || !status.apiConfigured" @click="syncFixtures">
           {{ syncing ? 'Sync...' : 'Spielplan synchronisieren' }}
@@ -122,17 +140,54 @@ async function testConnection() {
   }
 }
 
+function formatVenueEnrichment(data) {
+  const venue = data?.venueEnrichment;
+  if (!venue || venue.skipped) return '';
+  return ` ${venue.message || `${venue.enrichedCount || 0} Stadien angereichert.`}`;
+}
+
 async function syncFixtures() {
   syncing.value = true;
   error.value = '';
   message.value = '';
   try {
     const { data } = await api.post('/admin/sync/fixtures');
-    message.value = data.message || 'Spielplan synchronisiert.';
+    message.value = `${data.message || 'Spielplan synchronisiert.'}${formatVenueEnrichment(data)}`;
     messageType.value = data.errorCount > 0 ? 'warning' : 'success';
     await load();
   } catch (e) {
     error.value = e.response?.data?.error || 'Sync fehlgeschlagen.';
+  } finally {
+    syncing.value = false;
+  }
+}
+
+async function testTheSportsDb() {
+  syncing.value = true;
+  error.value = '';
+  message.value = '';
+  try {
+    const { data } = await api.post('/admin/sync/test-thesportsdb');
+    message.value = data.message || 'TheSportsDB verbunden.';
+    messageType.value = 'success';
+  } catch (e) {
+    error.value = e.response?.data?.error || 'TheSportsDB-Test fehlgeschlagen.';
+  } finally {
+    syncing.value = false;
+  }
+}
+
+async function enrichVenues() {
+  syncing.value = true;
+  error.value = '';
+  message.value = '';
+  try {
+    const { data } = await api.post('/admin/sync/enrich-venues');
+    message.value = data.message || 'Stadien angereichert.';
+    messageType.value = data.skipped ? 'warning' : 'success';
+    await load();
+  } catch (e) {
+    error.value = e.response?.data?.error || 'Stadion-Anreicherung fehlgeschlagen.';
   } finally {
     syncing.value = false;
   }

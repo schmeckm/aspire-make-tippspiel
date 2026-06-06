@@ -1,17 +1,6 @@
-const { fetchJson } = require('./providerUtils');
+const { buildTheSportsDbUrl, fetchTheSportsDb } = require('./theSportsDbClient');
 
 const NAME = 'thesportsdb';
-const DEFAULT_BASE_URL = 'https://www.thesportsdb.com/api/v1/json';
-
-function buildApiUrl(config, endpoint, params = {}) {
-  const baseUrl = (config.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
-  const apiKey = config.apiKey;
-  const url = new URL(`${baseUrl}/${apiKey}/${endpoint}`);
-  Object.entries(params).forEach(([key, value]) => {
-    if (value != null && value !== '') url.searchParams.set(key, value);
-  });
-  return url.toString();
-}
 
 function normalizePlayerResult(player, teamName) {
   const imageUrl = player.strThumb || player.strCutout || null;
@@ -58,8 +47,7 @@ function pickBestPlayer(players, playerName, teamName) {
 }
 
 async function searchPlayers(config, playerName) {
-  const url = buildApiUrl(config, 'searchplayers.php', { p: playerName.trim() });
-  const data = await fetchJson(url);
+  const data = await fetchTheSportsDb('searchplayers.php', { p: playerName.trim() }, config);
   return data.player || [];
 }
 
@@ -76,20 +64,20 @@ async function fetchPlayerImage(config, { playerName, teamName, countryCode }) {
 }
 
 async function testConnection(config) {
-  const url = buildApiUrl(config, 'searchplayers.php', { p: 'Messi' });
-  const data = await fetchJson(url);
+  const data = await fetchTheSportsDb('searchplayers.php', { p: 'Messi' }, config);
   const count = data.player?.length || 0;
   return {
     ok: true,
-    message: `TheSportsDB player images connected (${count} test result${count === 1 ? '' : 's'})`,
+    message: `TheSportsDB verbunden (${count} Test-Treffer, Key: ${config.apiKey === '123' ? 'kostenlos' : 'eigen'})`,
   };
 }
 
 module.exports = {
   name: NAME,
   label: 'TheSportsDB',
-  requiresApiKey: true,
-  defaultBaseUrl: DEFAULT_BASE_URL,
+  requiresApiKey: false,
+  defaultBaseUrl: 'https://www.thesportsdb.com/api/v1/json',
+  buildApiUrl: buildTheSportsDbUrl,
   fetchPlayerImage,
   testConnection,
 };

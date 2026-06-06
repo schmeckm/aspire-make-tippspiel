@@ -35,6 +35,7 @@
                 <UserAvatar
                   :image-url="entry.imageUrl"
                   :avatar-color="entry.avatarColor"
+                  :avatar-emoji="entry.avatarEmoji"
                   :first-name="entry.firstName"
                   :last-name="entry.lastName"
                   size="xs"
@@ -72,6 +73,7 @@
             <UserAvatar
               :image-url="entry.imageUrl"
               :avatar-color="entry.avatarColor"
+              :avatar-emoji="entry.avatarEmoji"
               :first-name="entry.firstName"
               :last-name="entry.lastName"
               size="xs"

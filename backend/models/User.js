@@ -86,6 +86,10 @@ const User = sequelize.define('User', {
     allowNull: false,
     defaultValue: 'default',
   },
+  avatarEmoji: {
+    type: DataTypes.STRING(16),
+    allowNull: true,
+  },
 }, {
   hooks: {
     beforeCreate: async (user) => {

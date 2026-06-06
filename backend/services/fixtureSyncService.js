@@ -6,6 +6,7 @@ const { startSyncLog, finishSyncLog, failSyncLog, emptySummary } = require('./sy
 const { shouldApplyFixtureUpdate, buildFixtureUpdateData } = require('./matchSyncUtils');
 const { shouldSkipSyncDueToRateLimit } = require('./footballDataRateLimitService');
 const { fixLegacyApiMatchNumbers, getNextMatchNumber } = require('./matchNumberService');
+const { enrichMatchVenuesFromTheSportsDb } = require('./theSportsDbVenueService');
 
 async function syncFixtures({ userId = null, req = null } = {}) {
   const config = await footballProviderService.getProviderConfig();
@@ -60,7 +61,7 @@ async function syncFixtures({ userId = null, req = null } = {}) {
           }
         }
 
-        const matchData = buildFixtureUpdateData(fixture, config);
+        const matchData = buildFixtureUpdateData(fixture, config, match);
 
         if (match) {
           if (match.status !== 'finished') {
@@ -81,6 +82,16 @@ async function syncFixtures({ userId = null, req = null } = {}) {
         summary.errorCount++;
         summary.errors.push({ externalApiId: fixture.externalApiId, message: err.message });
       }
+    }
+
+    try {
+      summary.venueEnrichment = await enrichMatchVenuesFromTheSportsDb();
+    } catch (venueError) {
+      summary.venueEnrichment = {
+        skipped: true,
+        message: venueError.message,
+        errors: [{ message: venueError.message }],
+      };
     }
 
     await finishSyncLog(log, summary, rateLimits);

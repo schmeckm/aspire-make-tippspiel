@@ -172,7 +172,42 @@
     "removeImage": "Eliminar foto de perfil",
     "imageTooLarge": "La imagen es demasiado grande (máx. 2 MB).",
     "imageRemoved": "Foto de perfil eliminada.",
-    "imageUploadFailed": "No se pudo subir la foto de perfil."
+    "imageUploadFailed": "No se pudo subir la foto de perfil.",
+    "avatarCustomize": "Avatar sin foto de perfil",
+    "avatarCustomizeHint": "Elige color de fondo y opcionalmente una cara divertida en lugar de tus iniciales.",
+    "avatarColor": "Color de fondo",
+    "avatarColorHint": "Elige un color para tu avatar con iniciales.",
+    "avatarColorWithImage": "Se muestra sin foto de perfil. Elimina la imagen o guarda tu elección.",
+    "avatarFace": "Cara divertida",
+    "avatarFaceHint": "Opcional en lugar de iniciales — combinado con el color elegido.",
+    "avatarPreview": "Vista previa",
+    "avatarColors": {
+      "default": "Predeterminado",
+      "forest": "Verde bosque",
+      "ocean": "Azul océano",
+      "sunset": "Atardecer",
+      "berry": "Baya",
+      "violet": "Violeta",
+      "slate": "Pizarra",
+      "gold": "Oro",
+      "coral": "Coral"
+    },
+    "avatarFaces": {
+      "initials": "Iniciales",
+      "grin": "Sonrisa",
+      "cool": "Guay",
+      "party": "Fiesta",
+      "wink": "Guiño",
+      "tongue": "Lengua",
+      "star": "Emocionado",
+      "thinking": "Pensativo",
+      "soccer": "Fútbol",
+      "trophy": "Trofeo",
+      "lion": "León",
+      "clown": "Payaso",
+      "nerd": "Nerd",
+      "fire": "Fuego"
+    }
   },
   "privacy": {
     "title": "Política de privacidad",
