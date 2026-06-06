@@ -347,7 +347,8 @@
       "teams": "Plantillas",
       "standings": "Clasificación",
       "scorers": "Goleadores",
-      "live": "Partidos en vivo"
+      "live": "Partidos en vivo",
+      "duels": "Duelos CM"
     },
     "liveFilters": {
       "today": "Hoy",
@@ -360,7 +361,27 @@
       "defence": "Defensa",
       "midfield": "Centrocampista",
       "offence": "Delantero"
-    }
+    },
+    "duelsHint": "Compara dos selecciones según sus duelos históricos en Copas del Mundo.",
+    "duelsTeamA": "Equipo A",
+    "duelsTeamB": "Equipo B",
+    "duelsSelectTeam": "Elegir equipo…",
+    "duelsCompare": "Cargar duelos"
+  },
+  "head2head": {
+    "title": "Duelos históricos en el Mundial",
+    "wcOnly": "Solo Copa Mundial FIFA (football-data.org)",
+    "show": "Mostrar duelos históricos",
+    "loading": "Cargando duelos…",
+    "loadFailed": "No se pudieron cargar los duelos históricos.",
+    "empty": "No hay duelos anteriores en el Mundial entre estos equipos en los datos de la API.",
+    "wins": "Victorias",
+    "draws": "Empates",
+    "date": "Fecha",
+    "competition": "Torneo",
+    "stage": "Fase",
+    "cached": "En caché",
+    "footnote": "{count} partidos de CM · {goals} goles en total"
   },
   "matches": {
     "title": "Partidos",

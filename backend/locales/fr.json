@@ -143,6 +143,8 @@
     "footballStandingsLoadFailed": "Impossible de charger le classement.",
     "footballScorersLoadFailed": "Impossible de charger les buteurs.",
     "footballMatchesLoadFailed": "Impossible de charger les matchs en direct.",
+    "footballHead2HeadLoadFailed": "Impossible de charger les confrontations historiques.",
+    "footballHead2HeadUnavailable": "Aucune confrontation historique de Coupe du Monde disponible pour ces équipes.",
     "playerImageNameRequired": "Le nom du joueur est requis.",
     "playerImageUrlRequired": "L'URL de l'image est requise.",
     "playerImageNotFound": "Enregistrement d'image du joueur introuvable.",

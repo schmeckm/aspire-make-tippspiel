@@ -272,6 +272,52 @@
         </div>
       </div>
     </template>
+
+    <!-- Head-to-head comparison -->
+    <template v-else-if="activeTab === 'duels'">
+      <div class="card">
+        <div class="card-body">
+          <p class="text-muted">{{ t('nationalTeams.duelsHint') }}</p>
+          <div class="duels-select-row">
+            <div class="form-group">
+              <label>{{ t('nationalTeams.duelsTeamA') }}</label>
+              <select v-model="duelTeamAId" class="form-control">
+                <option :value="null">{{ t('nationalTeams.duelsSelectTeam') }}</option>
+                <option v-for="team in teams" :key="`a-${team.id}`" :value="team.id">
+                  {{ team.name }}
+                </option>
+              </select>
+            </div>
+            <span class="duels-vs">{{ t('common.vs') }}</span>
+            <div class="form-group">
+              <label>{{ t('nationalTeams.duelsTeamB') }}</label>
+              <select v-model="duelTeamBId" class="form-control">
+                <option :value="null">{{ t('nationalTeams.duelsSelectTeam') }}</option>
+                <option v-for="team in teams" :key="`b-${team.id}`" :value="team.id">
+                  {{ team.name }}
+                </option>
+              </select>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary duels-compare-btn"
+              :disabled="!canCompareDuels || duelLoading"
+              @click="compareDuels"
+            >
+              {{ duelLoading ? t('head2head.loading') : t('nationalTeams.duelsCompare') }}
+            </button>
+          </div>
+
+          <HeadToHeadPanel
+            v-if="duelData || duelError"
+            :data="duelData"
+            :loading="duelLoading"
+            :error="duelError"
+            :subtitle="t('head2head.wcOnly')"
+          />
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -283,7 +329,9 @@ import api from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner.vue';
 import AlertMessage from '../components/AlertMessage.vue';
 import PlayerAvatar from '../components/PlayerAvatar.vue';
+import HeadToHeadPanel from '../components/HeadToHeadPanel.vue';
 import { useFormatters } from '../composables/useFormatters';
+import { useHeadToHead } from '../composables/useHeadToHead';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -305,6 +353,16 @@ const loadingLive = ref(false);
 const error = ref('');
 const search = ref('');
 const liveFilter = ref('today');
+const duelTeamAId = ref(null);
+const duelTeamBId = ref(null);
+
+const {
+  data: duelData,
+  loading: duelLoading,
+  error: duelError,
+  loadForTeams: loadDuelHead2Head,
+  reset: resetDuelHead2Head,
+} = useHeadToHead();
 
 let teamDetailAbort = null;
 let imageResolveAbort = null;
@@ -339,6 +397,7 @@ const tabs = computed(() => [
   { id: 'standings', label: t('nationalTeams.tabs.standings') },
   { id: 'scorers', label: t('nationalTeams.tabs.scorers') },
   { id: 'live', label: t('nationalTeams.tabs.live') },
+  { id: 'duels', label: t('nationalTeams.tabs.duels') },
 ]);
 
 const matchFilters = computed(() => [
@@ -382,6 +441,24 @@ const squadGroups = computed(() => {
 const missingPlayerImages = computed(() => (
   selectedTeam.value?.squad?.filter((player) => !player.imageUrl).length || 0
 ));
+
+const canCompareDuels = computed(() => (
+  duelTeamAId.value
+  && duelTeamBId.value
+  && duelTeamAId.value !== duelTeamBId.value
+));
+
+function teamNameById(id) {
+  return teams.value.find((team) => team.id === id)?.name || null;
+}
+
+async function compareDuels() {
+  if (!canCompareDuels.value) return;
+  await loadDuelHead2Head(duelTeamAId.value, duelTeamBId.value, {
+    teamAName: teamNameById(duelTeamAId.value),
+    teamBName: teamNameById(duelTeamBId.value),
+  });
+}
 
 function positionLabel(position) {
   const key = {
@@ -609,6 +686,7 @@ async function switchTab(tabId) {
   if (tabId === 'standings' && !standings.value.length) await loadStandings();
   if (tabId === 'scorers' && !scorers.value.length) await loadScorers();
   if (tabId === 'live' && !liveMatches.value.length) await loadLiveMatches();
+  if (tabId !== 'duels') resetDuelHead2Head();
 }
 
 watch(() => route.query.team, async (name) => {
@@ -702,7 +780,31 @@ onUnmounted(() => {
   gap: 0.5rem;
 }
 
+.duels-select-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  gap: 0.75rem;
+  align-items: end;
+  margin-bottom: 1.25rem;
+}
+
+.duels-vs {
+  font-weight: 700;
+  padding-bottom: 0.5rem;
+}
+
+.duels-compare-btn {
+  white-space: nowrap;
+}
+
 @media (max-width: 900px) {
   .national-teams-layout { grid-template-columns: 1fr; }
+  .duels-select-row {
+    grid-template-columns: 1fr;
+  }
+  .duels-vs {
+    text-align: center;
+    padding-bottom: 0;
+  }
 }
 </style>

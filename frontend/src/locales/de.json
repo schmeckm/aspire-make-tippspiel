@@ -370,7 +370,8 @@
       "teams": "Kader",
       "standings": "Tabellen",
       "scorers": "Torschützen",
-      "live": "Live-Spiele"
+      "live": "Live-Spiele",
+      "duels": "WM-Duelle"
     },
     "liveFilters": {
       "today": "Heute",
@@ -383,7 +384,27 @@
       "defence": "Abwehr",
       "midfield": "Mittelfeld",
       "offence": "Angriff"
-    }
+    },
+    "duelsHint": "Vergleiche zwei Nationalmannschaften anhand ihrer historischen WM-Duelle.",
+    "duelsTeamA": "Mannschaft A",
+    "duelsTeamB": "Mannschaft B",
+    "duelsSelectTeam": "Mannschaft wählen…",
+    "duelsCompare": "Duelle laden"
+  },
+  "head2head": {
+    "title": "Historische WM-Duelle",
+    "wcOnly": "Nur FIFA-Weltmeisterschaften (football-data.org)",
+    "show": "Historische Duelle anzeigen",
+    "loading": "Lade Duelle…",
+    "loadFailed": "Historische Duelle konnten nicht geladen werden.",
+    "empty": "Keine früheren WM-Duelle zwischen diesen Mannschaften in den API-Daten.",
+    "wins": "Siege",
+    "draws": "Remis",
+    "date": "Datum",
+    "competition": "Turnier",
+    "stage": "Runde",
+    "cached": "Aus Cache",
+    "footnote": "{count} WM-Spiele · {goals} Tore gesamt"
   },
   "matches": {
     "title": "Spiele",

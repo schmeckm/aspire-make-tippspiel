@@ -347,7 +347,8 @@
       "teams": "Effectifs",
       "standings": "Classements",
       "scorers": "Buteurs",
-      "live": "Matchs live"
+      "live": "Matchs live",
+      "duels": "Duels CM"
     },
     "liveFilters": {
       "today": "Aujourd'hui",
@@ -360,7 +361,27 @@
       "defence": "Défense",
       "midfield": "Milieu",
       "offence": "Attaque"
-    }
+    },
+    "duelsHint": "Comparez deux équipes nationales selon leurs confrontations historiques en Coupe du Monde.",
+    "duelsTeamA": "Équipe A",
+    "duelsTeamB": "Équipe B",
+    "duelsSelectTeam": "Choisir une équipe…",
+    "duelsCompare": "Charger les duels"
+  },
+  "head2head": {
+    "title": "Duels historiques en Coupe du Monde",
+    "wcOnly": "Coupe du Monde FIFA uniquement (football-data.org)",
+    "show": "Afficher les duels historiques",
+    "loading": "Chargement des duels…",
+    "loadFailed": "Impossible de charger les duels historiques.",
+    "empty": "Aucun duel précédent en Coupe du Monde entre ces équipes dans les données API.",
+    "wins": "Victoires",
+    "draws": "Nuls",
+    "date": "Date",
+    "competition": "Tournoi",
+    "stage": "Phase",
+    "cached": "En cache",
+    "footnote": "{count} matchs de CM · {goals} buts au total"
   },
   "matches": {
     "title": "Matchs",

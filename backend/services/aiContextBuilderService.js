@@ -36,6 +36,11 @@ async function buildMatchContext(matchId, userId = null) {
     }
   }
 
+  const headToHead = await require('./headToHeadService').getHead2HeadForAiContext(matchId);
+  if (headToHead) {
+    ctx.headToHead = headToHead;
+  }
+
   return ctx;
 }
 

@@ -13,6 +13,10 @@ const {
   getScorers,
   getLiveMatches,
 } = require('../services/footballCompetitionService');
+const {
+  getHead2HeadForMatch,
+  getHead2HeadByTeamIds,
+} = require('../services/headToHeadService');
 
 const router = express.Router();
 
@@ -132,6 +136,46 @@ router.get('/matches', async (req, res) => {
   } catch (error) {
     console.error('Football matches error:', error.message);
     sendError(res, req, error.code === 'NO_API_KEY' ? 503 : 502, 'errors.footballMatchesLoadFailed');
+  }
+});
+
+router.get('/head2head/match/:matchId', async (req, res) => {
+  try {
+    if (!isFootballApiAvailable()) {
+      return sendError(res, req, 503, 'errors.footballApiNotConfigured');
+    }
+
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 15, 1), 30);
+    const competitions = req.query.competitions || 'WC';
+    const data = await getHead2HeadForMatch(req.params.matchId, { limit, competitions });
+    if (!data) return sendError(res, req, 404, 'errors.matchNotFound');
+    if (!data.available) return sendError(res, req, 404, 'errors.footballHead2HeadUnavailable');
+    res.json(data);
+  } catch (error) {
+    console.error('Football head2head match error:', error.message);
+    sendError(res, req, error.code === 'NO_API_KEY' ? 503 : 502, 'errors.footballHead2HeadLoadFailed');
+  }
+});
+
+router.get('/head2head/teams/:teamAId/:teamBId', async (req, res) => {
+  try {
+    if (!isFootballApiAvailable()) {
+      return sendError(res, req, 503, 'errors.footballApiNotConfigured');
+    }
+
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 15, 1), 30);
+    const competitions = req.query.competitions || 'WC';
+    const data = await getHead2HeadByTeamIds(req.params.teamAId, req.params.teamBId, {
+      limit,
+      competitions,
+      teamAName: req.query.teamAName || null,
+      teamBName: req.query.teamBName || null,
+    });
+    if (!data.available) return sendError(res, req, 404, 'errors.footballHead2HeadUnavailable');
+    res.json(data);
+  } catch (error) {
+    console.error('Football head2head teams error:', error.message);
+    sendError(res, req, error.code === 'NO_API_KEY' ? 503 : 502, 'errors.footballHead2HeadLoadFailed');
   }
 });
 

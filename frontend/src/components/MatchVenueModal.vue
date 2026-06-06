@@ -43,6 +43,17 @@
             </p>
           </div>
 
+          <section class="match-venue-h2h">
+            <HeadToHeadPanel
+              :data="h2hData"
+              :loading="h2hLoading"
+              :error="h2hError"
+              :subtitle="t('head2head.wcOnly')"
+              :show-load-button="!h2hData && !h2hLoading && !h2hError"
+              @load="loadHead2Head()"
+            />
+          </section>
+
           <section v-if="showAi" class="match-venue-ai">
             <div class="match-venue-ai-header">
               <h4>🤖 {{ t('ai.matchPreviewTitle') }}</h4>
@@ -85,7 +96,9 @@ import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/authStore';
 import LoadingSpinner from './LoadingSpinner.vue';
 import AlertMessage from './AlertMessage.vue';
+import HeadToHeadPanel from './HeadToHeadPanel.vue';
 import { useMatchPreview } from '../composables/useMatchPreview';
+import { useHeadToHead } from '../composables/useHeadToHead';
 import { useFormatters } from '../composables/useFormatters';
 import { useMatchMeta } from '../composables/useMatchMeta';
 
@@ -115,6 +128,18 @@ const {
   resetPreview,
 } = useMatchPreview(matchId);
 
+const {
+  data: h2hData,
+  loading: h2hLoading,
+  error: h2hError,
+  loadForMatch: loadHead2HeadRequest,
+  reset: resetHead2Head,
+} = useHeadToHead();
+
+function loadHead2Head() {
+  if (matchId.value) loadHead2HeadRequest(matchId.value);
+}
+
 const modalTitle = computed(() => {
   if (props.match?.stadium) return props.match.stadium;
   return t('matches.venueDetails');
@@ -131,6 +156,7 @@ function onKeydown(event) {
 watch(() => props.open, (isOpen) => {
   if (!isOpen) {
     resetPreview();
+    resetHead2Head();
   }
 });
 
@@ -172,6 +198,12 @@ onUnmounted(() => {
 .match-venue-teams {
   font-size: 1rem;
   font-weight: 700;
+}
+
+.match-venue-h2h {
+  padding-top: 1rem;
+  margin-bottom: 1rem;
+  border-top: 1px solid var(--color-border);
 }
 
 .match-venue-ai {

@@ -143,6 +143,8 @@
     "footballStandingsLoadFailed": "Could not load standings.",
     "footballScorersLoadFailed": "Could not load top scorers.",
     "footballMatchesLoadFailed": "Could not load live matches.",
+    "footballHead2HeadLoadFailed": "Could not load historical head-to-head data.",
+    "footballHead2HeadUnavailable": "No historical World Cup meetings available for these teams.",
     "playerImageNameRequired": "Player name is required.",
     "playerImageUrlRequired": "Image URL is required.",
     "playerImageNotFound": "Player image record not found.",

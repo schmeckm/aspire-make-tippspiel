@@ -143,6 +143,8 @@
     "footballStandingsLoadFailed": "Tabellen konnten nicht geladen werden.",
     "footballScorersLoadFailed": "Torschützen konnten nicht geladen werden.",
     "footballMatchesLoadFailed": "Live-Spiele konnten nicht geladen werden.",
+    "footballHead2HeadLoadFailed": "Historische Duelle konnten nicht geladen werden.",
+    "footballHead2HeadUnavailable": "Keine historischen WM-Duelle für diese Mannschaften verfügbar.",
     "playerImageNameRequired": "Spielername ist erforderlich.",
     "playerImageUrlRequired": "Bild-URL ist erforderlich.",
     "playerImageNotFound": "Spielerbild-Eintrag nicht gefunden.",

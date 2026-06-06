@@ -143,6 +143,8 @@
     "footballStandingsLoadFailed": "No se pudieron cargar las clasificaciones.",
     "footballScorersLoadFailed": "No se pudieron cargar los goleadores.",
     "footballMatchesLoadFailed": "No se pudieron cargar los partidos en vivo.",
+    "footballHead2HeadLoadFailed": "No se pudieron cargar los duelos históricos.",
+    "footballHead2HeadUnavailable": "No hay duelos históricos de Copa del Mundo disponibles para estos equipos.",
     "playerImageNameRequired": "El nombre del jugador es obligatorio.",
     "playerImageUrlRequired": "La URL de la imagen es obligatoria.",
     "playerImageNotFound": "Registro de imagen del jugador no encontrado.",

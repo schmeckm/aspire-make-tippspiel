@@ -359,7 +359,8 @@
       "teams": "Squads",
       "standings": "Standings",
       "scorers": "Top scorers",
-      "live": "Live matches"
+      "live": "Live matches",
+      "duels": "WC head-to-head"
     },
     "liveFilters": {
       "today": "Today",
@@ -372,7 +373,27 @@
       "defence": "Defence",
       "midfield": "Midfield",
       "offence": "Offence"
-    }
+    },
+    "duelsHint": "Compare two national teams by their historical World Cup meetings.",
+    "duelsTeamA": "Team A",
+    "duelsTeamB": "Team B",
+    "duelsSelectTeam": "Select team…",
+    "duelsCompare": "Load meetings"
+  },
+  "head2head": {
+    "title": "Historical World Cup meetings",
+    "wcOnly": "FIFA World Cup only (football-data.org)",
+    "show": "Show historical meetings",
+    "loading": "Loading meetings…",
+    "loadFailed": "Could not load historical meetings.",
+    "empty": "No previous World Cup meetings between these teams in the API data.",
+    "wins": "Wins",
+    "draws": "Draws",
+    "date": "Date",
+    "competition": "Tournament",
+    "stage": "Round",
+    "cached": "Cached",
+    "footnote": "{count} World Cup matches · {goals} goals total"
   },
   "matches": {
     "title": "Matches",

@@ -241,7 +241,7 @@ async function fetchTeamById(config, teamId) {
 }
 
 const MATCH_QUERY_KEYS = [
-  'status', 'date', 'dateFrom', 'dateTo', 'stage', 'group', 'matchday', 'season', 'limit', 'offset',
+  'status', 'date', 'dateFrom', 'dateTo', 'stage', 'group', 'matchday', 'season', 'limit', 'offset', 'competitions',
 ];
 
 const STANDING_QUERY_KEYS = ['matchday', 'season', 'date'];
@@ -326,6 +326,8 @@ function normalizeApiMatch(m) {
     },
     score: { home: homeScore, away: awayScore },
     venue: m.venue || null,
+    competition: m.competition ? { id: m.competition.id, name: m.competition.name } : null,
+    season: m.season ? { startDate: m.season.startDate, endDate: m.season.endDate } : null,
   };
 }
 
@@ -360,6 +362,33 @@ async function fetchScorers(config, query = {}) {
   return {
     scorers: normalizeScorers(result.data),
     competitionUsed: result.competitionUsed,
+    rateLimits: result.rateLimits,
+  };
+}
+
+async function fetchTeamMatches(config, teamId, query = {}) {
+  const params = pickQuery(query, MATCH_QUERY_KEYS);
+
+  const result = await apiRequest(config, `/teams/${teamId}/matches`, params);
+  return {
+    matches: (result.data.matches || []).map(normalizeApiMatch),
+    resultSet: result.data.resultSet || null,
+    rateLimits: result.rateLimits,
+  };
+}
+
+async function fetchHead2Head(config, externalMatchId, query = {}) {
+  const params = {};
+  if (query.limit != null) params.limit = query.limit;
+  if (query.dateFrom) params.dateFrom = query.dateFrom;
+  if (query.dateTo) params.dateTo = query.dateTo;
+  if (query.competitions) params.competitions = query.competitions;
+
+  const result = await apiRequest(config, `/matches/${externalMatchId}/head2head`, params);
+  return {
+    aggregates: result.data.aggregates || result.data.head2head || null,
+    matches: (result.data.matches || []).map(normalizeApiMatch),
+    referenceMatch: result.data.match ? normalizeApiMatch(result.data.match) : null,
     rateLimits: result.rateLimits,
   };
 }
@@ -464,6 +493,8 @@ module.exports = {
   fetchTeamById,
   fetchStandings,
   fetchScorers,
+  fetchTeamMatches,
+  fetchHead2Head,
   fetchFilteredMatches,
   normalizeTeamDetail,
   testConnection,
