@@ -86,7 +86,7 @@ const { t } = useI18n();
   left: -2rem;
   width: 20rem;
   height: 20rem;
-  background: radial-gradient(circle, rgba(0, 255, 127, 0.18) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.12) 0%, transparent 70%);
   pointer-events: none;
   z-index: -1;
 }
@@ -102,8 +102,8 @@ const { t } = useI18n();
 
 .auth-immersive-brand-accent {
   display: block;
-  color: var(--color-primary);
-  text-shadow: 0 0 40px rgba(0, 255, 127, 0.45);
+  color: var(--auth-accent, var(--color-primary));
+  text-shadow: none;
 }
 
 .auth-immersive-text {
@@ -146,7 +146,7 @@ const { t } = useI18n();
 }
 
 .auth-immersive-footer :deep(a:hover) {
-  color: var(--color-primary-light);
+  color: var(--auth-accent, var(--color-primary-light));
 }
 
 .auth-immersive-language {
@@ -213,9 +213,9 @@ const { t } = useI18n();
 .auth-immersive-input {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--auth-surface-border, rgba(255, 255, 255, 0.16));
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--auth-surface, rgba(0, 0, 0, 0.42));
   color: #fff;
   font-size: 0.875rem;
   font-family: inherit;
@@ -226,9 +226,9 @@ const { t } = useI18n();
 
 .auth-immersive-input:focus {
   outline: none;
-  border-color: var(--color-primary);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 3px rgba(0, 255, 127, 0.15);
+  border-color: var(--auth-surface-border-focus, rgba(74, 222, 128, 0.55));
+  background: var(--auth-surface-hover, rgba(0, 0, 0, 0.52));
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.12);
 }
 
 .auth-immersive-input:-webkit-autofill,
@@ -240,7 +240,7 @@ const { t } = useI18n();
 }
 
 .auth-immersive-input::placeholder {
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.48);
 }
 
 .auth-immersive-input option {
@@ -275,8 +275,8 @@ const { t } = useI18n();
 }
 
 .auth-immersive-password-toggle:hover {
-  color: var(--color-primary);
-  background: rgba(0, 255, 127, 0.1);
+  color: var(--auth-accent, var(--color-primary));
+  background: rgba(74, 222, 128, 0.1);
 }
 
 .auth-google-btn {
@@ -286,9 +286,9 @@ const { t } = useI18n();
   gap: 0.65rem;
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--auth-surface-border, rgba(255, 255, 255, 0.16));
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--auth-surface, rgba(0, 0, 0, 0.42));
   color: #fff;
   font-size: 0.875rem;
   font-weight: 600;
@@ -300,8 +300,8 @@ const { t } = useI18n();
 }
 
 .auth-google-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(0, 255, 127, 0.35);
+  background: var(--auth-surface-hover, rgba(0, 0, 0, 0.52));
+  border-color: var(--auth-surface-border-focus, rgba(74, 222, 128, 0.55));
 }
 
 .auth-google-icon {
@@ -335,8 +335,8 @@ const { t } = useI18n();
   margin-top: 1.25rem;
   padding: 1rem;
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--auth-surface, rgba(0, 0, 0, 0.42));
+  border: 1px solid var(--auth-surface-border, rgba(255, 255, 255, 0.16));
   backdrop-filter: blur(8px);
 }
 
@@ -345,8 +345,8 @@ const { t } = useI18n();
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: var(--radius);
-  background: var(--color-primary);
-  color: var(--color-on-primary, #0A0A0A);
+  background: var(--auth-accent, var(--color-primary));
+  color: #0a0a0a;
   font-size: 0.875rem;
   font-weight: 700;
   font-family: inherit;
@@ -356,8 +356,8 @@ const { t } = useI18n();
 }
 
 .auth-immersive-submit:hover:not(:disabled) {
-  background: var(--color-primary-dark);
-  box-shadow: var(--glow-primary);
+  background: var(--auth-accent-hover, var(--color-primary-dark));
+  box-shadow: 0 0 16px rgba(74, 222, 128, 0.18);
 }
 
 .auth-immersive-submit:disabled {
@@ -434,7 +434,7 @@ const { t } = useI18n();
 }
 
 .auth-immersive-legal a:hover {
-  color: var(--color-primary-light);
+  color: var(--auth-accent, var(--color-primary-light));
 }
 
 @media (max-width: 600px) {
