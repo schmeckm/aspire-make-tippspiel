@@ -55,4 +55,4 @@ jobs:
           DB_USER: postgres
           DB_PASSWORD: postgres
           JWT_SECRET: test-jwt-secret-for-integration-tests
-        run: node --test tests/integration/auth.test.js
+        run: node --test --test-force-exit tests/integration/auth.test.js

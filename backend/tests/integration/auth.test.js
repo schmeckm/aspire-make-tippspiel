@@ -1,6 +1,10 @@
-const { describe, it, before } = require('node:test');
+const { describe, it, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const { setupTestDb } = require('../helpers/testApp');
+const { setupTestDb, teardownTestDb } = require('../helpers/testApp');
+
+after(async () => {
+  await teardownTestDb();
+});
 
 function getUserModel() {
   return require('../../models').User;

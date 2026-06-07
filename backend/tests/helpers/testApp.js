@@ -10,6 +10,11 @@ async function setupTestDb() {
   return supertest(app);
 }
 
+async function teardownTestDb() {
+  const { sequelize } = require('../../app');
+  await sequelize.close();
+}
+
 async function loginAs(api, email, password) {
   return api.post('/api/auth/login').send({ email, password });
 }
@@ -24,6 +29,7 @@ async function adminToken(api) {
 
 module.exports = {
   setupTestDb,
+  teardownTestDb,
   loginAs,
   adminToken,
 };
