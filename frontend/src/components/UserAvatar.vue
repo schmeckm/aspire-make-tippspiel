@@ -42,7 +42,7 @@ const imageSrc = computed(() => {
   if (props.imageUrl.startsWith('blob:') || props.imageUrl.startsWith('data:')) {
     return props.imageUrl;
   }
-  if (!props.imageCache) return props.imageUrl;
+  if (props.imageUrl.includes('?v=') || !props.imageCache) return props.imageUrl;
   const separator = props.imageUrl.includes('?') ? '&' : '?';
   return `${props.imageUrl}${separator}v=${props.imageCache}`;
 });

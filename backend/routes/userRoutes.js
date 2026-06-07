@@ -19,6 +19,7 @@ const { deleteUserAccount } = require('../services/userAccountService');
 const { normalizeAvatarColor } = require('../services/avatarColorService');
 const { normalizeAvatarEmoji } = require('../services/avatarEmojiService');
 const { validatePassword } = require('../utils/passwordValidation');
+const { invalidateLeaderboardCache } = require('../services/leaderboardService');
 
 const router = express.Router();
 
@@ -138,6 +139,7 @@ router.post(
 
       user.imageUrl = buildImageUrl(user.id, ext);
       await user.save();
+      invalidateLeaderboardCache();
       res.json(user.toSafeJSON());
     } catch (error) {
       if (req.file?.path && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
@@ -162,6 +164,7 @@ router.delete('/:id/image', async (req, res) => {
     deleteUserImageFiles(user.id);
     user.imageUrl = null;
     await user.save();
+    invalidateLeaderboardCache();
     res.json(user.toSafeJSON());
   } catch (error) {
     sendError(res, req, 500, 'errors.userImageDeleteFailed');

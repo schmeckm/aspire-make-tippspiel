@@ -2,6 +2,7 @@ const { Op } = require('sequelize');
 const { User, Team, Prediction, Match, ScoringRule, BonusPrediction, BonusQuestion, LeaderboardSnapshot } = require('../models');
 const { calculatePoints, classifyPrediction } = require('./pointsCalculationService');
 const { getSetting } = require('./settingsService');
+const { withImageCacheBuster } = require('./userImageService');
 
 const CACHE_TTL_MS = parseInt(process.env.LEADERBOARD_CACHE_TTL_MS || '45000', 10);
 const leaderboardCache = new Map();
@@ -130,7 +131,7 @@ function buildUserLeaderboardEntryFromData(user, scoringRules, options = {}) {
     userId: user.id,
     firstName: user.firstName,
     lastName: user.lastName,
-    imageUrl: user.imageUrl || null,
+    imageUrl: withImageCacheBuster(user.imageUrl, user.updatedAt),
     avatarColor: user.avatarColor || 'default',
     avatarEmoji: user.avatarEmoji || null,
     teamId: user.teamId,

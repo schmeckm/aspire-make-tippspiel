@@ -25,6 +25,17 @@ function buildImageUrl(userId, ext) {
   return `/uploads/users/user-${userId}${ext}`;
 }
 
+function withImageCacheBuster(imageUrl, updatedAt) {
+  if (!imageUrl) return null;
+  if (/^https?:\/\//i.test(imageUrl) || imageUrl.startsWith('blob:') || imageUrl.startsWith('data:')) {
+    return imageUrl;
+  }
+  const version = updatedAt ? new Date(updatedAt).getTime() : 0;
+  if (!version) return imageUrl;
+  const base = imageUrl.split('?')[0];
+  return `${base}?v=${version}`;
+}
+
 function deleteUserImageFiles(userId) {
   const dir = getUsersUploadDir();
   for (const ext of ALLOWED_EXTENSIONS) {
@@ -74,6 +85,7 @@ module.exports = {
   getUsersUploadDir,
   resolveExtension,
   buildImageUrl,
+  withImageCacheBuster,
   deleteUserImageFiles,
   importProfileImageFromUrl,
 };

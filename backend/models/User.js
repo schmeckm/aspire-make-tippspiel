@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const sequelize = require('../database');
+const { withImageCacheBuster } = require('../services/userImageService');
 
 const User = sequelize.define('User', {
   id: {
@@ -129,6 +130,7 @@ User.prototype.toSafeJSON = function () {
     passwordResetExpires,
     ...safe
   } = this.toJSON();
+  safe.imageUrl = withImageCacheBuster(safe.imageUrl, safe.updatedAt);
   return safe;
 };
 
