@@ -401,6 +401,9 @@
     "squadEmpty": "Squad could not be loaded. Please try again later.",
     "loadPlayerImages": "Load player photos ({count} missing)",
     "loadingPlayerImages": "Loading player photos…",
+    "playerImagesProgressBar": "Player image progress",
+    "playerImagesLoadedCount": "{withImage} / {total} images loaded",
+    "playerImagesProgressMeta": "{missing} still missing",
     "standingsEmpty": "No standings data available yet.",
     "scorersEmpty": "No scorers yet – starts when the tournament begins.",
     "liveEmpty": "No matches for this filter.",
@@ -990,11 +993,15 @@
       "liveSynced": "Live scores synchronized.",
       "liveSyncFailed": "Live sync failed.",
       "playerImagesStarted": "Player image sync started.",
+      "playerImagesAlreadyRunning": "Player image sync is already running in the background — see sync logs for progress.",
       "playerImagesFailed": "Player image sync failed.",
       "playerImagesFinished": "Player images done: {created} new, {updated} updated.",
       "playerImagesErrors": "Player image sync finished with errors.",
       "playerImagesTimeout": "Player image sync is taking longer than expected — check sync logs.",
       "playerImagesProgress": "Loading player images… {resolved} with image, {skipped} skipped{progress}",
+      "playerImagesProgressBar": "Player image sync progress",
+      "playerImagesLoadedCount": "{loaded} / {total} images loaded",
+      "playerImagesProgressMeta": "{processed} of {total} players scanned, {skipped} without image",
       "genericError": "Error.",
       "venuesEnrichedCount": "{count} venues enriched."
     },
@@ -1163,7 +1170,39 @@
     "aiAssistant": { "title": "AI assistant", "subtitle": "Admin help for diagnostics and copy" }
   },
   "admin": {
-    "manualMode": "Manual CSV mode",
+    "manualMode": {
+      "csvTitle": "Manual CSV mode",
+      "apiTitle": "API mode active",
+      "defaultMessage": "No Football API configured. The app is running in manual CSV mode.",
+      "csvImport": "CSV import",
+      "results": "Results",
+      "editMatches": "Edit matches",
+      "recalculate": "Recalculate points",
+      "recalculating": "Recalculating..."
+    },
+    "leaderboard": {
+      "includeAdmins": "Show admins in leaderboard",
+      "includeAdminsHint": "Excluded by default.",
+      "saved": "Leaderboard setting saved."
+    },
+    "ai": {
+      "placeholder": "Ask an admin question...",
+      "actions": {
+        "missingTips": "Analyze missing tips",
+        "pointsIssue": "Check points issue",
+        "csvImport": "Review CSV import",
+        "reminderText": "Create reminder text",
+        "bonusSuggestions": "Suggest bonus questions"
+      },
+      "questions": {
+        "missingTips": "Which users have not submitted tips today?",
+        "pointsIssue": "Why might points not have been calculated for a match?",
+        "csvImport": "What data might be missing after the CSV import?",
+        "reminderText": "Create a friendly reminder text for missing tips.",
+        "bonusSuggestions": "Suggest 5 suitable bonus questions for World Cup 2026."
+      }
+    },
+    "manualModeLegacy": "Manual CSV mode",
     "apiMode": "API mode active",
     "syncFixtures": "Sync schedule",
     "syncResults": "Sync results",

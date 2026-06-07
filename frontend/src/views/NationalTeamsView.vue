@@ -70,13 +70,39 @@
                   v-if="missingPlayerImages > 0"
                   type="button"
                   class="btn btn-secondary btn-sm national-team-load-images"
-                  :disabled="loadingPlayerImages"
                   @click="loadPlayerImages"
                 >
-                  {{ loadingPlayerImages
+                  {{ resolvingPlayerImages
                     ? t('nationalTeams.loadingPlayerImages')
                     : t('nationalTeams.loadPlayerImages', { count: missingPlayerImages }) }}
                 </button>
+                <div
+                  v-if="resolvingPlayerImages && squadImageProgress.total"
+                  class="national-team-image-progress"
+                >
+                  <div class="national-team-image-progress__header">
+                    <span class="national-team-image-progress__count">
+                      {{ t('nationalTeams.playerImagesLoadedCount', squadImageProgress) }}
+                    </span>
+                    <strong>{{ squadImageProgress.percent }}%</strong>
+                  </div>
+                  <div
+                    class="national-team-image-progress__track"
+                    role="progressbar"
+                    :aria-valuenow="squadImageProgress.withImage"
+                    aria-valuemin="0"
+                    :aria-valuemax="squadImageProgress.total"
+                    :aria-label="t('nationalTeams.playerImagesProgressBar')"
+                  >
+                    <div
+                      class="national-team-image-progress__fill"
+                      :style="{ width: `${squadImageProgress.percent}%` }"
+                    />
+                  </div>
+                  <p class="text-muted national-team-image-progress__meta">
+                    {{ t('nationalTeams.playerImagesProgressMeta', squadImageProgress) }}
+                  </p>
+                </div>
               </div>
             </div>
             <LoadingSpinner v-if="loadingTeamDetail && !squadGroups.length" />
@@ -347,7 +373,7 @@ const scorers = ref([]);
 const liveMatches = ref([]);
 const loadingTeams = ref(true);
 const loadingTeamDetail = ref(false);
-const loadingPlayerImages = ref(false);
+const resolvingPlayerImages = ref(false);
 const loadingStandings = ref(false);
 const loadingScorers = ref(false);
 const loadingLive = ref(false);
@@ -442,6 +468,19 @@ const squadGroups = computed(() => {
 const missingPlayerImages = computed(() => (
   selectedTeam.value?.squad?.filter((player) => !player.imageUrl).length || 0
 ));
+
+const squadImageProgress = computed(() => {
+  const squad = selectedTeam.value?.squad || [];
+  const total = squad.length;
+  const withImage = squad.filter((player) => player.imageUrl).length;
+  const percent = total ? Math.min(100, Math.round((withImage / total) * 100)) : 0;
+  return {
+    total,
+    withImage,
+    missing: total - withImage,
+    percent,
+  };
+});
 
 const canCompareDuels = computed(() => (
   duelTeamAId.value
@@ -570,13 +609,11 @@ async function loadTeamDetail(team) {
 }
 
 async function loadPlayerImages() {
-  if (!selectedTeam.value?.id || loadingPlayerImages.value) return;
-  loadingPlayerImages.value = true;
-  try {
-    await resolveTeamImagesInBackground(selectedTeam.value.id);
-  } finally {
-    loadingPlayerImages.value = false;
-  }
+  if (!selectedTeam.value?.id || resolvingPlayerImages.value) return;
+  resolvingPlayerImages.value = true;
+  resolveTeamImagesInBackground(selectedTeam.value.id).finally(() => {
+    resolvingPlayerImages.value = false;
+  });
 }
 
 async function resolveTeamImagesInBackground(teamId) {
@@ -616,7 +653,7 @@ async function resolveTeamImagesInBackground(teamId) {
 
 async function selectTeam(team, { replaceRoute = true } = {}) {
   cancelTeamRequests();
-  loadingPlayerImages.value = false;
+  resolvingPlayerImages.value = false;
   error.value = '';
   selectedTeam.value = {
     id: team.id,
@@ -808,6 +845,50 @@ onUnmounted(() => {
 
 .duels-compare-btn {
   white-space: nowrap;
+}
+
+.national-team-image-progress {
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-soft);
+}
+
+.national-team-image-progress__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.national-team-image-progress__header strong {
+  color: var(--color-primary);
+}
+
+.national-team-image-progress__count {
+  font-weight: 600;
+}
+
+.national-team-image-progress__track {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.national-team-image-progress__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--color-primary-dark), var(--color-primary));
+  transition: width 0.4s ease;
+}
+
+.national-team-image-progress__meta {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
 }
 
 @media (max-width: 900px) {

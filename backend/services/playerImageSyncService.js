@@ -13,7 +13,7 @@ const {
 } = require('./playerImageService');
 const { isEnabled } = require('./playerImageProviderService');
 
-const PROGRESS_UPDATE_EVERY = 10;
+const PROGRESS_UPDATE_EVERY = 5;
 const STALE_RUNNING_MS = 30 * 60 * 1000;
 
 async function syncPlayerImages({
@@ -39,6 +39,8 @@ async function syncPlayerImages({
   try {
     const players = await footballTeamService.getAllSquadPlayers();
     summary.totalPlayers = players.length;
+    summary.processedCount = 0;
+    await updateSyncProgress(log, summary);
 
     if (!players.length) {
       summary.skippedCount = 0;
@@ -65,12 +67,13 @@ async function syncPlayerImages({
 
         if (!result?.imageUrl) {
           summary.skippedCount++;
-        } else if (!hadImage) {
-          summary.createdCount++;
-        } else if (existing.imageUrl !== result.imageUrl) {
-          summary.updatedCount++;
         } else {
-          summary.skippedCount++;
+          summary.loadedCount = (summary.loadedCount || 0) + 1;
+          if (!hadImage) {
+            summary.createdCount++;
+          } else if (existing.imageUrl !== result.imageUrl) {
+            summary.updatedCount++;
+          }
         }
       } catch (err) {
         summary.errorCount++;
@@ -89,6 +92,8 @@ async function syncPlayerImages({
       }
     }
 
+    summary.processedCount = processed;
+    await updateSyncProgress(log, summary);
     await finishSyncLog(log, summary);
 
     if (userId) {
@@ -102,11 +107,10 @@ async function syncPlayerImages({
       });
     }
 
-    const resolved = summary.createdCount + summary.updatedCount;
     return {
       logId: log.id,
       ...summary,
-      message: `Spielerbilder synchronisiert: ${resolved} mit Bild (${summary.createdCount} neu, ${summary.updatedCount} aktualisiert), ${summary.skippedCount} ohne Änderung, ${summary.errorCount} Fehler.`,
+      message: `Spielerbilder synchronisiert: ${summary.loadedCount || 0} mit Bild (${summary.createdCount} neu, ${summary.updatedCount} aktualisiert), ${summary.skippedCount} ohne Bild, ${summary.errorCount} Fehler.`,
     };
   } catch (error) {
     await failSyncLog(log, error, summary);

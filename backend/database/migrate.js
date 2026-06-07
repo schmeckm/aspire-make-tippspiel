@@ -71,6 +71,8 @@ async function runMigrations(sequelize) {
     console.log('Migration: PlayerImages.countryCode auf VARCHAR(64) erweitert.');
   }
 
+  await fixPlayerImagesUniqueIndexes(sequelize, queryInterface, playerImageTableInfo);
+
   let aiCommentaryTableInfo;
   try {
     aiCommentaryTableInfo = await queryInterface.describeTable('AICommentaries');
@@ -85,6 +87,61 @@ async function runMigrations(sequelize) {
   });
 
   await ensureIndexes(queryInterface);
+}
+
+async function fixPlayerImagesUniqueIndexes(sequelize, queryInterface, tableInfo) {
+  const hasColumnUnique = tableInfo.playerName?.unique || tableInfo.teamName?.unique;
+  if (!hasColumnUnique) return;
+
+  const dialect = sequelize.getDialect();
+  if (dialect === 'sqlite') {
+    await sequelize.query(`
+      CREATE TABLE PlayerImages_new (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        playerName VARCHAR(255) NOT NULL,
+        teamName VARCHAR(255),
+        countryCode VARCHAR(64),
+        imageUrl VARCHAR(255),
+        source VARCHAR(255) NOT NULL DEFAULT 'placeholder',
+        sourceId VARCHAR(255),
+        licenseInfo TEXT,
+        attributionText TEXT,
+        lastCheckedAt DATETIME,
+        isManuallyApproved TINYINT(1) NOT NULL DEFAULT 0,
+        createdAt DATETIME NOT NULL,
+        updatedAt DATETIME NOT NULL
+      )
+    `);
+    await sequelize.query(`
+      INSERT INTO PlayerImages_new (
+        id, playerName, teamName, countryCode, imageUrl, source, sourceId,
+        licenseInfo, attributionText, lastCheckedAt, isManuallyApproved, createdAt, updatedAt
+      )
+      SELECT
+        id, playerName, teamName, countryCode, imageUrl, source, sourceId,
+        licenseInfo, attributionText, lastCheckedAt, isManuallyApproved, createdAt, updatedAt
+      FROM PlayerImages
+    `);
+    await sequelize.query('DROP TABLE PlayerImages');
+    await sequelize.query('ALTER TABLE PlayerImages_new RENAME TO PlayerImages');
+  } else {
+    await queryInterface.changeColumn('PlayerImages', 'playerName', {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: false,
+    });
+    await queryInterface.changeColumn('PlayerImages', 'teamName', {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: false,
+    });
+  }
+
+  await ensureIndexSafe(queryInterface, 'PlayerImages', ['playerName', 'teamName'], {
+    unique: true,
+    name: 'player_images_player_name_team_name',
+  });
+  console.log('Migration: PlayerImages unique indexes auf (playerName, teamName) korrigiert.');
 }
 
 async function ensureIndexSafe(queryInterface, tableName, fields, options = {}) {

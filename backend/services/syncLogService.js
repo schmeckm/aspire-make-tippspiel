@@ -67,8 +67,22 @@ async function failSyncLog(log, error, summary = null) {
   return log;
 }
 
+async function failStaleRunningPlayerImageLogs() {
+  const { isStaleRunningLog } = require('./playerImageSyncService');
+  const runningLogs = await SyncLog.findAll({
+    where: { syncType: 'player_images', status: 'running' },
+  });
+
+  for (const log of runningLogs) {
+    if (isStaleRunningLog(log)) {
+      await failSyncLog(log, new Error('Sync nach Timeout abgebrochen (Server-Neustart oder Hänger).'));
+    }
+  }
+}
+
 async function getSyncLogs({ limit = 20, syncType = null, status = null } = {}) {
   const { Op } = require('sequelize');
+  await failStaleRunningPlayerImageLogs();
   const where = {};
   if (syncType) where.syncType = syncType;
   if (status) where.status = status;
@@ -147,6 +161,7 @@ module.exports = {
   finishSyncLog,
   updateSyncProgress,
   failSyncLog,
+  failStaleRunningPlayerImageLogs,
   getSyncLogs,
   getLastSuccessfulSync,
   getLastSync,

@@ -386,6 +386,9 @@
     "squadEmpty": "No se pudo cargar la plantilla. Inténtalo de nuevo más tarde.",
     "loadPlayerImages": "Cargar fotos de jugadores ({count} faltan)",
     "loadingPlayerImages": "Cargando fotos de jugadores…",
+    "playerImagesProgressBar": "Progreso de imágenes de jugadores",
+    "playerImagesLoadedCount": "{withImage} / {total} imágenes cargadas",
+    "playerImagesProgressMeta": "faltan {missing}",
     "standingsEmpty": "Aún no hay datos de clasificación.",
     "scorersEmpty": "Aún no hay goleadores – comienza con el torneo.",
     "liveEmpty": "No hay partidos para este filtro.",
@@ -689,7 +692,39 @@
     "points": "Puntos"
   },
   "admin": {
-    "manualMode": "Modo CSV manual",
+    "manualMode": {
+      "csvTitle": "Modo CSV manual",
+      "apiTitle": "Modo API activo",
+      "defaultMessage": "No hay API de fútbol configurada. La app funciona en modo CSV manual.",
+      "csvImport": "Importar CSV",
+      "results": "Resultados",
+      "editMatches": "Editar partidos",
+      "recalculate": "Recalcular puntos",
+      "recalculating": "Recalculando..."
+    },
+    "leaderboard": {
+      "includeAdmins": "Mostrar admins en la clasificación",
+      "includeAdminsHint": "Excluidos por defecto.",
+      "saved": "Ajuste de clasificación guardado."
+    },
+    "ai": {
+      "placeholder": "Haz una pregunta de administración...",
+      "actions": {
+        "missingTips": "Analizar pronósticos faltantes",
+        "pointsIssue": "Revisar problema de puntos",
+        "csvImport": "Revisar importación CSV",
+        "reminderText": "Crear texto de recordatorio",
+        "bonusSuggestions": "Sugerir preguntas bonus"
+      },
+      "questions": {
+        "missingTips": "¿Qué usuarios aún no han enviado pronósticos hoy?",
+        "pointsIssue": "¿Por qué podrían no haberse calculado puntos para un partido?",
+        "csvImport": "¿Qué datos podrían faltar tras la importación CSV?",
+        "reminderText": "Crea un texto amable de recordatorio para pronósticos faltantes.",
+        "bonusSuggestions": "Sugiere 5 preguntas bonus adecuadas para el Mundial 2026."
+      }
+    },
+    "manualModeLegacy": "Modo CSV manual",
     "apiMode": "Modo API activo",
     "syncFixtures": "Sincronizar calendario",
     "syncResults": "Sincronizar resultados",
@@ -1060,11 +1095,15 @@
       "liveSynced": "Marcadores en vivo sincronizados.",
       "liveSyncFailed": "Error en sync en vivo.",
       "playerImagesStarted": "Sync de imágenes iniciado.",
+      "playerImagesAlreadyRunning": "El sync de imágenes ya está en segundo plano — revisa los logs de sync.",
       "playerImagesFailed": "Error en sync de imágenes.",
       "playerImagesFinished": "Imágenes listas: {created} nuevas, {updated} actualizadas.",
       "playerImagesErrors": "Sync de imágenes terminado con errores.",
       "playerImagesTimeout": "El sync de imágenes tarda más de lo esperado — revisa los logs.",
       "playerImagesProgress": "Cargando imágenes… {resolved} con imagen, {skipped} omitidas{progress}",
+      "playerImagesProgressBar": "Progreso del sync de imágenes",
+      "playerImagesLoadedCount": "{loaded} / {total} imágenes cargadas",
+      "playerImagesProgressMeta": "{processed} de {total} jugadores revisados, {skipped} sin imagen",
       "genericError": "Error.",
       "venuesEnrichedCount": "{count} estadios enriquecidos."
     },
