@@ -6,7 +6,10 @@
       <aside class="auth-immersive-welcome">
         <div class="auth-immersive-welcome-content">
           <LanguageSwitcher show-label class="auth-immersive-language" />
-          <h1 class="auth-immersive-brand">{{ t('auth.welcomeBack') }}</h1>
+          <h1 v-if="showHeadline" class="auth-immersive-brand">
+            {{ headline || t('auth.welcomeHeadline') }}
+            <span class="auth-immersive-brand-accent">{{ headlineAccent || t('auth.welcomeHeadlineAccent') }}</span>
+          </h1>
           <p class="auth-immersive-text">{{ welcomeText || t('auth.loginWelcomeText') }}</p>
         </div>
       </aside>
@@ -31,6 +34,9 @@ defineProps({
   title: { type: String, default: '' },
   hint: { type: String, default: '' },
   welcomeText: { type: String, default: '' },
+  headline: { type: String, default: '' },
+  headlineAccent: { type: String, default: '' },
+  showHeadline: { type: Boolean, default: true },
 });
 
 const { t } = useI18n();
@@ -70,15 +76,34 @@ const { t } = useI18n();
 
 .auth-immersive-welcome {
   padding-right: 2rem;
+  position: relative;
+}
+
+.auth-immersive-welcome::before {
+  content: '';
+  position: absolute;
+  top: -2rem;
+  left: -2rem;
+  width: 20rem;
+  height: 20rem;
+  background: radial-gradient(circle, rgba(0, 255, 127, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .auth-immersive-brand {
-  font-size: clamp(3.25rem, 7vw, 5.5rem);
-  font-weight: 700;
+  font-size: clamp(2.75rem, 6vw, 4.5rem);
+  font-weight: 800;
   line-height: 1.05;
   color: #fff;
   margin: 1.5rem 0 1.25rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+}
+
+.auth-immersive-brand-accent {
+  display: block;
+  color: var(--color-primary);
+  text-shadow: 0 0 40px rgba(0, 255, 127, 0.45);
 }
 
 .auth-immersive-text {
@@ -188,32 +213,39 @@ const { t } = useI18n();
 .auth-immersive-input {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-sm);
-  background: #fff;
-  color: var(--sapTitleColor);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
   font-size: 0.875rem;
   font-family: inherit;
   min-height: 2.75rem;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .auth-immersive-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 25%, transparent);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(0, 255, 127, 0.15);
 }
 
 .auth-immersive-input:-webkit-autofill,
 .auth-immersive-input:-webkit-autofill:hover,
 .auth-immersive-input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px #fff inset;
-  -webkit-text-fill-color: var(--sapTitleColor);
-  caret-color: var(--sapTitleColor);
+  -webkit-box-shadow: 0 0 0 1000px #1a1a1a inset;
+  -webkit-text-fill-color: #fff;
+  caret-color: #fff;
 }
 
 .auth-immersive-input::placeholder {
-  color: #9aa0a6;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.auth-immersive-input option {
+  background: #1a1a1a;
+  color: #fff;
 }
 
 .auth-immersive-input-wrap {
@@ -238,32 +270,94 @@ const { t } = useI18n();
   border: none;
   border-radius: 0.25rem;
   background: transparent;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.65);
   cursor: pointer;
 }
 
 .auth-immersive-password-toggle:hover {
-  color: var(--auth-bg);
-  background: rgba(0, 0, 0, 0.05);
+  color: var(--color-primary);
+  background: rgba(0, 255, 127, 0.1);
+}
+
+.auth-google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  min-height: 2.75rem;
+  backdrop-filter: blur(8px);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.auth-google-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(0, 255, 127, 0.35);
+}
+
+.auth-google-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0 0.25rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.auth-divider span {
+  white-space: nowrap;
+}
+
+.auth-qr-card {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
 }
 
 .auth-immersive-submit {
   width: 100%;
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary, #0A0A0A);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
   min-height: 2.75rem;
 }
 
 .auth-immersive-submit:hover:not(:disabled) {
   background: var(--color-primary-dark);
+  box-shadow: var(--glow-primary);
 }
 
 .auth-immersive-submit:disabled {

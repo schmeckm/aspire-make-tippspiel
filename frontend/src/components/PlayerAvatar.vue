@@ -78,7 +78,7 @@ function onImageError() {
 .player-avatar-fallback {
   font-weight: 700;
   color: var(--color-primary);
-  background: var(--color-primary-bg, #e8f4fd);
+  background: var(--color-primary-bg);
 }
 
 .player-avatar-xs {

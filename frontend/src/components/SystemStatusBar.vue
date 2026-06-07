@@ -89,7 +89,7 @@ const { items, version } = useSystemHealth();
 }
 
 .system-status-item.checking .system-status-dot {
-  background: #9ca3af;
+  background: var(--color-text-muted);
   animation: pulse 1.2s ease-in-out infinite;
 }
 
@@ -103,7 +103,7 @@ const { items, version } = useSystemHealth();
 }
 
 .system-status-item.online .system-status-value {
-  color: #166534;
+  color: var(--color-success);
 }
 
 .system-status-item.offline .system-status-dot {
@@ -112,7 +112,7 @@ const { items, version } = useSystemHealth();
 }
 
 .system-status-item.offline .system-status-value {
-  color: #991b1b;
+  color: var(--color-danger);
 }
 
 @keyframes pulse {

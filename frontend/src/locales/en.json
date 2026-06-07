@@ -41,6 +41,7 @@
     "administration": "Administration",
     "dashboard": "Dashboard",
     "matches": "Matches",
+    "groupStandings": "Group standings",
     "nationalTeams": "National teams",
     "myPredictions": "My Predictions",
     "bonus": "Bonus Questions",
@@ -72,6 +73,10 @@
   },
   "auth": {
     "welcomeBack": "Aspire MAKE",
+    "welcomeHeadline": "Predict against your",
+    "welcomeHeadlineAccent": "colleagues.",
+    "registerHeadline": "Join the",
+    "registerHeadlineAccent": "World Cup.",
     "loginWelcomeText": "Welcome to the Aspire MAKE FIFA World Cup 2026 prediction game – follow matches, place your predictions, and compete with your colleagues.",
     "registerWelcomeText": "Join Aspire MAKE – register and start predicting the FIFA World Cup 2026.",
     "forgotPasswordWelcomeText": "No worries – we'll help you regain access to your Aspire MAKE account.",
@@ -99,6 +104,7 @@
     "noAccount": "No account yet?",
     "hasAccount": "Already registered?",
     "registerNow": "Register now",
+    "scanToOpen": "Scan to open this page on your phone",
     "toLogin": "Go to login",
     "loginFailed": "Login failed.",
     "registerFailed": "Registration failed.",
@@ -175,6 +181,9 @@
     "passwordHint": "Leave blank to keep current password",
     "showPassword": "Show password",
     "hidePassword": "Hide password",
+    "darkMode": "Dark mode",
+    "darkModeOn": "On",
+    "darkModeOff": "Off",
     "saveProfile": "Save profile",
     "updated": "Profile updated successfully.",
     "updateFailed": "Profile could not be saved.",
@@ -352,6 +361,30 @@
     "noTeam": "Not assigned to a team yet.",
     "goToProfile": "Choose team in profile"
   },
+  "groupStandings": {
+    "title": "Group standings",
+    "subtitle": "World Cup 2026 – tables by group (A–L)",
+    "empty": "No group-stage matches in the system yet.",
+    "preliminary": "Preliminary tables – updated live after each match. Top two per group are highlighted.",
+    "loadFailed": "Could not load group standings.",
+    "nextMatches": "Next matches",
+    "knockoutOutlook": "Knockout outlook",
+    "upcomingTitle": "Upcoming group matches",
+    "knockoutTitle": "Knockout preview by bracket",
+    "knockoutSubtitle": "Round of 32 and Round of 16 – teams are projected from current standings and update live when results arrive.",
+    "vs": "vs",
+    "live": "Live",
+    "match": "Match",
+    "projected": "Projected",
+    "roundOf32": "Round of 32",
+    "roundOf16": "Round of 16",
+    "winner": "Winner",
+    "runnerUp": "Runner-up",
+    "thirdFromGroups": "Best 3rd from {groups}",
+    "thirdPlaceRank": "Rank among third place: {rank}",
+    "thirdPlaceQualified": "proj. qualified",
+    "winnerOfMatch": "Winner match {match}"
+  },
   "nationalTeams": {
     "title": "National teams & squads",
     "subtitle": "World Cup 2026 – teams and players (football-data.org)",
@@ -416,7 +449,9 @@
     "stage": "Round",
     "cached": "Cached",
     "footnote": "{count} World Cup matches · {goals} goals total",
-    "summaryOnly": "Individual matches are not available on the free football-data.org plan."
+    "summaryOnly": "Individual matches are not available on the free football-data.org plan.",
+    "statsPartial": "Match count and goals from the API; wins/draws are not available on the free plan.",
+    "historicalSource": "Based on official World Cup historical records (API has no history for this pairing)."
   },
   "matches": {
     "title": "Matches",
@@ -488,7 +523,11 @@
     "empty": "No predictions submitted yet.",
     "loadFailed": "Could not load predictions.",
     "homeScoreLabel": "Home goals {team}",
-    "awayScoreLabel": "Away goals {team}"
+    "awayScoreLabel": "Away goals {team}",
+    "decreaseHomeScore": "Decrease home goals {team}",
+    "increaseHomeScore": "Increase home goals {team}",
+    "decreaseAwayScore": "Decrease away goals {team}",
+    "increaseAwayScore": "Increase away goals {team}"
   },
   "leaderboard": {
     "title": "Leaderboard",
@@ -647,6 +686,7 @@
     "toggleDropdown": "Toggle notifications panel"
   },
   "display": {
+    "subtitle": "Live leaderboard",
     "updated": "Updated",
     "liveMatches": "Matches",
     "noMatches": "No matches."
@@ -927,6 +967,9 @@
       "syncPlayerImages": "Load player images (WC squads)",
       "loadingImages": "Loading images...",
       "syncing": "Syncing...",
+      "syncOfficialSchedule": "Align official World Cup schedule",
+      "officialSynced": "Official World Cup 2026 schedule aligned.",
+      "officialCleanup": "{count} test/special match(es) removed.",
       "syncFixtures": "Sync fixtures",
       "syncResults": "Sync results",
       "syncLive": "Sync live scores",

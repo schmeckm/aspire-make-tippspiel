@@ -39,7 +39,7 @@ async function seedDemoData() {
   await seedDefaultSettings();
 
   await Match.bulkCreate([
-    { matchNumber: 1, stage: 'Group Stage', groupName: 'A', homeTeam: 'Deutschland', awayTeam: 'Frankreich', kickoffTime: '2026-06-11T21:00:00.000Z', stadium: 'MetLife Stadium', city: 'New York' },
+    { matchNumber: 1, stage: 'Group Stage', groupName: 'A', homeTeam: 'Mexico', awayTeam: 'South Africa', kickoffTime: '2026-06-11T19:00:00.000Z', stadium: 'Estadio Azteca', city: 'Mexico City' },
     { matchNumber: 2, stage: 'Group Stage', groupName: 'A', homeTeam: 'Brasilien', awayTeam: 'Japan', kickoffTime: '2026-06-12T18:00:00.000Z', stadium: 'SoFi Stadium', city: 'Los Angeles' },
     { matchNumber: 3, stage: 'Group Stage', groupName: 'B', homeTeam: 'Spanien', awayTeam: 'Argentinien', kickoffTime: '2026-06-13T21:00:00.000Z', stadium: 'AT&T Stadium', city: 'Dallas' },
     { matchNumber: 4, stage: 'Group Stage', groupName: 'B', homeTeam: 'England', awayTeam: 'Niederlande', kickoffTime: '2026-06-14T18:00:00.000Z', stadium: 'Mercedes-Benz Stadium', city: 'Atlanta' },

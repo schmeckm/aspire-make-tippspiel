@@ -4,6 +4,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
 const { syncFixtures } = require('../services/fixtureSyncService');
 const { enrichMatchVenuesFromTheSportsDb, enrichCitiesFromWm2026Lookup } = require('../services/theSportsDbVenueService');
+const { syncOfficialWm2026Schedule } = require('../services/wm2026OfficialSyncService');
 const { testTheSportsDbConnection } = require('../services/playerImageProviderService');
 const { syncPlayerImages } = require('../services/playerImageSyncService');
 const { syncResults } = require('../services/resultSyncService');
@@ -85,6 +86,15 @@ router.put('/provider', async (req, res) => {
 router.post('/fixtures', async (req, res) => {
   try {
     const result = await syncFixtures({ userId: req.user.id, req });
+    res.json(result);
+  } catch (error) {
+    handleSyncError(error, res);
+  }
+});
+
+router.post('/official-schedule', async (req, res) => {
+  try {
+    const result = await syncOfficialWm2026Schedule({ userId: req.user.id, req });
     res.json(result);
   } catch (error) {
     handleSyncError(error, res);

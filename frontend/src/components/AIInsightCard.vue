@@ -28,14 +28,15 @@ onMounted(async () => {
 .ai-insights { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
 .insight-card {
   display: flex; align-items: center; gap: 0.75rem;
-  padding: 0.875rem 1rem; border-radius: var(--radius-sm);
+  padding: 0.875rem 1rem; border-radius: var(--radius);
   background: var(--color-surface); border: 1px solid var(--color-border);
   font-size: 0.875rem;
+  box-shadow: var(--glow-card);
 }
 .insight-card.warning { border-left: 3px solid var(--color-warning); }
 .insight-card.success { border-left: 3px solid var(--color-success); }
 .insight-card.info { border-left: 3px solid var(--color-info); }
-.insight-card.ai { border-left: 3px solid var(--color-primary); background: rgba(13,79,60,0.04); }
+.insight-card.ai { border-left: 3px solid var(--color-primary); background: var(--color-primary-soft); }
 .insight-icon { font-size: 1.25rem; }
 .insight-text { flex: 1; }
 .insight-link { color: var(--color-primary); font-weight: 600; text-decoration: none; }

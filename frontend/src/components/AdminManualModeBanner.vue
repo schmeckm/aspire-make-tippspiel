@@ -47,11 +47,11 @@ const showBanner = computed(() => props.showWhenApiConfigured || !props.apiConfi
   border: 1px solid var(--color-border);
 }
 .csv-mode {
-  background: linear-gradient(135deg, #fff9e6 0%, #f0f4f3 100%);
-  border-left: 4px solid var(--color-accent-dark);
+  background: var(--color-warning-bg);
+  border-left: 4px solid var(--color-warning);
 }
 .api-mode {
-  background: rgba(13, 79, 60, 0.05);
+  background: var(--color-primary-soft);
   border-left: 4px solid var(--color-primary);
 }
 .banner-content p { margin: 0.25rem 0 0; font-size: 0.875rem; color: var(--color-text-muted); }

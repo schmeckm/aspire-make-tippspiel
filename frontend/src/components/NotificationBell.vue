@@ -60,7 +60,8 @@ onUnmounted(() => document.removeEventListener('click', closeOnClickOutside));
 .bell-icon { font-size: 1.25rem; }
 .badge-count {
   position: absolute; top: 0; right: 0;
-  background: #dc3545; color: white;
+  background: var(--color-danger);
+  color: #fff;
   font-size: 0.65rem; font-weight: 700;
   padding: 0.1rem 0.35rem; border-radius: 999px;
 }

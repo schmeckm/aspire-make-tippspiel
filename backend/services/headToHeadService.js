@@ -3,9 +3,11 @@ const { Match } = require('../models');
 const footballDataProvider = require('./providers/footballDataProvider');
 const { getProviderConfig, assertApiConfigured } = require('./footballProviderService');
 const { findTeamByName, listTeams } = require('./footballTeamService');
+const { findHistoricalHeadToHead } = require('../data/wcHistoricalHeadToHead');
 
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
+const BRIDGE_SEARCH_MAX_DAYS = 750;
 const DEFAULT_COMPETITIONS = 'WC';
 const DEFAULT_LIMIT = 15;
 
@@ -172,6 +174,7 @@ function buildResult({
   competitions,
   detailLevel = 'full',
   source = 'football-data.org',
+  statsPartial = false,
 }) {
   return {
     available: true,
@@ -182,8 +185,25 @@ function buildResult({
     meetings,
     detailLevel,
     matchListLimited: detailLevel === 'summary_only',
+    statsPartial,
     source,
   };
+}
+
+function buildHistoricalFallbackResult(teamAName, teamBName, competitions) {
+  const historical = findHistoricalHeadToHead(teamAName, teamBName);
+  if (!historical?.meetings?.length) return null;
+
+  const summary = computeSummary(historical.meetings, teamAName, teamBName);
+  return buildResult({
+    teamAName,
+    teamBName,
+    meetings: historical.meetings,
+    summary,
+    competitions,
+    detailLevel: 'full',
+    source: 'fifa-wc-records',
+  });
 }
 
 function findOpponentMatch(matches, teamAId, teamBId) {
@@ -193,13 +213,14 @@ function findOpponentMatch(matches, teamAId, teamBId) {
   )) || null;
 }
 
-async function findBridgeExternalMatch(config, teamAId, teamBId, competitions) {
+async function findBridgeExternalMatch(config, teamAId, teamBId) {
   const today = new Date();
   const recentFrom = new Date(today);
-  recentFrom.setDate(recentFrom.getDate() - 720);
+  recentFrom.setDate(recentFrom.getDate() - BRIDGE_SEARCH_MAX_DAYS);
 
   const strategies = [
-    { competitions, limit: 100 },
+    { limit: 100 },
+    { limit: 100, dateFrom: formatApiDate(recentFrom), dateTo: formatApiDate(today) },
     { limit: 50, status: 'FINISHED', dateFrom: formatApiDate(recentFrom), dateTo: formatApiDate(today) },
   ];
 
@@ -291,15 +312,27 @@ async function fetchHead2HeadData({
   let summary;
   let detailLevel = 'none';
 
+  let statsPartial = false;
+
   if (meetings.length > 0) {
     summary = computeSummary(meetings, teamAName, teamBName);
     detailLevel = 'full';
   } else if (aggregates?.numberOfMatches) {
     summary = mapAggregatesToSummary(aggregates, teamAName, teamBName, refHome, refAway);
-    if (!summary.breakdownAvailable) {
-      return buildUnavailable(teamAName, teamBName);
+    if (summary.breakdownAvailable) {
+      detailLevel = 'summary_only';
+    } else {
+      summary = {
+        totalMatches: aggregates.numberOfMatches,
+        totalGoals: aggregates.totalGoals ?? 0,
+        teamAWins: null,
+        teamBWins: null,
+        draws: null,
+        breakdownAvailable: false,
+      };
+      detailLevel = 'summary_only';
+      statsPartial = true;
     }
-    detailLevel = 'summary_only';
   } else {
     summary = {
       totalMatches: 0, totalGoals: 0, teamAWins: 0, teamBWins: 0, draws: 0, breakdownAvailable: false,
@@ -313,6 +346,7 @@ async function fetchHead2HeadData({
     summary,
     competitions,
     detailLevel,
+    statsPartial,
   });
 }
 
@@ -349,11 +383,17 @@ async function getHead2HeadByTeamIds(teamAId, teamBId, {
 
   let bridge = await findBridgeFromLocalMatch(labelA, labelB);
   if (!bridge) {
-    bridge = await findBridgeExternalMatch(config, resolvedA.id, resolvedB.id, competitions);
+    bridge = await findBridgeExternalMatch(config, resolvedA.id, resolvedB.id);
   }
   bridge = await resolveBridgeReference(config, bridge);
 
   if (!bridge?.id) {
+    const fallback = buildHistoricalFallbackResult(labelA, labelB, competitions);
+    if (fallback) {
+      cacheSet(cacheKey, fallback);
+      return fallback;
+    }
+
     const empty = buildResult({
       teamAName: labelA,
       teamBName: labelB,
@@ -363,6 +403,7 @@ async function getHead2HeadByTeamIds(teamAId, teamBId, {
       },
       competitions,
       detailLevel: 'none',
+      statsPartial: false,
     });
     cacheSet(cacheKey, empty);
     return empty;
@@ -377,6 +418,14 @@ async function getHead2HeadByTeamIds(teamAId, teamBId, {
     competitions,
     limit,
   });
+
+  if ((result.summary?.totalMatches || 0) === 0 && (result.meetings?.length || 0) === 0) {
+    const fallback = buildHistoricalFallbackResult(labelA, labelB, competitions);
+    if (fallback) {
+      cacheSet(cacheKey, fallback);
+      return fallback;
+    }
+  }
 
   cacheSet(cacheKey, result);
   return result;

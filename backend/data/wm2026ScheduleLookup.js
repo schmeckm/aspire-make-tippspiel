@@ -43,7 +43,7 @@ const TEAM_ALIAS_GROUPS = [
   ['austria', 'oesterreich', 'osterreich', 'österreich'],
   ['jordan', 'jordanien'],
   ['portugal'],
-  ['dr congo', 'dr kongo', 'democratic republic of the congo', 'demokratische republik kongo'],
+  ['dr congo', 'dr kongo', 'congo dr', 'democratic republic of the congo', 'demokratische republik kongo', 'demokratische republik des kongo'],
   ['uzbekistan', 'usbekistan'],
   ['colombia', 'kolumbien'],
   ['england'],

@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-app">
+  <div class="layout-app" data-area="app">
     <div v-if="sidebarOpen" class="sidebar-backdrop" @click="closeSidebar" />
     <Sidebar ref="sidebarRef" :links="adminSidebarLinks" admin-mode />
     <div class="layout-main">

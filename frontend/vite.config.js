@@ -13,12 +13,13 @@ export default defineConfig({
         name: 'WM 2026 Tippspiel',
         short_name: 'WM2026',
         description: 'FIFA WM 2026 Tippspiel',
-        theme_color: '#0d4f3c',
-        background_color: '#f0f4f3',
+        theme_color: '#0A0A0A',
+        background_color: '#0A0A0A',
         display: 'standalone',
         lang: 'de',
         icons: [
-          { src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⚽</text></svg>', sizes: '192x192', type: 'image/svg+xml' },
+          { src: '/icons/pwa-icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
+          { src: '/icons/pwa-icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'maskable' },
         ],
       },
       workbox: {

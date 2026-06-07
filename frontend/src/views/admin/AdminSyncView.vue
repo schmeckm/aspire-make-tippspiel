@@ -55,7 +55,10 @@
       </div>
 
       <div class="btn-group mb-2">
-        <button class="btn btn-primary" :disabled="syncing || !status.apiConfigured" @click="syncFixtures">
+        <button class="btn btn-primary" :disabled="syncing || !status.apiConfigured" @click="syncOfficialSchedule">
+          {{ syncing ? t('adminPages.sync.syncing') : t('adminPages.sync.syncOfficialSchedule') }}
+        </button>
+        <button class="btn btn-secondary" :disabled="syncing || !status.apiConfigured" @click="syncFixtures">
           {{ syncing ? t('adminPages.sync.syncing') : t('adminPages.sync.syncFixtures') }}
         </button>
         <button class="btn btn-accent" :disabled="syncing || !status.apiConfigured" @click="syncResults">
@@ -159,6 +162,29 @@ async function syncFixtures() {
     const { data } = await api.post('/admin/sync/fixtures');
     message.value = `${data.message || t('adminPages.sync.fixturesSynced')}${formatVenueEnrichment(data)}`;
     messageType.value = data.errorCount > 0 ? 'warning' : 'success';
+    await load();
+  } catch (e) {
+    error.value = e.response?.data?.error || t('adminPages.sync.syncFailed');
+  } finally {
+    syncing.value = false;
+  }
+}
+
+async function syncOfficialSchedule() {
+  syncing.value = true;
+  error.value = '';
+  message.value = '';
+  try {
+    const { data } = await api.post('/admin/sync/official-schedule');
+    const parts = [
+      data.message,
+      data.cleanupResult?.removedCount
+        ? t('adminPages.sync.officialCleanup', { count: data.cleanupResult.removedCount })
+        : '',
+    ].filter(Boolean);
+    message.value = parts.join(' ') || t('adminPages.sync.officialSynced');
+    const fixtureErrors = data.fixtureResult?.errorCount || 0;
+    messageType.value = fixtureErrors > 0 ? 'warning' : 'success';
     await load();
   } catch (e) {
     error.value = e.response?.data?.error || t('adminPages.sync.syncFailed');

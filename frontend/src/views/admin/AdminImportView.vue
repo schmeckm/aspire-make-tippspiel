@@ -43,7 +43,7 @@
         <div class="card-header"><h3>{{ t('adminPages.import.exampleCsv') }}</h3></div>
         <div class="card-body">
           <pre class="csv-example">matchNumber,stage,groupName,homeTeam,awayTeam,kickoffTime,stadium,city
-1,Group Stage,A,Deutschland,Frankreich,2026-06-11T21:00:00,MetLife Stadium,New York
+1,Group Stage,A,Mexico,South Africa,2026-06-11T19:00:00,Estadio Azteca,Mexico City
 2,Group Stage,A,Brasilien,Japan,2026-06-12T18:00:00,SoFi Stadium,Los Angeles</pre>
         </div>
       </div>

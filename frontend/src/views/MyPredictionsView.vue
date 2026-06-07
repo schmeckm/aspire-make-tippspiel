@@ -286,9 +286,10 @@ onMounted(async () => {
 
 .prediction-card {
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   padding: 0.875rem;
   background: var(--color-surface);
+  box-shadow: var(--glow-card);
 }
 
 .prediction-card-header,

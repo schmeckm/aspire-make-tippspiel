@@ -38,11 +38,15 @@ async function handleClick(n) {
 <style scoped>
 .notification-list { max-height: 320px; overflow-y: auto; }
 .notification-item {
-  padding: 0.75rem 1rem; border-bottom: 1px solid var(--color-border);
-  cursor: pointer; transition: background 0.2s;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background 0.2s;
+  color: var(--color-text);
 }
+
 .notification-item:hover { background: var(--color-bg); }
-.notification-item.unread { background: rgba(13, 79, 60, 0.05); border-left: 3px solid var(--color-primary); }
+.notification-item.unread { background: var(--color-primary-soft); border-left: 3px solid var(--color-primary); }
 .notification-title { font-weight: 600; font-size: 0.85rem; }
 .notification-message { font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.25rem; }
 .notification-time { font-size: 0.7rem; color: var(--color-text-muted); margin-top: 0.25rem; }

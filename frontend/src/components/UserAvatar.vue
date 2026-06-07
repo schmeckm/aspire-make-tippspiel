@@ -80,7 +80,7 @@ const fallbackStyle = computed(() => resolveAvatarColorStyle(props.avatarColor))
 .user-avatar-fallback {
   font-weight: 700;
   color: var(--color-primary);
-  background: var(--color-primary-bg, #e8f4fd);
+  background: var(--color-primary-bg);
 }
 
 .user-avatar-emoji {

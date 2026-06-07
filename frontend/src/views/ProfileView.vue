@@ -1,13 +1,14 @@
 <template>
-  <div>
+  <div class="profile-page">
     <div class="page-header">
       <h1>{{ t('profile.title') }}</h1>
+      <span class="text-muted">{{ authStore.user?.email }}</span>
     </div>
 
     <AlertMessage v-if="success" :message="success" type="success" />
     <AlertMessage v-if="error" :message="error" type="error" />
 
-    <div class="card" style="max-width: 640px;">
+    <div class="card profile-card">
       <div class="card-body">
         <div class="profile-image-section">
           <UserAvatar
@@ -118,15 +119,22 @@
             <label for="language">{{ t('languages.label') }}</label>
             <LocalePicker v-model="form.language" />
           </div>
-          <div class="form-group">
-            <label class="checkbox-label">
-              <input
-                type="checkbox"
-                :checked="themeStore.theme === 'dark'"
-                @change="themeStore.toggleTheme()"
-              />
-              {{ t('profile.darkMode') }}
-            </label>
+          <div class="form-group profile-theme-group">
+            <span class="profile-theme-label">{{ t('profile.darkMode') }}</span>
+            <button
+              type="button"
+              class="profile-theme-toggle"
+              role="switch"
+              :aria-checked="themeStore.theme === 'dark'"
+              @click="themeStore.toggleTheme()"
+            >
+              <span class="profile-theme-track" :class="{ active: themeStore.theme === 'dark' }">
+                <span class="profile-theme-thumb" />
+              </span>
+              <span class="profile-theme-text">
+                {{ themeStore.theme === 'dark' ? t('profile.darkModeOn') : t('profile.darkModeOff') }}
+              </span>
+            </button>
           </div>
           <div class="form-group">
             <label for="team">{{ t('auth.teamDepartment') }}</label>
@@ -222,7 +230,7 @@
       </div>
     </div>
 
-    <div class="card profile-danger-card" style="max-width: 640px;">
+    <div class="card profile-card profile-danger-card">
       <div class="card-body">
         <h3 class="profile-danger-title">{{ t('profile.dangerZoneTitle') }}</h3>
         <p class="text-muted profile-danger-hint">{{ t('profile.dangerZoneHint') }}</p>
@@ -308,7 +316,7 @@ const previewInitials = computed(() => {
 const faceButtonStyle = computed(() => {
   const style = resolveAvatarColorStyle(form.value.avatarColor);
   return style || {
-    backgroundColor: 'var(--color-primary-bg, #e8f4fd)',
+    backgroundColor: 'var(--color-primary-bg)',
     color: 'var(--color-primary)',
   };
 });
@@ -551,6 +559,14 @@ async function handleSave() {
 </script>
 
 <style scoped>
+.profile-page {
+  max-width: 40rem;
+}
+
+.profile-card {
+  margin-bottom: 1.5rem;
+}
+
 .profile-image-section {
   display: flex;
   gap: 1.25rem;
@@ -620,13 +636,16 @@ async function handleSave() {
   border-radius: 50%;
   border: 2px solid var(--color-border);
   cursor: pointer;
-  background: var(--color-primary-bg, #e8f4fd);
+  background: var(--color-primary-bg);
   padding: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .profile-avatar-color-btn.active {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+  box-shadow: var(--glow-primary);
+  transform: scale(1.1);
 }
 
 .profile-avatar-faces-grid {
@@ -651,6 +670,71 @@ async function handleSave() {
 .profile-avatar-face-btn.active {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+  box-shadow: var(--glow-primary);
+}
+
+.profile-theme-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius);
+  background: var(--color-surface-elevated, var(--color-bg));
+  border: 1px solid var(--color-border);
+}
+
+.profile-theme-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.profile-theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+.profile-theme-track {
+  position: relative;
+  width: 2.75rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  background: var(--color-border);
+  transition: background 0.2s ease;
+}
+
+.profile-theme-track.active {
+  background: var(--color-primary);
+  box-shadow: var(--glow-primary);
+}
+
+.profile-theme-thumb {
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s ease;
+}
+
+.profile-theme-track.active .profile-theme-thumb {
+  transform: translateX(1.25rem);
+  background: var(--color-on-primary);
+}
+
+.profile-theme-text {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  min-width: 4.5rem;
+  text-align: left;
 }
 
 .profile-avatar-face-emoji {
@@ -737,13 +821,13 @@ async function handleSave() {
 }
 
 .profile-danger-card {
-  margin-top: 1.5rem;
-  border-color: var(--sapErrorColor, #bb0000);
+  border-color: rgba(255, 107, 107, 0.35);
+  box-shadow: 0 0 24px rgba(255, 107, 107, 0.08);
 }
 
 .profile-danger-title {
   margin: 0 0 0.5rem;
-  color: var(--sapErrorColor, #bb0000);
+  color: var(--sapErrorColor);
   font-size: 1.05rem;
 }
 
@@ -751,6 +835,7 @@ async function handleSave() {
   font-size: 0.875rem;
   line-height: 1.5;
   margin-bottom: 1rem;
+  color: var(--color-text-muted);
 }
 
 .profile-danger-form {

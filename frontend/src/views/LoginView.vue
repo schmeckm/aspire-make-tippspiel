@@ -93,8 +93,15 @@
     </p>
 
     <template #footer>
-      {{ t('auth.noAccount') }}
-      <router-link to="/register">{{ t('auth.registerNow') }}</router-link>
+      <div class="auth-login-footer">
+        <p>
+          {{ t('auth.noAccount') }}
+          <router-link to="/register">{{ t('auth.registerNow') }}</router-link>
+        </p>
+        <div class="auth-qr-card">
+          <PageQrCode :url="pageUrl" :label="t('auth.scanToOpen')" />
+        </div>
+      </div>
     </template>
   </AuthImmersiveLayout>
 </template>
@@ -106,6 +113,7 @@ import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/authStore';
 import AlertMessage from '../components/AlertMessage.vue';
 import AuthImmersiveLayout from '../components/AuthImmersiveLayout.vue';
+import PageQrCode from '../components/PageQrCode.vue';
 
 const REMEMBER_EMAIL_KEY = 'rememberedEmail';
 
@@ -124,8 +132,10 @@ const error = ref('');
 const showResendVerification = ref(false);
 const resending = ref(false);
 const resendMessage = ref('');
+const pageUrl = ref('');
 
 onMounted(async () => {
+  pageUrl.value = `${globalThis.location.origin}/login`;
   const rememberedEmail = localStorage.getItem(REMEMBER_EMAIL_KEY);
   if (rememberedEmail) {
     email.value = rememberedEmail;
@@ -186,54 +196,14 @@ async function handleResendVerification() {
 </script>
 
 <style scoped>
-.auth-google-btn {
+.auth-login-footer {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: var(--radius-sm);
-  background: #fff;
-  color: #1f2937;
-  font-size: 0.875rem;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  min-height: 2.75rem;
-  transition: background 0.15s ease, box-shadow 0.15s ease;
+  text-align: center;
 }
 
-.auth-google-btn:hover {
-  background: #f8fafc;
-  box-shadow: var(--shadow-sm);
-}
-
-.auth-google-icon {
-  width: 1.125rem;
-  height: 1.125rem;
-  flex-shrink: 0;
-}
-
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 1.25rem 0 0.25rem;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.auth-divider::before,
-.auth-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.auth-divider span {
-  white-space: nowrap;
+.auth-login-footer p {
+  margin: 0;
 }
 </style>

@@ -734,22 +734,34 @@ onUnmounted(() => {
   align-items: center;
   padding: 0.625rem 0.75rem;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   background: var(--color-surface);
+  color: var(--color-text);
   cursor: pointer;
   text-align: left;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .national-team-card.active,
 .national-team-card:hover {
   border-color: var(--color-primary);
   background: var(--color-primary-soft);
+  box-shadow: var(--glow-primary);
 }
 
 .national-team-crest { width: 28px; height: 28px; object-fit: contain; }
 .national-team-crest-fallback { width: 28px; text-align: center; }
-.national-team-name { font-weight: 600; font-size: 0.9rem; }
+.national-team-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
 .national-team-meta { font-size: 0.75rem; color: var(--color-text-muted); }
+
+.national-team-card.active .national-team-name,
+.national-team-card:hover .national-team-name {
+  color: var(--color-text);
+}
 
 .national-team-detail-header {
   display: flex;

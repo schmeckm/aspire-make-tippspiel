@@ -41,6 +41,7 @@
     "administration": "Administración",
     "dashboard": "Panel",
     "matches": "Partidos",
+    "groupStandings": "Clasificación por grupos",
     "nationalTeams": "Selecciones",
     "myPredictions": "Mis Pronósticos",
     "bonus": "Preguntas Bonus",
@@ -71,6 +72,10 @@
   },
   "auth": {
     "welcomeBack": "Aspire MAKE",
+    "welcomeHeadline": "Pronostica contra tus",
+    "welcomeHeadlineAccent": "compañeros.",
+    "registerHeadline": "Únete al",
+    "registerHeadlineAccent": "Mundial.",
     "loginWelcomeText": "Bienvenido al juego de pronósticos de la Copa Mundial FIFA 2026 de Aspire MAKE: sigue los partidos, haz tus predicciones y compite con tus compañeros.",
     "registerWelcomeText": "Únete a Aspire MAKE – regístrate y empieza a pronosticar la Copa Mundial FIFA 2026.",
     "forgotPasswordWelcomeText": "Sin problema – te ayudamos a recuperar el acceso a tu cuenta de Aspire MAKE.",
@@ -98,6 +103,7 @@
     "noAccount": "¿No tienes cuenta?",
     "hasAccount": "¿Ya registrado?",
     "registerNow": "Regístrate ahora",
+    "scanToOpen": "Escanee para abrir esta página en el móvil",
     "toLogin": "Ir al login",
     "loginFailed": "Inicio de sesión fallido.",
     "registerFailed": "Registro fallido.",
@@ -172,6 +178,9 @@
     "passwordHint": "Dejar en blanco para mantener la actual",
     "showPassword": "Mostrar contraseña",
     "hidePassword": "Ocultar contraseña",
+    "darkMode": "Modo oscuro",
+    "darkModeOn": "Activado",
+    "darkModeOff": "Desactivado",
     "saveProfile": "Guardar perfil",
     "updated": "Perfil actualizado correctamente.",
     "updateFailed": "No se pudo guardar el perfil.",
@@ -337,6 +346,30 @@
     "noTeam": "Aún no asignado a un equipo.",
     "goToProfile": "Elegir equipo en el perfil"
   },
+  "groupStandings": {
+    "title": "Clasificación por grupos",
+    "subtitle": "Mundial 2026 – tablas por grupo (A–L)",
+    "empty": "Aún no hay partidos de grupos en el sistema.",
+    "preliminary": "Tablas provisionales – se actualizan en vivo tras cada partido. Los dos primeros de cada grupo están resaltados.",
+    "loadFailed": "No se pudo cargar la clasificación por grupos.",
+    "nextMatches": "Próximos partidos",
+    "knockoutOutlook": "Siguiente fase",
+    "upcomingTitle": "Próximos partidos de grupos",
+    "knockoutTitle": "Vista previa eliminatoria",
+    "knockoutSubtitle": "Dieciseisavos y octavos – equipos proyectados según la clasificación actual, actualización en vivo.",
+    "vs": "vs",
+    "live": "En vivo",
+    "match": "Partido",
+    "projected": "Provisional",
+    "roundOf32": "Dieciseisavos",
+    "roundOf16": "Octavos",
+    "winner": "1.º",
+    "runnerUp": "2.º",
+    "thirdFromGroups": "Mejor 3.º de {groups}",
+    "thirdPlaceRank": "Puesto entre terceros: {rank}",
+    "thirdPlaceQualified": "clasif. probable",
+    "winnerOfMatch": "Ganador partido {match}"
+  },
   "nationalTeams": {
     "title": "Selecciones y plantillas",
     "subtitle": "Mundial 2026 – equipos y jugadores (football-data.org)",
@@ -473,7 +506,11 @@
     "empty": "Aún no hay pronósticos enviados.",
     "loadFailed": "No se pudieron cargar los pronósticos.",
     "homeScoreLabel": "Goles local {team}",
-    "awayScoreLabel": "Goles visitante {team}"
+    "awayScoreLabel": "Goles visitante {team}",
+    "decreaseHomeScore": "Reducir goles local {team}",
+    "increaseHomeScore": "Aumentar goles local {team}",
+    "decreaseAwayScore": "Reducir goles visitante {team}",
+    "increaseAwayScore": "Aumentar goles visitante {team}"
   },
   "leaderboard": {
     "title": "Clasificación",
@@ -632,6 +669,7 @@
     "toggleDropdown": "Mostrar u ocultar notificaciones"
   },
   "display": {
+    "subtitle": "Clasificación en vivo",
     "updated": "Actualizado",
     "liveMatches": "Partidos",
     "noMatches": "Sin partidos."
@@ -999,6 +1037,9 @@
       "syncPlayerImages": "Cargar imágenes de jugadores",
       "loadingImages": "Cargando imágenes...",
       "syncing": "Sincronizando...",
+      "syncOfficialSchedule": "Alinear calendario oficial del Mundial",
+      "officialSynced": "Calendario oficial del Mundial 2026 alineado.",
+      "officialCleanup": "{count} partido(s) de prueba/especial eliminado(s).",
       "syncFixtures": "Sincronizar calendario",
       "syncResults": "Sincronizar resultados",
       "syncLive": "Sincronizar en vivo",

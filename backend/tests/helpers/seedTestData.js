@@ -38,8 +38,8 @@ async function seedTestData() {
     homeTeam: 'Deutschland',
     awayTeam: 'Frankreich',
     kickoffTime: '2026-06-11T21:00:00.000Z',
-    stadium: 'Test Stadium',
-    city: 'Test City',
+    stadium: 'MetLife Stadium',
+    city: 'East Rutherford',
   });
 
   return { team };

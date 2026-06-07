@@ -322,7 +322,14 @@ async function submit() {
 </script>
 
 <style scoped>
-.bonus-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+.bonus-card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm), var(--glow-card);
+}
+.bonus-card:hover {
+  border-color: rgba(0, 255, 127, 0.2);
+  box-shadow: var(--shadow-md), var(--glow-primary);
+}
 .card-header-row { display: flex; justify-content: space-between; align-items: start; gap: 1rem; margin-bottom: 0.5rem; }
 .question-title { display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; margin: 0; flex-wrap: wrap; }
 .question-team-flag { flex-shrink: 0; }

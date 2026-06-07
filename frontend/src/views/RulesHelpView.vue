@@ -142,13 +142,20 @@ onMounted(async () => {
 .help-example {
   margin-top: 1rem;
   padding: 1rem;
-  background: var(--color-bg);
-  border-radius: var(--radius-sm);
+  background: var(--color-primary-soft);
+  border: 1px solid rgba(0, 255, 127, 0.15);
+  border-radius: var(--radius);
+  box-shadow: var(--glow-card);
 }
 
 .help-example p {
   margin: 0.25rem 0;
   font-size: 0.875rem;
+}
+
+.help-ai-card {
+  border-color: rgba(0, 255, 127, 0.2);
+  box-shadow: var(--glow-card);
 }
 
 .help-ai-card .btn {

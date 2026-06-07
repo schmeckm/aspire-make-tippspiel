@@ -8,6 +8,8 @@ import { useI18n } from 'vue-i18n';
 import { Line } from 'vue-chartjs';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
 import { useFormatters } from '../composables/useFormatters';
+import { useThemeStore } from '../stores/themeStore';
+import { CHART_PRIMARY, CHART_PRIMARY_FILL, baseChartOptions, getChartPalette } from '../utils/chartTheme';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
@@ -19,23 +21,25 @@ const props = defineProps({
 
 const { t } = useI18n();
 const { formatDate } = useFormatters();
+const themeStore = useThemeStore();
+const chartPalette = computed(() => getChartPalette(themeStore.theme));
 
 const chartData = computed(() => ({
   labels: props.data.map((d) => formatDate(d.time)),
   datasets: [{
     label: props.label || t('chart.points'),
     data: props.data.map((d) => d[props.valueKey]),
-    borderColor: '#007AC2',
-    backgroundColor: 'rgba(0, 122, 194, 0.1)',
+    borderColor: CHART_PRIMARY,
+    backgroundColor: CHART_PRIMARY_FILL,
+    pointBackgroundColor: CHART_PRIMARY,
+    pointBorderColor: chartPalette.value.pointBorder,
     tension: 0.3,
     fill: true,
   }],
 }));
 
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: { legend: { display: false } },
-  scales: { y: { beginAtZero: true } },
-};
+const chartOptions = computed(() => baseChartOptions({
+  y: { beginAtZero: true },
+  theme: themeStore.theme,
+}));
 </script>

@@ -1,27 +1,39 @@
 <template>
-  <nav class="navbar fiori-shell-bar">
+  <nav class="navbar" :class="{ 'navbar--admin': adminMode }">
     <div class="navbar-start">
       <button class="icon-btn mobile-menu-btn" @click="$emit('toggle-sidebar')" :aria-label="t('nav.menu')">
         <NavIcon name="menu" />
       </button>
+      <router-link
+        v-if="adminMode"
+        to="/dashboard"
+        class="icon-btn navbar-back-btn"
+        :title="t('nav.backToApp')"
+      >
+        <NavIcon name="arrow-left" />
+      </router-link>
       <AppBrandMark v-if="!adminMode" compact :show-title="false" class="navbar-brand-mark" />
       <span v-if="adminMode" class="badge badge-admin">{{ t('nav.adminArea') }}</span>
       <span v-else class="navbar-shell-title navbar-shell-title--mobile">{{ t('brand.title') }}</span>
     </div>
     <div class="navbar-user">
       <div class="navbar-actions">
-        <router-link to="/help" class="icon-btn" :title="t('help.nav')">
+        <router-link to="/help" class="icon-btn navbar-action--desktop" :title="t('help.nav')">
           <NavIcon name="help" />
         </router-link>
         <button
-          class="icon-btn"
+          class="icon-btn navbar-theme-toggle"
           :title="t('profile.darkMode')"
           @click="themeStore.toggleTheme()"
         >
           <NavIcon :name="themeStore.theme === 'dark' ? 'sun' : 'moon'" />
         </button>
-        <LanguageSwitcher />
-        <NotificationBell v-if="!adminMode" />
+        <div class="navbar-action--desktop">
+          <LanguageSwitcher />
+        </div>
+        <div v-if="!adminMode" class="navbar-notification">
+          <NotificationBell />
+        </div>
       </div>
       <router-link to="/profile" class="navbar-user-block" :title="t('nav.profile')">
         <UserAvatar
@@ -128,15 +140,48 @@ async function handleLogout() {
   display: none;
 }
 
+.navbar-back-btn {
+  color: var(--color-text-muted);
+}
+
+.navbar-back-btn:hover {
+  color: var(--color-primary);
+}
+
 @media (max-width: 768px) {
+  .navbar {
+    min-height: 3.25rem;
+    padding: 0 0.75rem;
+  }
+
   .navbar-user-text,
   .navbar-logout {
+    display: none;
+  }
+
+  .navbar-action--desktop {
     display: none;
   }
 
   .navbar-actions {
     padding-right: 0;
     border-right: none;
+    gap: 0.125rem;
+  }
+
+  .navbar-user {
+    gap: 0.5rem;
+  }
+
+  .navbar-user-block {
+    padding: 0;
+    margin: 0;
+  }
+
+  .navbar-shell-title--mobile {
+    font-size: 0.9375rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 }
 </style>

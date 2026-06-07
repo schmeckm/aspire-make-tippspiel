@@ -53,11 +53,12 @@ onMounted(async () => {
 
 <style scoped>
 .ai-summary-card {
-  background: linear-gradient(135deg, #fff9e6 0%, #f0f4f3 100%);
-  border: 1px solid var(--color-accent-dark);
+  background: var(--color-primary-soft);
+  border: 1px solid rgba(0, 255, 127, 0.2);
   border-radius: var(--radius);
   padding: 1.25rem;
   margin-bottom: 1.5rem;
+  box-shadow: var(--glow-card);
 }
 .summary-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
 .summary-header h4 { margin: 0; color: var(--color-primary-dark); }

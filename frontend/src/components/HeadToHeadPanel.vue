@@ -14,23 +14,29 @@
       <div v-if="hasSummary" class="head2head-summary">
         <div class="head2head-summary-item">
           <span class="head2head-summary-label">{{ data.teamA }}</span>
-          <strong>{{ data.summary.teamAWins }}</strong>
+          <strong>{{ formatStat(data.summary.teamAWins) }}</strong>
           <span class="text-muted">{{ t('head2head.wins') }}</span>
         </div>
         <div class="head2head-summary-item head2head-summary-draws">
-          <strong>{{ data.summary.draws }}</strong>
+          <strong>{{ formatStat(data.summary.draws) }}</strong>
           <span class="text-muted">{{ t('head2head.draws') }}</span>
         </div>
         <div class="head2head-summary-item">
           <span class="head2head-summary-label">{{ data.teamB }}</span>
-          <strong>{{ data.summary.teamBWins }}</strong>
+          <strong>{{ formatStat(data.summary.teamBWins) }}</strong>
           <span class="text-muted">{{ t('head2head.wins') }}</span>
         </div>
       </div>
       <p v-else class="text-muted head2head-empty">{{ t('head2head.empty') }}</p>
 
-      <p v-if="data.matchListLimited" class="head2head-tier-hint text-muted">
+      <p v-if="data.statsPartial" class="head2head-tier-hint text-muted">
+        {{ t('head2head.statsPartial') }}
+      </p>
+      <p v-else-if="data.matchListLimited" class="head2head-tier-hint text-muted">
         {{ t('head2head.summaryOnly') }}
+      </p>
+      <p v-else-if="isHistoricalSource" class="head2head-tier-hint text-muted">
+        {{ t('head2head.historicalSource') }}
       </p>
 
       <div v-if="hasMeetings" class="table-wrapper head2head-table-wrap">
@@ -84,6 +90,11 @@ const { formatDate } = useFormatters();
 
 const hasMeetings = computed(() => (props.data?.meetings?.length || 0) > 0);
 const hasSummary = computed(() => (props.data?.summary?.totalMatches || 0) > 0);
+const isHistoricalSource = computed(() => props.data?.source === 'fifa-wc-records');
+
+function formatStat(value) {
+  return value == null ? '–' : value;
+}
 
 function formatMeetingDate(value) {
   if (!value) return '–';
@@ -120,6 +131,7 @@ function meetingLabel(meeting) {
 .head2head-subtitle {
   margin: 0 0 0.75rem;
   font-size: 0.85rem;
+  color: var(--color-text-muted);
 }
 
 .head2head-summary {
@@ -130,7 +142,7 @@ function meetingLabel(meeting) {
   padding: 0.75rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  background: var(--color-bg-soft, #f8fafc);
+  background: var(--color-bg-soft);
 }
 
 .head2head-summary-item {
@@ -144,11 +156,13 @@ function meetingLabel(meeting) {
 .head2head-summary-item strong {
   font-size: 1.35rem;
   line-height: 1;
+  color: var(--color-text);
 }
 
 .head2head-summary-label {
   font-size: 0.8rem;
   font-weight: 600;
+  color: var(--color-text-muted);
 }
 
 .head2head-summary-draws {
@@ -171,5 +185,6 @@ function meetingLabel(meeting) {
 .head2head-tier-hint {
   margin: 0.5rem 0 0;
   font-size: 0.78rem;
+  color: var(--color-text-muted);
 }
 </style>

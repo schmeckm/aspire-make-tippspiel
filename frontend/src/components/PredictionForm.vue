@@ -1,28 +1,66 @@
 <template>
   <form v-if="!isLocked" @submit.prevent="handleSubmit" :class="['prediction-inputs', { 'prediction-inputs--compact': compact }]">
-    <input
-      v-model.number="homeScore"
-      type="number"
-      min="0"
-      max="20"
-      required
-      class="form-control"
-      :style="{ width: compact ? '48px' : '60px', textAlign: 'center' }"
-      :placeholder="t('predictions.home')"
-      :aria-label="t('predictions.homeScoreLabel', { team: match.homeTeam })"
-    />
+    <div :class="['score-stepper', compact ? 'score-stepper--horizontal' : 'score-stepper--vertical']">
+      <button
+        type="button"
+        class="score-stepper-btn"
+        :disabled="scoreAtMax(homeScore)"
+        :aria-label="t('predictions.increaseHomeScore', { team: match.homeTeam })"
+        @click="adjustScore('home', 1)"
+      >
+        {{ compact ? '›' : '▴' }}
+      </button>
+      <input
+        v-model.number="homeScore"
+        type="number"
+        min="0"
+        max="20"
+        required
+        class="form-control score-stepper-input"
+        :placeholder="t('predictions.home')"
+        :aria-label="t('predictions.homeScoreLabel', { team: match.homeTeam })"
+      />
+      <button
+        type="button"
+        class="score-stepper-btn"
+        :disabled="scoreAtMin(homeScore)"
+        :aria-label="t('predictions.decreaseHomeScore', { team: match.homeTeam })"
+        @click="adjustScore('home', -1)"
+      >
+        {{ compact ? '‹' : '▾' }}
+      </button>
+    </div>
     <span class="prediction-separator" aria-hidden="true">:</span>
-    <input
-      v-model.number="awayScore"
-      type="number"
-      min="0"
-      max="20"
-      required
-      class="form-control"
-      :style="{ width: compact ? '48px' : '60px', textAlign: 'center' }"
-      :placeholder="t('predictions.away')"
-      :aria-label="t('predictions.awayScoreLabel', { team: match.awayTeam })"
-    />
+    <div :class="['score-stepper', compact ? 'score-stepper--horizontal' : 'score-stepper--vertical']">
+      <button
+        type="button"
+        class="score-stepper-btn"
+        :disabled="scoreAtMax(awayScore)"
+        :aria-label="t('predictions.increaseAwayScore', { team: match.awayTeam })"
+        @click="adjustScore('away', 1)"
+      >
+        {{ compact ? '›' : '▴' }}
+      </button>
+      <input
+        v-model.number="awayScore"
+        type="number"
+        min="0"
+        max="20"
+        required
+        class="form-control score-stepper-input"
+        :placeholder="t('predictions.away')"
+        :aria-label="t('predictions.awayScoreLabel', { team: match.awayTeam })"
+      />
+      <button
+        type="button"
+        class="score-stepper-btn"
+        :disabled="scoreAtMin(awayScore)"
+        :aria-label="t('predictions.decreaseAwayScore', { team: match.awayTeam })"
+        @click="adjustScore('away', -1)"
+      >
+        {{ compact ? '‹' : '▾' }}
+      </button>
+    </div>
     <button type="submit" class="btn btn-primary btn-sm" :disabled="loading">
       {{ loading ? t('common.loading') : (prediction ? t('common.save') : t('predictions.submit')) }}
     </button>
@@ -59,9 +97,31 @@ const isLocked = computed(() => {
   return props.match.canPredict === false;
 });
 
+const MIN_SCORE = 0;
+const MAX_SCORE = 20;
+
 const homeScore = ref(props.prediction?.predictedHomeScore ?? '');
 const awayScore = ref(props.prediction?.predictedAwayScore ?? '');
 const loading = ref(false);
+
+function parseScore(value) {
+  const num = Number(value);
+  return Number.isFinite(num) ? num : MIN_SCORE;
+}
+
+function scoreAtMin(value) {
+  return parseScore(value) <= MIN_SCORE;
+}
+
+function scoreAtMax(value) {
+  return parseScore(value) >= MAX_SCORE;
+}
+
+function adjustScore(side, delta) {
+  const target = side === 'home' ? homeScore : awayScore;
+  const next = Math.min(MAX_SCORE, Math.max(MIN_SCORE, parseScore(target.value) + delta));
+  target.value = next;
+}
 
 watch(() => props.prediction, (val) => {
   if (val) {
@@ -108,12 +168,103 @@ async function handleSubmit() {
 }
 .prediction-lock-icon { font-size: 1rem; opacity: 0.85; }
 
+.score-stepper {
+  display: inline-flex;
+  align-items: center;
+}
+
+.score-stepper--vertical {
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.score-stepper--horizontal {
+  flex-direction: row;
+  gap: 0.2rem;
+}
+
+.score-stepper-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 2.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.score-stepper--vertical .score-stepper-btn {
+  width: 5rem;
+  height: 3rem;
+  border: none;
+  background: transparent;
+  font-size: 2.3rem;
+}
+
+.score-stepper-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-soft, rgba(0, 255, 127, 0.08));
+}
+
+.score-stepper-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.score-stepper-input {
+  width: 60px;
+  text-align: center;
+  padding: 0.5rem 0.25rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  -moz-appearance: textfield;
+}
+
+.score-stepper--vertical .score-stepper-input {
+  width: 3rem;
+  padding: 0.25rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  border: none;
+  background: transparent;
+  min-height: auto;
+}
+
+.score-stepper--vertical .score-stepper-input:focus {
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.score-stepper-input::-webkit-outer-spin-button,
+.score-stepper-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .prediction-inputs--compact {
   justify-content: flex-start;
   gap: 0.35rem;
 }
 
-.prediction-inputs--compact :deep(input) {
+.prediction-inputs--compact .score-stepper--horizontal {
+  gap: 0.15rem;
+}
+
+.prediction-inputs--compact .score-stepper-btn {
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: 2.5rem;
+}
+
+.prediction-inputs--compact .score-stepper-input {
   width: 48px;
   padding: 0.25rem;
   font-size: 0.95rem;

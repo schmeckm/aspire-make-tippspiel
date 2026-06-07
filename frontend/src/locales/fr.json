@@ -41,6 +41,7 @@
     "administration": "Administration",
     "dashboard": "Tableau de bord",
     "matches": "Matchs",
+    "groupStandings": "Classements par groupe",
     "nationalTeams": "Équipes nationales",
     "myPredictions": "Mes Pronostics",
     "bonus": "Questions Bonus",
@@ -71,6 +72,10 @@
   },
   "auth": {
     "welcomeBack": "Aspire MAKE",
+    "welcomeHeadline": "Pronostiquez contre vos",
+    "welcomeHeadlineAccent": "collègues.",
+    "registerHeadline": "Rejoignez la",
+    "registerHeadlineAccent": "Coupe du Monde.",
     "loginWelcomeText": "Bienvenue au jeu de pronostics Coupe du Monde FIFA 2026 d'Aspire MAKE – suivez les matchs, faites vos prédictions et rivalisez avec vos collègues.",
     "registerWelcomeText": "Rejoignez Aspire MAKE – inscrivez-vous et commencez à pronostiquer la Coupe du Monde FIFA 2026.",
     "forgotPasswordWelcomeText": "Pas de souci – nous vous aidons à retrouver l'accès à votre compte Aspire MAKE.",
@@ -98,6 +103,7 @@
     "noAccount": "Pas encore de compte ?",
     "hasAccount": "Déjà inscrit ?",
     "registerNow": "S'inscrire maintenant",
+    "scanToOpen": "Scannez pour ouvrir cette page sur votre téléphone",
     "toLogin": "Aller à la connexion",
     "loginFailed": "Connexion échouée.",
     "registerFailed": "Inscription échouée.",
@@ -172,6 +178,9 @@
     "passwordHint": "Laisser vide pour conserver l'actuel",
     "showPassword": "Afficher le mot de passe",
     "hidePassword": "Masquer le mot de passe",
+    "darkMode": "Mode sombre",
+    "darkModeOn": "Activé",
+    "darkModeOff": "Désactivé",
     "saveProfile": "Enregistrer le profil",
     "updated": "Profil mis à jour avec succès.",
     "updateFailed": "Impossible d'enregistrer le profil.",
@@ -337,6 +346,30 @@
     "noTeam": "Pas encore assigné à une équipe.",
     "goToProfile": "Choisir l'équipe dans le profil"
   },
+  "groupStandings": {
+    "title": "Classements par groupe",
+    "subtitle": "Coupe du monde 2026 – tableaux par groupe (A–L)",
+    "empty": "Aucun match de groupe dans le système pour l'instant.",
+    "preliminary": "Classements provisoires – mis à jour en direct après chaque match. Les deux premiers de chaque groupe sont mis en évidence.",
+    "loadFailed": "Impossible de charger les classements par groupe.",
+    "nextMatches": "Prochains matchs",
+    "knockoutOutlook": "Suite du tournoi",
+    "upcomingTitle": "Prochains matchs de groupes",
+    "knockoutTitle": "Aperçu des éliminatoires",
+    "knockoutSubtitle": "Seizièmes et huitièmes – équipes projetées selon le classement actuel, mises à jour en direct.",
+    "vs": "vs",
+    "live": "En direct",
+    "match": "Match",
+    "projected": "Provisoire",
+    "roundOf32": "Seizièmes de finale",
+    "roundOf16": "Huitièmes de finale",
+    "winner": "1er",
+    "runnerUp": "2e",
+    "thirdFromGroups": "Meilleur 3e de {groups}",
+    "thirdPlaceRank": "Rang parmi les 3e : {rank}",
+    "thirdPlaceQualified": "qualif. probable",
+    "winnerOfMatch": "Vainqueur match {match}"
+  },
   "nationalTeams": {
     "title": "Équipes nationales & effectifs",
     "subtitle": "CM 2026 – équipes et joueurs (football-data.org)",
@@ -473,7 +506,11 @@
     "empty": "Aucun pronostic soumis pour le moment.",
     "loadFailed": "Impossible de charger les pronostics.",
     "homeScoreLabel": "Buts domicile {team}",
-    "awayScoreLabel": "Buts extérieur {team}"
+    "awayScoreLabel": "Buts extérieur {team}",
+    "decreaseHomeScore": "Diminuer les buts domicile {team}",
+    "increaseHomeScore": "Augmenter les buts domicile {team}",
+    "decreaseAwayScore": "Diminuer les buts extérieur {team}",
+    "increaseAwayScore": "Augmenter les buts extérieur {team}"
   },
   "leaderboard": {
     "title": "Classement",
@@ -632,6 +669,7 @@
     "toggleDropdown": "Afficher ou masquer les notifications"
   },
   "display": {
+    "subtitle": "Classement en direct",
     "updated": "Mis à jour",
     "liveMatches": "Matchs",
     "noMatches": "Aucun match."
@@ -999,6 +1037,9 @@
       "syncPlayerImages": "Charger les images joueurs",
       "loadingImages": "Chargement…",
       "syncing": "Sync…",
+      "syncOfficialSchedule": "Aligner le calendrier officiel de la Coupe du Monde",
+      "officialSynced": "Calendrier officiel de la Coupe du Monde 2026 aligné.",
+      "officialCleanup": "{count} match(s) test/spécial supprimé(s).",
       "syncFixtures": "Synchroniser le calendrier",
       "syncResults": "Synchroniser les résultats",
       "syncLive": "Synchroniser le live",

@@ -6,8 +6,8 @@
     <template v-else-if="stats">
       <UserStatsCards :data="stats" />
       <div class="grid-2 mt-2">
-        <div class="card"><div class="card-header"><h3>{{ t('statistics.pointsOverTime') }}</h3></div><div class="card-body"><PointsChart :data="stats.pointsOverTime" /></div></div>
-        <div class="card"><div class="card-header"><h3>{{ t('statistics.rankOverTime') }}</h3></div><div class="card-body"><RankChart :data="stats.rankOverTime" /></div></div>
+        <div class="card"><div class="card-header"><h3>{{ t('statistics.pointsOverTime') }}</h3></div><div class="card-body chart-container"><PointsChart :data="stats.pointsOverTime" /></div></div>
+        <div class="card"><div class="card-header"><h3>{{ t('statistics.rankOverTime') }}</h3></div><div class="card-body chart-container"><RankChart :data="stats.rankOverTime" /></div></div>
       </div>
       <div class="card mt-2">
         <div class="card-header"><h3>{{ t('statistics.accuracyByStage') }}</h3></div>
@@ -60,3 +60,9 @@ async function loadStats() {
 
 onMounted(loadStats);
 </script>
+
+<style scoped>
+.chart-container {
+  height: 280px;
+}
+</style>

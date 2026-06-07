@@ -102,8 +102,10 @@ async function ask(question) {
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
-  background: var(--color-bg);
-  border-radius: var(--radius);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glow-card);
 }
 .chat-msg.user { align-self: flex-end; }
 .chat-msg.assistant { align-self: flex-start; }
@@ -115,8 +117,16 @@ async function ask(question) {
   line-height: 1.5;
   white-space: pre-wrap;
 }
-.chat-msg.user .chat-bubble { background: var(--color-primary); color: white; }
-.chat-msg.assistant .chat-bubble { background: var(--color-surface); border: 1px solid var(--color-border); }
+.chat-msg.user .chat-bubble {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 600;
+  box-shadow: var(--glow-primary);
+}
+.chat-msg.assistant .chat-bubble {
+  background: var(--color-surface-elevated, var(--color-bg));
+  border: 1px solid var(--color-border);
+}
 .ai-disclaimer { font-size: 0.7rem; color: var(--color-text-muted); margin-top: 0.25rem; font-style: italic; }
 .chat-input { display: flex; gap: 0.5rem; }
 .chat-input input { flex: 1; }

@@ -473,7 +473,7 @@ onUnmounted(() => {
 
 .selected-count {
   font-size: 0.875rem;
-  color: var(--color-text-muted, #666);
+  color: var(--color-text-muted);
   margin-right: 0.25rem;
 }
 
@@ -482,16 +482,6 @@ onUnmounted(() => {
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-}
-
-.badge-success {
-  background: var(--color-success-bg, #e8f5e9);
-  color: var(--color-success, #107e3e);
-}
-
-.badge-warning {
-  background: var(--color-warning-bg, #fff3e0);
-  color: var(--color-warning, #e9730c);
 }
 
 .user-image-editor {

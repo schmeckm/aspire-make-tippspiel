@@ -2,6 +2,9 @@
   <AuthImmersiveLayout
     :title="registrationComplete ? t('auth.registerSuccessTitle') : t('auth.createAccount')"
     :welcome-text="registrationComplete ? t('auth.registerSuccessWelcomeText') : t('auth.registerWelcomeText')"
+    :show-headline="!registrationComplete"
+    :headline="t('auth.registerHeadline')"
+    :headline-accent="t('auth.registerHeadlineAccent')"
   >
     <AlertMessage v-if="error" :message="error" type="error" inline class="auth-immersive-alert" />
 

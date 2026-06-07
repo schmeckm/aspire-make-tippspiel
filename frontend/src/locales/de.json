@@ -41,6 +41,7 @@
     "administration": "Administration",
     "dashboard": "Dashboard",
     "matches": "Spiele",
+    "groupStandings": "Gruppentabellen",
     "nationalTeams": "Nationalteams",
     "myPredictions": "Meine Tipps",
     "bonus": "Bonusfragen",
@@ -72,6 +73,10 @@
   },
   "auth": {
     "welcomeBack": "Aspire MAKE",
+    "welcomeHeadline": "Tippen gegen deine",
+    "welcomeHeadlineAccent": "Kollegen.",
+    "registerHeadline": "Tippe auf die",
+    "registerHeadlineAccent": "WM 2026.",
     "loginWelcomeText": "Willkommen beim WM 2026 Tippspiel von Aspire MAKE – tippen Sie mit, verfolgen Sie Spiele und messen Sie sich mit Ihren Kollegen.",
     "registerWelcomeText": "Werden Sie Teil von Aspire MAKE – registrieren Sie sich und tippen Sie mit auf die FIFA WM 2026.",
     "forgotPasswordWelcomeText": "Kein Problem – wir helfen Ihnen, wieder Zugang zu Ihrem Aspire MAKE Konto zu erhalten.",
@@ -99,6 +104,7 @@
     "noAccount": "Noch kein Konto?",
     "hasAccount": "Bereits registriert?",
     "registerNow": "Jetzt registrieren",
+    "scanToOpen": "Mit dem Handy scannen, um die Seite zu öffnen",
     "toLogin": "Zum Login",
     "loginFailed": "Anmeldung fehlgeschlagen.",
     "registerFailed": "Registrierung fehlgeschlagen.",
@@ -163,6 +169,7 @@
     "backToDashboard": "Zum Dashboard"
   },
   "display": {
+    "subtitle": "Live-Tabelle",
     "updated": "Aktualisiert",
     "liveMatches": "Spiele",
     "noMatches": "Keine Spiele."
@@ -203,6 +210,8 @@
     "playersShown": "{count} Spieler angezeigt",
     "chooseImage": "Profilbild wählen",
     "darkMode": "Dunkles Design",
+    "darkModeOn": "Aktiv",
+    "darkModeOff": "Aus",
     "imageHint": "JPG, PNG, WebP oder GIF, max. 2 MB",
     "removeImage": "Profilbild entfernen",
     "imageTooLarge": "Bild ist zu groß (max. 2 MB).",
@@ -363,6 +372,30 @@
     "noTeam": "Noch keinem Team zugeordnet.",
     "goToProfile": "Im Profil Team wählen"
   },
+  "groupStandings": {
+    "title": "Gruppentabellen",
+    "subtitle": "WM 2026 – Tabellenstand nach Gruppen (A–L)",
+    "empty": "Noch keine Gruppen-Spiele im System.",
+    "preliminary": "Vorläufige Tabellen – Ergebnisse werden nach Spielende live aktualisiert. Die ersten zwei Plätze pro Gruppe sind hervorgehoben.",
+    "loadFailed": "Gruppentabellen konnten nicht geladen werden.",
+    "nextMatches": "Nächste Spiele",
+    "knockoutOutlook": "Weiter im Turnier",
+    "upcomingTitle": "Nächste Gruppenspiele",
+    "knockoutTitle": "K.-o.-Vorschau nach Spielplan",
+    "knockoutSubtitle": "Letzte 32 und Achtelfinale – Teams werden aus dem aktuellen Tabellenstand abgeleitet und bei Ergebnissen live aktualisiert.",
+    "vs": "vs.",
+    "live": "Live",
+    "match": "Spiel",
+    "projected": "Vorläufig",
+    "roundOf32": "Letzte 32",
+    "roundOf16": "Achtelfinale",
+    "winner": "Erster",
+    "runnerUp": "Zweiter",
+    "thirdFromGroups": "Bester 3. aus {groups}",
+    "thirdPlaceRank": "Rang unter den Dritten: {rank}",
+    "thirdPlaceQualified": "vorauss. qualifiziert",
+    "winnerOfMatch": "Sieger Spiel {match}"
+  },
   "nationalTeams": {
     "title": "Nationalteams & Kader",
     "subtitle": "WM 2026 – Mannschaften und Spieler (football-data.org)",
@@ -427,7 +460,9 @@
     "stage": "Runde",
     "cached": "Aus Cache",
     "footnote": "{count} WM-Spiele · {goals} Tore gesamt",
-    "summaryOnly": "Einzelspiele sind im kostenlosen football-data.org-Tarif nicht verfügbar."
+    "summaryOnly": "Einzelspiele sind im kostenlosen football-data.org-Tarif nicht verfügbar.",
+    "statsPartial": "Anzahl Spiele und Tore aus der API; Siege/Remis im kostenlosen Tarif nicht verfügbar.",
+    "historicalSource": "Basierend auf offiziellen WM-Historiendaten (API liefert für dieses Paar keine Historie)."
   },
   "matches": {
     "title": "Spiele",
@@ -503,7 +538,11 @@
     "empty": "Noch keine Tipps abgegeben.",
     "loadFailed": "Tipps konnten nicht geladen werden.",
     "homeScoreLabel": "Heimtore {team}",
-    "awayScoreLabel": "Auswärtstore {team}"
+    "awayScoreLabel": "Auswärtstore {team}",
+    "decreaseHomeScore": "Heimtore {team} verringern",
+    "increaseHomeScore": "Heimtore {team} erhöhen",
+    "decreaseAwayScore": "Auswärtstore {team} verringern",
+    "increaseAwayScore": "Auswärtstore {team} erhöhen"
   },
   "leaderboard": {
     "title": "Hitliste",
@@ -938,6 +977,9 @@
       "syncPlayerImages": "Spielerbilder laden (WM-Kader)",
       "loadingImages": "Lade Bilder...",
       "syncing": "Sync...",
+      "syncOfficialSchedule": "Offiziellen WM-Spielplan abgleichen",
+      "officialSynced": "Offizieller WM-2026-Spielplan abgeglichen.",
+      "officialCleanup": "{count} Test-/Sonder-Spiel(e) entfernt.",
       "syncFixtures": "Spielplan synchronisieren",
       "syncResults": "Ergebnisse synchronisieren",
       "syncLive": "Live-Scores synchronisieren",

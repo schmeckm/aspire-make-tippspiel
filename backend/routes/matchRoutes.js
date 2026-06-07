@@ -10,8 +10,19 @@ const { logAudit } = require('../services/auditService');
 const socketService = require('../services/socketService');
 const { isMatchEditable } = require('../services/matchLockService');
 const { attachStadiumImage, attachStadiumImages } = require('../services/matchPresentationService');
+const { getGroupStandings } = require('../services/groupStandingsService');
 
 const router = express.Router();
+
+router.get('/group-standings', authMiddleware, async (req, res) => {
+  try {
+    const standings = await getGroupStandings();
+    res.json(standings);
+  } catch (error) {
+    console.error(error);
+    sendError(res, req, 500, 'errors.matchesLoadFailed');
+  }
+});
 
 router.get('/groups', authMiddleware, async (req, res) => {
   try {

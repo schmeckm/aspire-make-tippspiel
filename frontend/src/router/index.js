@@ -62,6 +62,7 @@ const routes = [
       { path: '', redirect: '/dashboard' },
       { path: 'dashboard', name: 'Dashboard', component: () => import('../views/DashboardView.vue') },
       { path: 'matches', name: 'Matches', component: () => import('../views/MatchesView.vue') },
+      { path: 'group-standings', name: 'GroupStandings', component: () => import('../views/GroupStandingsView.vue') },
       { path: 'national-teams', name: 'NationalTeams', component: () => import('../views/NationalTeamsView.vue') },
       { path: 'my-predictions', name: 'MyPredictions', component: () => import('../views/MyPredictionsView.vue') },
       { path: 'leaderboard', name: 'Leaderboard', component: () => import('../views/LeaderboardView.vue') },

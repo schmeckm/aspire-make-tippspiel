@@ -42,11 +42,12 @@ const {
 <style scoped>
 .ai-preview { margin-top: 0.75rem; }
 .ai-card {
-  background: linear-gradient(135deg, #f0f4f3 0%, #e8f5e9 100%);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  background: var(--color-primary-soft);
+  border: 1px solid rgba(0, 255, 127, 0.2);
+  border-radius: var(--radius);
   padding: 1rem;
   margin-top: 0.5rem;
+  box-shadow: var(--glow-card);
 }
 .ai-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
 .ai-card-header h4 { margin: 0; font-size: 0.9rem; color: var(--color-primary); }

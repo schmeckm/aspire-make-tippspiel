@@ -18,8 +18,17 @@ const { t } = useI18n();
   padding: 4rem 1rem;
 }
 .not-found h1 {
-  font-size: 4rem;
+  font-size: 5rem;
   margin-bottom: 0.5rem;
   color: var(--color-primary);
+  font-weight: 800;
+  text-shadow: var(--glow-primary);
+  line-height: 1;
+}
+
+.not-found p {
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
 }
 </style>

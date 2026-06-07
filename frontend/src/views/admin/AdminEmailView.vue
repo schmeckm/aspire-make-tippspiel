@@ -175,7 +175,7 @@ async function sendReminders() {
   font-size: 0.875rem;
 }
 
-.smtp-checklist li.ok { color: var(--color-success, #107e3e); }
+.smtp-checklist li.ok { color: var(--color-success); }
 .smtp-checklist li.missing { color: var(--color-text-muted); }
 
 .check-icon {
@@ -189,13 +189,4 @@ async function sendReminders() {
   margin: 0;
 }
 
-.badge-success {
-  background: var(--color-success-bg, #e8f5e9);
-  color: var(--color-success, #107e3e);
-}
-
-.badge-warning {
-  background: var(--color-warning-bg, #fff3e0);
-  color: var(--color-warning, #e9730c);
-}
 </style>

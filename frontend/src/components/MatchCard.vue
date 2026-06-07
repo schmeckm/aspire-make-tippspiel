@@ -48,7 +48,10 @@
             decoding="async"
           />
         </button>
-        🏟️ {{ match.stadium }}<template v-if="match.city">, {{ match.city }}</template>
+        <span v-else class="match-stadium-thumb-placeholder" aria-hidden="true">🏟️</span>
+        <span class="match-venue-text">
+          {{ match.stadium }}<template v-if="match.city">, {{ match.city }}</template>
+        </span>
       </span>
       <CountdownBadge v-if="match.status === 'scheduled'" :kickoff-time="match.kickoffTime" />
     </div>

@@ -47,7 +47,7 @@ const sizeClass = computed(() => `team-avatar-${props.size}`);
 .team-avatar-fallback {
   font-weight: 700;
   color: var(--color-primary);
-  background: var(--color-primary-bg, #e8f4fd);
+  background: var(--color-primary-bg);
 }
 
 .team-avatar-sm {

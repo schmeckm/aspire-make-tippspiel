@@ -83,6 +83,11 @@ function sectionItems(sectionId) {
 .legal-document {
   max-width: 48rem;
   margin: 0 auto;
+  padding: 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--glow-card);
 }
 
 .legal-document h1 {

@@ -1,6 +1,7 @@
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 const { computeSummary, mapAggregatesToSummary } = require('../../services/headToHeadService');
+const { findHistoricalHeadToHead } = require('../../data/wcHistoricalHeadToHead');
 
 describe('headToHeadService.computeSummary', () => {
   test('counts wins from team A home and away perspective', () => {
@@ -108,5 +109,24 @@ describe('headToHeadService.mapAggregatesToSummary', () => {
       draws: 0,
       breakdownAvailable: true,
     });
+  });
+});
+
+describe('wcHistoricalHeadToHead.findHistoricalHeadToHead', () => {
+  test('returns Germany vs Argentina World Cup meetings', () => {
+    const result = findHistoricalHeadToHead('Germany', 'Argentina');
+    assert.ok(result);
+    assert.equal(result.meetings.length, 6);
+    assert.ok(result.meetings.some((m) => m.stage === 'FINAL' && m.seasonYear === 2014));
+  });
+
+  test('matches team names regardless of order', () => {
+    const result = findHistoricalHeadToHead('Argentina', 'Germany');
+    assert.ok(result);
+    assert.equal(result.meetings.length, 6);
+  });
+
+  test('returns null for unknown pairings', () => {
+    assert.equal(findHistoricalHeadToHead('Germany', 'Mexico'), null);
   });
 });

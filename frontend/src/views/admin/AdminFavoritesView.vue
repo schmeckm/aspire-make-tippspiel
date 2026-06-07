@@ -349,7 +349,7 @@ onMounted(async () => {
 }
 
 .admin-favorites-bar-fill-team {
-  background: var(--sapSuccessColor, #107e3e);
+  background: var(--color-success);
 }
 
 .admin-favorites-toggle {

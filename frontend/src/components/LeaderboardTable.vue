@@ -128,8 +128,8 @@ function rankClass(rank) {
   flex-wrap: wrap;
 }
 
-.rank-up { color: #28a745; font-weight: 700; }
-.rank-down { color: #dc3545; font-weight: 700; }
+.rank-up { color: var(--color-primary); font-weight: 700; }
+.rank-down { color: var(--color-danger); font-weight: 700; }
 
 .leaderboard-row-current {
   background: var(--color-primary-soft);
@@ -145,15 +145,18 @@ function rankClass(rank) {
 .leaderboard-card {
   display: flex;
   gap: 0.75rem;
-  padding: 0.75rem;
+  padding: 0.875rem;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--glow-card);
 }
 
 .leaderboard-card-current {
   border-color: var(--color-primary);
   background: var(--color-primary-soft);
+  box-shadow: var(--glow-primary);
 }
 
 .leaderboard-card-rank {
