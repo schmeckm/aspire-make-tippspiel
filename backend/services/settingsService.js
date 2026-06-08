@@ -8,7 +8,7 @@ const DEFAULT_SETTINGS = {
   apiSyncEnabled: true,
   resultSyncEnabled: true,
   footballApiProvider: null,
-  emailRemindersEnabled: false,
+  emailRemindersEnabled: true,
   leaderboardPublic: false,
   bonusQuestionsEnabled: true,
   liveScoresEnabled: true,
@@ -19,6 +19,9 @@ const DEFAULT_SETTINGS = {
   openRegistration: true,
   adminSyncErrorEmails: true,
   reminderFrequency: 'daily',
+  morningDigestEnabled: true,
+  morningDigestTime: '07:30',
+  lastDigestSentDate: null,
   reminderEmailSubject: '',
   reminderEmailBody: '',
   reminderNotificationText: '',
@@ -158,7 +161,7 @@ async function updateSettings(updates) {
     'apiSyncEnabled', 'resultSyncEnabled', 'emailRemindersEnabled', 'leaderboardPublic',
     'bonusQuestionsEnabled', 'liveScoresEnabled', 'openRegistration', 'adminSyncErrorEmails',
     'requireTeamOnRegistration', 'requireEmailVerification', 'includeAdminsInLeaderboard',
-    'displayModeEnabled', 'prizesEnabled',
+    'displayModeEnabled', 'prizesEnabled', 'morningDigestEnabled',
   ]);
 
   for (const [key, value] of Object.entries(updates || {})) {

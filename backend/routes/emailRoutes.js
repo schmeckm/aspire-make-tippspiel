@@ -5,6 +5,7 @@ const adminMiddleware = require('../middleware/adminMiddleware');
 const emailService = require('../services/emailService');
 const reminderService = require('../services/reminderService');
 const adminUserEmailService = require('../services/adminUserEmailService');
+const morningDigestService = require('../services/morningDigestService');
 const { logAudit } = require('../services/auditService');
 const { wrapBrandedEmail, escapeHtml } = require('../services/emailLayoutService');
 const { normalizeLocale, resolveUserEmailLocale, t } = require('../services/i18nService');
@@ -86,6 +87,32 @@ router.post('/send-status-updates', async (req, res) => {
     res.json(result);
   } catch (error) {
     sendError(res, req, 500, 'errors.statusUpdatesSendFailed');
+  }
+});
+
+router.get('/preview-morning-digest', async (req, res) => {
+  try {
+    const userId = req.query.userId ? parseInt(req.query.userId, 10) : req.user.id;
+    const result = await morningDigestService.previewMorningDigest(userId);
+    if (result.error) {
+      return sendError(res, req, 404, 'errors.userNotFound');
+    }
+    res.json(result);
+  } catch (error) {
+    sendError(res, req, 500, 'errors.morningDigestPreviewFailed');
+  }
+});
+
+router.post('/send-morning-digest', async (req, res) => {
+  try {
+    const userIds = Array.isArray(req.body?.userIds) ? req.body.userIds : [];
+    const result = userIds.length > 0
+      ? await morningDigestService.sendMorningDigestsToUsers(userIds, { force: true })
+      : await morningDigestService.sendMorningDigests({ force: true });
+    await logAudit({ userId: req.user.id, action: 'EMAIL_MORNING_DIGEST', newValue: result, req });
+    res.json(result);
+  } catch (error) {
+    sendError(res, req, 500, 'errors.morningDigestSendFailed');
   }
 });
 

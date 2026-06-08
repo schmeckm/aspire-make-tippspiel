@@ -4,7 +4,10 @@ const { syncFixtures } = require('./fixtureSyncService');
 const { syncResults } = require('./resultSyncService');
 const { syncLiveScores } = require('./liveScoreSyncService');
 const { sendMissingPredictionReminders, sendBonusQuestionReminders, sendSyncErrorToAdmin, sendUpcomingMatchesSummary, sendLeaderboardUpdates } = require('./reminderService');
+const { sendMorningDigests } = require('./morningDigestService');
 const { getSetting } = require('./settingsService');
+const { isEmailRemindersEnabled, isMorningDigestEnabled } = require('./emailReminderSettingsService');
+const { buildReminderCron } = require('../utils/reminderCron');
 const footballProviderService = require('./footballProviderService');
 const { runWithCronMonitor, captureException } = require('./sentryCronService');
 
@@ -110,8 +113,14 @@ async function safeSyncRun(fn, label, monitor = null) {
   return safeRun(fn, label, monitor);
 }
 
-function startScheduler() {
+const REMINDER_TZ = process.env.REMINDER_TIMEZONE || process.env.DEFAULT_TIMEZONE || CRON_TZ;
+
+async function startScheduler() {
   stopScheduler();
+
+  const reminderTime = await getSetting('reminderTime', '09:00');
+  const reminderFrequency = await getSetting('reminderFrequency', 'daily');
+  const reminderCron = buildReminderCron(reminderTime, reminderFrequency);
 
   // Daily fixture sync at 06:00 (before tournament)
   jobs.push(cron.schedule('0 6 * * *', () => {
@@ -139,27 +148,24 @@ function startScheduler() {
     }
   }));
 
-  // Daily reminder emails
-  jobs.push(cron.schedule('0 9 * * *', async () => {
-    const enabled = await getSetting('emailRemindersEnabled', false);
-    if (enabled) {
+  // Tip + bonus reminder emails (time/frequency from admin settings)
+  jobs.push(cron.schedule(reminderCron, async () => {
+    if (await isEmailRemindersEnabled()) {
       await safeRun(() => sendMissingPredictionReminders(), 'Fehlende-Tipp-Erinnerungen');
       await safeRun(() => sendBonusQuestionReminders(), 'Bonusfrage-Erinnerungen');
     }
-  }));
+  }, { timezone: REMINDER_TZ }));
 
   // Weekly upcoming matches summary (Monday 08:00)
   jobs.push(cron.schedule('0 8 * * 1', async () => {
-    const enabled = await getSetting('emailRemindersEnabled', false);
-    if (enabled && isTournamentActive()) {
+    if ((await isEmailRemindersEnabled()) && isTournamentActive()) {
       await safeRun(() => sendUpcomingMatchesSummary(), 'Spielübersicht-E-Mail');
     }
   }));
 
   // Weekly leaderboard updates (Sunday 18:00)
   jobs.push(cron.schedule('0 18 * * 0', async () => {
-    const enabled = await getSetting('emailRemindersEnabled', false);
-    if (enabled && isTournamentActive()) {
+    if ((await isEmailRemindersEnabled()) && isTournamentActive()) {
       await safeRun(() => sendLeaderboardUpdates(), 'Hitlisten-Update-E-Mail');
     }
   }));
@@ -227,7 +233,11 @@ function startScheduler() {
     await safeRun(() => cleanupExpiredTokens(), 'Token-Blacklist-Bereinigung');
   }));
 
-  console.log(`[Scheduler] ${jobs.length} Cron-Jobs gestartet.`);
+  console.log(`[Scheduler] ${jobs.length} Cron-Jobs gestartet (Erinnerungen: ${reminderCron}, Digest: ${morningDigestCron}, TZ ${REMINDER_TZ}).`);
+}
+
+async function restartScheduler() {
+  await startScheduler();
 }
 
 function stopScheduler() {
@@ -235,4 +245,4 @@ function stopScheduler() {
   jobs = [];
 }
 
-module.exports = { startScheduler, stopScheduler, isTournamentActive };
+module.exports = { startScheduler, stopScheduler, restartScheduler, isTournamentActive };

@@ -56,7 +56,14 @@ async function start() {
     }
 
     await socketService.init(server, { corsOrigin: getSocketCorsOrigin() });
-    startScheduler();
+
+    const { ensureAutomaticEmailReminders } = require('./services/emailReminderSettingsService');
+    const reminderBootstrap = await ensureAutomaticEmailReminders();
+    if (reminderBootstrap.enabled) {
+      console.log(`[Email] Automatische Erinnerungen aktiv (${reminderBootstrap.reason}).`);
+    }
+
+    await startScheduler();
 
     server.listen(PORT, () => {
       console.log(`WM 2026 Tippspiel v${getAppVersion()} – Server läuft auf http://localhost:${PORT}`);

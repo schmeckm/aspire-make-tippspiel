@@ -983,6 +983,7 @@
       "from": "Remitente",
       "appUrl": "APP_URL",
       "reminders": "Recordatorios",
+      "morningDigest": "Resumen matutino",
       "active": "Activo",
       "inactive": "Inactivo",
       "emailVerification": "Verificación de correo",
@@ -999,6 +1000,14 @@
       "remindersDisabled": "Los recordatorios están desactivados.",
       "noEmailsSent": "No se enviaron correos.",
       "remindersSent": "{count} recordatorios enviados.",
+      "morningDigest": "Resumen matutino",
+      "digestPreviewTitle": "Vista previa del resumen matutino",
+      "digestPreviewSubject": "Asunto",
+      "digestPreviewReady": "Vista previa creada.",
+      "digestPreviewFailed": "No se pudo crear la vista previa.",
+      "digestDisabled": "El resumen matutino está desactivado.",
+      "digestSent": "{count} resúmenes matutinos enviados.",
+      "digestSendFailed": "No se pudo enviar el resumen matutino.",
       "form": {
         "enableReminders": "Activar recordatorios por correo",
         "adminSyncErrors": "Notificar al admin en errores de sincronización",
@@ -1007,7 +1016,13 @@
         "daily": "Diario",
         "weekly": "Semanal",
         "sendTestEmail": "Enviar correo de prueba",
-        "sendRemindersNow": "Enviar recordatorios ahora"
+        "sendRemindersNow": "Enviar recordatorios ahora",
+        "morningDigestTitle": "Resumen matutino (actualización diaria del Mundial)",
+        "morningDigestDesc": "Cada mañana: resultados de anoche, clasificación, equipo, destacados y partidos de hoy – personalizado por usuario.",
+        "enableMorningDigest": "Activar resumen matutino",
+        "morningDigestTime": "Hora de envío",
+        "previewMorningDigest": "Mostrar vista previa",
+        "sendMorningDigestNow": "Enviar resumen ahora"
       }
     },
     "teams": {

@@ -28,6 +28,10 @@
           {{ emailStatus.remindersEnabled ? t('adminPages.email.active') : t('adminPages.email.inactive') }}
         </p>
         <p>
+          <strong>{{ t('adminPages.email.morningDigest') }}:</strong>
+          {{ emailStatus.morningDigestEnabled ? t('adminPages.email.active') : t('adminPages.email.inactive') }}
+        </p>
+        <p>
           <strong>{{ t('adminPages.email.emailVerification') }}:</strong>
           {{ emailStatus.requireEmailVerification ? t('adminPages.email.active') : t('adminPages.email.inactive') }}
         </p>
@@ -65,10 +69,26 @@
         <EmailSettingsForm
           :settings="settings"
           :loading="saving"
+          :digest-loading="digestLoading"
           @save="saveSettings"
           @test-email="sendTest"
           @send-reminders="sendReminders"
+          @preview-digest="previewDigest"
+          @send-digest="sendDigest"
         />
+      </div>
+    </div>
+
+    <div v-if="digestPreview" class="card mb-2">
+      <div class="card-header">
+        <h3>{{ t('adminPages.email.digestPreviewTitle') }}</h3>
+        <button type="button" class="btn btn-secondary btn-sm" @click="digestPreview = null">
+          {{ t('common.close') }}
+        </button>
+      </div>
+      <div class="card-body">
+        <p><strong>{{ t('adminPages.email.digestPreviewSubject') }}:</strong> {{ digestPreview.subject }}</p>
+        <div class="digest-preview-frame" v-html="digestPreview.html" />
       </div>
     </div>
     </template>
@@ -90,6 +110,8 @@ const settings = ref({});
 const emailStatus = ref({});
 const loading = ref(true);
 const saving = ref(false);
+const digestLoading = ref(false);
+const digestPreview = ref(null);
 const message = ref('');
 const loadError = ref('');
 const error = ref('');
@@ -206,6 +228,27 @@ async function sendReminders() {
 .checklist-hint {
   font-size: 0.8rem;
   margin: 0;
+}
+
+.digest-preview-frame {
+  margin-top: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
 }
 
 </style>

@@ -90,6 +90,7 @@ const EMAIL_ACTIONS = new Set([
   'EMAIL_REMINDERS',
   'EMAIL_USER_REMINDERS',
   'EMAIL_STATUS_UPDATES',
+  'EMAIL_MORNING_DIGEST',
 ]);
 
 function formatDate(d) {

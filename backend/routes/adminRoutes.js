@@ -90,7 +90,7 @@ router.get('/dashboard', async (req, res) => {
       top10,
       syncStatus,
       emailStatus,
-      emailRemindersEnabled: await getSetting('emailRemindersEnabled', false),
+      emailRemindersEnabled: await require('../services/emailReminderSettingsService').isEmailRemindersEnabled(),
       upcomingLocked,
       lastSyncError,
       rankChanges,

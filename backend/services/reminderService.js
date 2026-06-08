@@ -4,6 +4,7 @@ const emailService = require('./emailService');
 const reminderEmailService = require('./reminderEmailService');
 const notificationService = require('./notificationService');
 const { getSetting } = require('./settingsService');
+const { isEmailRemindersEnabled } = require('./emailReminderSettingsService');
 const { getLeaderboard } = require('./leaderboardService');
 const { runWithConcurrency } = require('./emailQueueService');
 const { toRecipientAuditEntry } = require('./adminUserEmailService');
@@ -33,8 +34,8 @@ async function getReminderRecipients() {
 }
 
 async function sendMissingPredictionReminders({ force = false } = {}) {
-  const enabled = await getSetting('emailRemindersEnabled', false);
-  if (!enabled && !force) {
+  const enabled = force || await isEmailRemindersEnabled();
+  if (!enabled) {
     return { skipped: true, message: 'E-Mail-Erinnerungen deaktiviert. Bitte aktivieren und speichern, oder manuell erneut senden.' };
   }
 
@@ -114,8 +115,7 @@ async function sendMissingPredictionReminders({ force = false } = {}) {
 }
 
 async function sendUpcomingMatchesSummary() {
-  const enabled = await getSetting('emailRemindersEnabled', false);
-  if (!enabled) return { skipped: true };
+  if (!(await isEmailRemindersEnabled())) return { skipped: true };
 
   const users = await getReminderRecipients();
   const upcoming = await Match.findAll({
@@ -138,8 +138,7 @@ async function sendUpcomingMatchesSummary() {
 }
 
 async function sendBonusQuestionReminders() {
-  const enabled = await getSetting('emailRemindersEnabled', false);
-  if (!enabled) return { skipped: true };
+  if (!(await isEmailRemindersEnabled())) return { skipped: true };
 
   const in24h = new Date(Date.now() + 24 * 60 * 60 * 1000);
   const questions = await BonusQuestion.findAll({
@@ -199,8 +198,7 @@ async function sendSyncErrorToAdmin(errorMessage) {
 }
 
 async function sendLeaderboardUpdates() {
-  const enabled = await getSetting('emailRemindersEnabled', false);
-  if (!enabled) return { skipped: true };
+  if (!(await isEmailRemindersEnabled())) return { skipped: true };
 
   const leaderboard = await getLeaderboard();
   const users = await getReminderRecipients();
@@ -218,6 +216,7 @@ async function sendLeaderboardUpdates() {
 }
 
 module.exports = {
+  getReminderRecipients,
   sendMissingPredictionReminders,
   sendUpcomingMatchesSummary,
   sendBonusQuestionReminders,

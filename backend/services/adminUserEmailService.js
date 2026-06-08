@@ -268,6 +268,7 @@ module.exports = {
   sendTipRemindersToUsers,
   sendStatusUpdatesToUsers,
   toRecipientAuditEntry,
+  formatRankingListHtml,
   templateManualTipReminder,
   templateStatusUpdate,
 };

@@ -29,7 +29,12 @@ module.exports = router;
 
 module.exports.updateSettings = async (req, res) => {
   try {
+    const { affectsReminderSchedule } = require('../services/emailReminderSettingsService');
     const settings = await updateSettings(req.body);
+    if (affectsReminderSchedule(req.body)) {
+      const { restartScheduler } = require('../services/schedulerService');
+      await restartScheduler();
+    }
     await logAudit({ userId: req.user.id, action: 'SETTINGS_UPDATE', newValue: req.body, req });
     res.json(settings);
   } catch (error) {

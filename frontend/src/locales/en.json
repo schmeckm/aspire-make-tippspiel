@@ -1274,6 +1274,7 @@
       "from": "From",
       "appUrl": "APP_URL",
       "reminders": "Reminders",
+      "morningDigest": "Morning Digest",
       "active": "Active",
       "inactive": "Inactive",
       "emailVerification": "Email verification",
@@ -1290,6 +1291,13 @@
       "remindersDisabled": "Reminders are disabled.",
       "noEmailsSent": "No emails sent.",
       "remindersSent": "{count} reminders sent.",
+      "digestPreviewTitle": "Morning digest preview",
+      "digestPreviewSubject": "Subject",
+      "digestPreviewReady": "Preview created.",
+      "digestPreviewFailed": "Preview could not be created.",
+      "digestDisabled": "Morning digest is disabled.",
+      "digestSent": "{count} morning digests sent.",
+      "digestSendFailed": "Morning digest could not be sent.",
       "form": {
         "enableReminders": "Enable email reminders",
         "adminSyncErrors": "Notify admin on sync errors",
@@ -1298,7 +1306,13 @@
         "daily": "Daily",
         "weekly": "Weekly",
         "sendTestEmail": "Send test email",
-        "sendRemindersNow": "Send reminders now"
+        "sendRemindersNow": "Send reminders now",
+        "morningDigestTitle": "Morning Digest (daily World Cup update)",
+        "morningDigestDesc": "Every morning: last night's results, leaderboard, team standing, highlights and today's matches – personalized per user.",
+        "enableMorningDigest": "Enable morning digest",
+        "morningDigestTime": "Send time",
+        "previewMorningDigest": "Show preview",
+        "sendMorningDigestNow": "Send digest now"
       }
     },
     "statistics": {

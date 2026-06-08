@@ -1273,6 +1273,7 @@
       "from": "Absender",
       "appUrl": "APP_URL",
       "reminders": "Erinnerungen",
+      "morningDigest": "Morning Digest",
       "active": "Aktiv",
       "inactive": "Inaktiv",
       "emailVerification": "E-Mail-Bestätigung",
@@ -1289,6 +1290,13 @@
       "remindersDisabled": "Erinnerungen sind deaktiviert.",
       "noEmailsSent": "Keine E-Mails gesendet.",
       "remindersSent": "{count} Erinnerungen gesendet.",
+      "digestPreviewTitle": "Morning-Digest-Vorschau",
+      "digestPreviewSubject": "Betreff",
+      "digestPreviewReady": "Vorschau erstellt.",
+      "digestPreviewFailed": "Vorschau konnte nicht erstellt werden.",
+      "digestDisabled": "Morning Digest ist deaktiviert.",
+      "digestSent": "{count} Morning Digests gesendet.",
+      "digestSendFailed": "Morning Digest konnte nicht gesendet werden.",
       "form": {
         "enableReminders": "E-Mail-Erinnerungen aktivieren",
         "adminSyncErrors": "Admin bei Sync-Fehlern benachrichtigen",
@@ -1297,7 +1305,13 @@
         "daily": "Täglich",
         "weekly": "Wöchentlich",
         "sendTestEmail": "Test-E-Mail senden",
-        "sendRemindersNow": "Erinnerungen jetzt senden"
+        "sendRemindersNow": "Erinnerungen jetzt senden",
+        "morningDigestTitle": "Morning Digest (tägliches WM-Update)",
+        "morningDigestDesc": "Täglich morgens: Ergebnisse der Nacht, Hitliste, Team-Stand, Highlights und heutige Spiele – personalisiert pro Nutzer.",
+        "enableMorningDigest": "Morning Digest aktivieren",
+        "morningDigestTime": "Versandzeit",
+        "previewMorningDigest": "Vorschau anzeigen",
+        "sendMorningDigestNow": "Digest jetzt senden"
       }
     },
     "statistics": {
