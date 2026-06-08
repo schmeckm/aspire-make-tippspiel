@@ -1,4 +1,5 @@
-const { describe, it, before, after } = require('node:test');
+require('../helpers/testEnv');
+const { describe, it, before } = require('node:test');
 const assert = require('node:assert/strict');
 const { sequelize, User, Team } = require('../../models');
 const { getTeamRanking } = require('../../services/leaderboardService');
@@ -10,16 +11,12 @@ describe('leaderboardService.getTeamRanking', () => {
     await seedTestData();
   });
 
-  after(async () => {
-    await sequelize.close();
-  });
-
   it('counts all assigned team members, including admins excluded from the leaderboard', async () => {
     const team = await Team.findOne({ where: { name: 'IT' } });
     await User.create({
       firstName: 'Markus',
       lastName: 'Schmeckenbecher',
-      email: 'markus.schmeckenbecher@gmail.com',
+      email: 'team-ranking-admin@test.local',
       password: 'admin123',
       role: 'admin',
       teamId: team.id,

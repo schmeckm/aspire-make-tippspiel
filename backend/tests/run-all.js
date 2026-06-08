@@ -28,7 +28,14 @@ function runTests(subdir) {
 
   const result = spawnSync(
     process.execPath,
-    ['--require', path.join(__dirname, 'helpers/testEnv.js'), '--test', ...testFiles],
+    [
+      '--require',
+      path.join(__dirname, 'helpers/testEnv.js'),
+      '--test',
+      '--test-concurrency=1',
+      '--test-force-exit',
+      ...testFiles,
+    ],
     { stdio: 'inherit', cwd: path.join(__dirname, '..') },
   );
 
