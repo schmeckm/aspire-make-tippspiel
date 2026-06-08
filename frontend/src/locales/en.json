@@ -701,13 +701,15 @@
     }
   },
   "help": {
-    "nav": "Help",
-    "title": "Rules & Help",
-    "subtitle": "How the FIFA World Cup 2026 prediction game works.",
+    "nav": "Game rules",
+    "eyebrow": "Official guideline",
+    "title": "Release Train Engineer",
+    "titleAccent": "Game Rules",
+    "subtitle": "How the World Cup 2026 pool works — fair, transparent, and without manual workarounds.",
     "sections": {
       "winner": {
         "title": "Who wins?",
-        "text": "The player with the most points on the leaderboard wins. There is also a team ranking: points from all members of a team (e.g. IT, Finance) are added together."
+        "text": "The player with the most points on the leaderboard wins. There is also a team ranking based on each department's average points per member (e.g. IT, Finance)."
       },
       "scoring": {
         "title": "Points per match",
@@ -716,6 +718,29 @@
       "deadline": {
         "title": "When can I predict?",
         "text": "Predictions are allowed until kick-off. After that, matches are locked — including live, finished, or admin-locked matches."
+      },
+      "participation": {
+        "title": "Do I have to predict every match?",
+        "intro": "The system contains 104 World Cup matches (72 group games + 32 knockout ties). There is no technical or legal requirement to complete every match — you can predict only selected games. Missing predictions score 0 points and lower your completion rate on the leaderboard.",
+        "rteRule": "RTE rule for this pool: every participant predicts all matches themselves. Splitting work among colleagues (e.g. “you take Group A, I take Group B”) is not allowed.",
+        "tableTitle": "Typical models compared",
+        "tableModel": "Model",
+        "tableEffort": "Effort per person",
+        "tableNote": "The highlighted row is the model we use. The other variants do not apply in this pool.",
+        "variants": {
+          "all": "Everyone predicts everything",
+          "allEffort": "104 predictions",
+          "split": "Split (e.g. 4 people × 26 matches)",
+          "splitEffort": "26 per person",
+          "mandatory": "Mandatory matches only for everyone",
+          "mandatoryEffort": "fewer than 104",
+          "optional": "Only predict matches you know",
+          "optionalEffort": "variable"
+        }
+      },
+      "profile": {
+        "title": "Profile: favorite team & top scorer",
+        "text": "Set your favorite national team and top scorer pick in your profile. Your favorite team is used for the bonus question “How far will your team get?” and is visible to all participants."
       },
       "bonus": {
         "title": "Bonus questions",
@@ -727,7 +752,7 @@
       },
       "teams": {
         "title": "Team ranking",
-        "text": "Each player belongs to a team. In the team ranking, all members' points are summed — see which department predicts best."
+        "text": "Each player belongs to a team. The team ranking uses average points per member — the largest department does not win automatically."
       },
       "ai": {
         "title": "Ask the AI coach",

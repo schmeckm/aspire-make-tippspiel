@@ -673,13 +673,15 @@
     }
   },
   "help": {
-    "nav": "Ayuda",
-    "title": "Reglas y ayuda",
-    "subtitle": "Así funciona el juego de pronósticos del Mundial 2026.",
+    "nav": "Reglas del juego",
+    "eyebrow": "Guía oficial",
+    "title": "Release Train Engineer",
+    "titleAccent": "Reglas del juego",
+    "subtitle": "Así funciona el pool del Mundial 2026: justo, transparente y sin workarounds manuales.",
     "sections": {
       "winner": {
         "title": "¿Quién gana?",
-        "text": "Gana quien tenga más puntos en la clasificación. También hay un ranking por equipos: se suman los puntos de todos los miembros de un equipo (p. ej. IT, Finance)."
+        "text": "Gana quien tenga más puntos en la clasificación. También hay un ranking por equipos según la media de puntos por miembro (p. ej. IT, Finance)."
       },
       "scoring": {
         "title": "Puntos por partido",
@@ -688,6 +690,29 @@
       "deadline": {
         "title": "¿Cuándo puedo pronosticar?",
         "text": "Los pronósticos son posibles hasta el saque inicial. Después el partido queda bloqueado — en vivo, finalizado o bloqueado por el admin."
+      },
+      "participation": {
+        "title": "¿Debo pronosticar todos los partidos?",
+        "intro": "El sistema contiene 104 partidos del Mundial (72 de grupos + 32 de eliminatorias). No hay obligación técnica ni legal de completarlos todos — puedes pronosticar solo algunos. Los pronósticos faltantes suman 0 puntos y reducen tu porcentaje de completitud en la clasificación.",
+        "rteRule": "Regla RTE para este pool: cada participante pronostica todos los partidos por sí mismo. Repartir el trabajo entre colegas (p. ej. «tú el grupo A, yo el grupo B») no está permitido.",
+        "tableTitle": "Modelos típicos en comparación",
+        "tableModel": "Modelo",
+        "tableEffort": "Esfuerzo por persona",
+        "tableNote": "La fila resaltada es el modelo que usamos. Las otras variantes no aplican en este pool.",
+        "variants": {
+          "all": "Cada uno pronostica todo",
+          "allEffort": "104 pronósticos",
+          "split": "Repartido (p. ej. 4 personas × 26 partidos)",
+          "splitEffort": "26 por persona",
+          "mandatory": "Solo partidos obligatorios para todos",
+          "mandatoryEffort": "menos de 104",
+          "optional": "Solo partidos que se conocen",
+          "optionalEffort": "variable"
+        }
+      },
+      "profile": {
+        "title": "Perfil: selección favorita y goleador",
+        "text": "Indica tu selección favorita y tu nominación de goleador en el perfil. La selección favorita se usa en la pregunta bonus « ¿Hasta dónde llegará tu equipo? » y es visible para todos los participantes."
       },
       "bonus": {
         "title": "Preguntas bonus",
@@ -699,7 +724,7 @@
       },
       "teams": {
         "title": "Ranking por equipos",
-        "text": "Cada jugador pertenece a un equipo. En el ranking por equipos se suman los puntos de todos los miembros."
+        "text": "Cada jugador pertenece a un equipo. El ranking por equipos usa la media de puntos por miembro; el equipo más grande no gana automáticamente."
       },
       "ai": {
         "title": "Preguntar al coach IA",

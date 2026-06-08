@@ -673,13 +673,15 @@
     }
   },
   "help": {
-    "nav": "Aide",
-    "title": "Règles et aide",
-    "subtitle": "Comment fonctionne le jeu de pronostics de la Coupe du monde 2026.",
+    "nav": "Règles du jeu",
+    "eyebrow": "Guideline officielle",
+    "title": "Release Train Engineer",
+    "titleAccent": "Règles du jeu",
+    "subtitle": "Comment fonctionne le pool Coupe du monde 2026 — équitable, transparent et sans workarounds manuels.",
     "sections": {
       "winner": {
         "title": "Qui gagne ?",
-        "text": "Gagne celui qui a le plus de points au classement. Il y a aussi un classement par équipe : les points de tous les membres d'une équipe (ex. IT, Finance) sont additionnés."
+        "text": "Gagne celui qui a le plus de points au classement. Il y a aussi un classement par équipe basé sur la moyenne des points par membre (ex. IT, Finance)."
       },
       "scoring": {
         "title": "Points par match",
@@ -688,6 +690,29 @@
       "deadline": {
         "title": "Quand puis-je pronostiquer ?",
         "text": "Les pronostics sont possibles jusqu'au coup d'envoi. Ensuite le match est verrouillé — en direct, terminé ou bloqué par l'admin."
+      },
+      "participation": {
+        "title": "Dois-je pronostiquer tous les matchs ?",
+        "intro": "Le système contient 104 matchs de Coupe du monde (72 matchs de groupe + 32 matchs à élimination directe). Aucune obligation technique ou légale de tout compléter — vous pouvez pronostiquer seulement certains matchs. Les pronostics manquants rapportent 0 point et réduisent votre taux de complétion au classement.",
+        "rteRule": "Règle RTE pour ce pool : chaque participant pronostique tous les matchs lui-même. Répartir le travail entre collègues (ex. « toi le groupe A, moi le groupe B ») n'est pas autorisé.",
+        "tableTitle": "Modèles typiques comparés",
+        "tableModel": "Modèle",
+        "tableEffort": "Charge par personne",
+        "tableNote": "La ligne surlignée est le modèle retenu chez nous. Les autres variantes ne s'appliquent pas dans ce pool.",
+        "variants": {
+          "all": "Chacun pronostique tout",
+          "allEffort": "104 pronostics",
+          "split": "Réparti (ex. 4 personnes × 26 matchs)",
+          "splitEffort": "26 par personne",
+          "mandatory": "Seulement les matchs obligatoires pour tous",
+          "mandatoryEffort": "moins de 104",
+          "optional": "Seulement les matchs connus",
+          "optionalEffort": "variable"
+        }
+      },
+      "profile": {
+        "title": "Profil : équipe favorite et buteur",
+        "text": "Indiquez votre équipe nationale favorite et votre nomination pour le meilleur buteur dans le profil. L'équipe favorite sert à la question bonus « Jusqu'où ira votre équipe ? » et est visible par tous les participants."
       },
       "bonus": {
         "title": "Questions bonus",
@@ -699,7 +724,7 @@
       },
       "teams": {
         "title": "Classement par équipe",
-        "text": "Chaque joueur appartient à une équipe. Au classement par équipe, les points de tous les membres sont additionnés."
+        "text": "Chaque joueur appartient à une équipe. Le classement par équipe utilise la moyenne des points par membre — la plus grande équipe ne gagne pas automatiquement."
       },
       "ai": {
         "title": "Demander au coach IA",

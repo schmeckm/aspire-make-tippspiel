@@ -712,13 +712,15 @@
     }
   },
   "help": {
-    "nav": "Hilfe",
-    "title": "Spielregeln & Hilfe",
-    "subtitle": "So funktioniert das WM 2026 Tippspiel.",
+    "nav": "Spielregeln",
+    "eyebrow": "Offizielle Guideline",
+    "title": "Release Train Engineer",
+    "titleAccent": "Spielregeln",
+    "subtitle": "So läuft das WM 2026 Tippspiel – fair, transparent und ohne manuelle Workarounds.",
     "sections": {
       "winner": {
         "title": "Wer gewinnt?",
-        "text": "Am Ende gewinnt, wer die meisten Punkte in der Hitliste hat. Zusätzlich gibt es eine Teamwertung: Die Punkte aller Mitglieder eines Teams (z. B. IT, Finance) werden zusammengezählt."
+        "text": "Am Ende gewinnt, wer die meisten Punkte in der Hitliste hat. Zusätzlich gibt es eine Teamwertung: Entscheidend ist der Durchschnitt der Punkte aller Mitglieder einer Abteilung (z. B. IT, Finance)."
       },
       "scoring": {
         "title": "Punkte pro Spiel",
@@ -727,6 +729,29 @@
       "deadline": {
         "title": "Wann darf ich tippen?",
         "text": "Tipps sind bis zum Anpfiff möglich. Danach sind Spiele gesperrt – auch wenn sie live laufen, beendet oder vom Admin gesperrt sind."
+      },
+      "participation": {
+        "title": "Muss ich alle Spiele tippen?",
+        "intro": "Im System sind 104 WM-Spiele hinterlegt (72 Gruppenspiele + 32 K.-o.-Partien). Technisch oder gesetzlich ist keine Vollständigkeit vorgeschrieben – du kannst auch nur einzelne Spiele tippen. Fehlende Tipps bringen 0 Punkte und senken deine Vollständigkeit in der Hitliste.",
+        "rteRule": "RTE-Regel für dieses Tippspiel: Jeder Teilnehmer tippt alle Spiele selbst. Eine Aufteilung unter Kollegen (z. B. „du Gruppe A, ich Gruppe B“) gibt es nicht.",
+        "tableTitle": "Typische Modelle im Vergleich",
+        "tableModel": "Modell",
+        "tableEffort": "Aufwand pro Person",
+        "tableNote": "Markiert ist das Modell, das bei uns gilt. Die anderen Varianten werden in diesem Tippspiel nicht genutzt.",
+        "variants": {
+          "all": "Jeder tippt alles",
+          "allEffort": "104 Tipps",
+          "split": "Aufgeteilt (z. B. 4 Personen × 26 Spiele)",
+          "splitEffort": "26 pro Person",
+          "mandatory": "Nur Pflicht-Spiele für alle",
+          "mandatoryEffort": "weniger als 104",
+          "optional": "Nur Spiele tippen, die man kennt",
+          "optionalEffort": "variabel"
+        }
+      },
+      "profile": {
+        "title": "Profil: Lieblingsteam & Torschütze",
+        "text": "Trage im Profil dein Lieblingsteam und deine Torschützenkönig-Nominierung ein. Das Lieblingsteam wird für die Bonusfrage „Wie weit kommt dein Team?“ genutzt und ist für alle Mitspieler sichtbar."
       },
       "bonus": {
         "title": "Bonusfragen",
@@ -738,7 +763,7 @@
       },
       "teams": {
         "title": "Teamwertung",
-        "text": "Jeder Spieler gehört einem Team an. In der Teamwertung werden die Punkte aller Teammitglieder zusammengezählt – so siehst du, welche Abteilung am besten tippt."
+        "text": "Jeder Spieler gehört einem Team an. In der Teamwertung zählt der Ø Punkte pro Mitglied – so gewinnt nicht automatisch die größte Abteilung, sondern die mit dem besten Schnitt."
       },
       "ai": {
         "title": "Fragen an den KI-Coach",
