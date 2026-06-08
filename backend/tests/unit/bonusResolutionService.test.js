@@ -10,7 +10,7 @@ const {
   isProgressAnswerCorrect,
 } = require('../../services/bonusResolutionService');
 
-describe('bonusResolutionService', () => {
+describe('bonusResolutionService', { concurrency: 1 }, () => {
   before(async () => {
     await sequelize.sync({ force: true });
   });
@@ -65,6 +65,19 @@ describe('bonusResolutionService', () => {
   });
 
   test('getTeamProgress returns highest reached stage', async () => {
+    await Match.bulkCreate([
+      {
+        matchNumber: 21,
+        stage: 'Semi-finals',
+        homeTeam: 'France',
+        awayTeam: 'Germany',
+        kickoffTime: '2026-07-10T20:00:00.000Z',
+        homeScore: 0,
+        awayScore: 1,
+        status: 'finished',
+      },
+    ]);
+
     const progress = await getTeamProgress('France');
     assert.equal(progress, 'semiFinal');
   });

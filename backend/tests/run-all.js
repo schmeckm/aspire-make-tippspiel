@@ -17,6 +17,23 @@ function collectTestFiles(dir) {
   return files;
 }
 
+function runSingleTestFile(file) {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '--require',
+      path.join(__dirname, 'helpers/testEnv.js'),
+      '--test',
+      '--test-concurrency=1',
+      '--test-force-exit',
+      file,
+    ],
+    { stdio: 'inherit', cwd: path.join(__dirname, '..') },
+  );
+
+  return result.status ?? 1;
+}
+
 function runTests(subdir) {
   const testsRoot = path.join(__dirname, subdir || '');
   const testFiles = collectTestFiles(testsRoot).sort();
@@ -26,20 +43,14 @@ function runTests(subdir) {
     process.exit(1);
   }
 
-  const result = spawnSync(
-    process.execPath,
-    [
-      '--require',
-      path.join(__dirname, 'helpers/testEnv.js'),
-      '--test',
-      '--test-concurrency=1',
-      '--test-force-exit',
-      ...testFiles,
-    ],
-    { stdio: 'inherit', cwd: path.join(__dirname, '..') },
-  );
+  for (const file of testFiles) {
+    const status = runSingleTestFile(file);
+    if (status !== 0) {
+      process.exit(status);
+    }
+  }
 
-  process.exit(result.status ?? 1);
+  process.exit(0);
 }
 
 const mode = process.argv[2];

@@ -5,7 +5,7 @@ const ExcelJS = require('exceljs');
 const { sequelize, User, Team, Match, ScoringRule } = require('../../models');
 const { buildExcelWorkbook, buildExcelExportBuffer, collectExportData } = require('../../services/excelExportService');
 
-describe('excelExportService', () => {
+describe('excelExportService', { concurrency: 1 }, () => {
   before(async () => {
     await sequelize.sync({ force: true });
     const team = await Team.create({ name: 'IT' });

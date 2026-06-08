@@ -16,7 +16,7 @@ const {
   isProgressAnswerCorrect,
 } = require('../../services/bonusResolutionService');
 
-describe('bonus scoring logic', () => {
+describe('bonus scoring logic', { concurrency: 1 }, () => {
   before(async () => {
     await sequelize.sync({ force: true });
   });
