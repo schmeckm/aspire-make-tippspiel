@@ -5,7 +5,10 @@ function getLocale(req) {
 }
 
 function sendError(res, req, status, key, params) {
-  return res.status(status).json({ error: t(key, getLocale(req), params) });
+  return res.status(status).json({
+    error: t(key, getLocale(req), params),
+    code: key,
+  });
 }
 
 function sendSuccess(res, req, key, params, extra = {}) {

@@ -2,8 +2,12 @@
   <div>
     <div class="page-header"><h1>{{ t('adminPages.email.title') }}</h1></div>
     <AlertMessage v-if="message" :message="message" type="success" />
-    <AlertMessage v-if="error" :message="error" type="error" />
+    <ErrorState v-if="loadError" :message="loadError" @retry="loadEmailData" />
+    <AlertMessage v-else-if="error" :message="error" type="error" />
 
+    <LoadingSpinner v-if="loading" />
+
+    <template v-else>
     <div class="card mb-2">
       <div class="card-header">
         <h3>{{ t('adminPages.email.smtpStatus') }}</h3>
@@ -67,6 +71,7 @@
         />
       </div>
     </div>
+    </template>
   </div>
 </template>
 
@@ -75,24 +80,38 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import api from '../../services/api';
 import AlertMessage from '../../components/AlertMessage.vue';
+import ErrorState from '../../components/ErrorState.vue';
+import LoadingSpinner from '../../components/LoadingSpinner.vue';
 import EmailSettingsForm from '../../components/EmailSettingsForm.vue';
 
 const { t } = useI18n();
 
 const settings = ref({});
 const emailStatus = ref({});
+const loading = ref(true);
 const saving = ref(false);
 const message = ref('');
+const loadError = ref('');
 const error = ref('');
 
-onMounted(async () => {
-  const [settingsRes, emailRes] = await Promise.all([
-    api.get('/settings'),
-    api.get('/admin/email/status'),
-  ]);
-  settings.value = settingsRes.data;
-  emailStatus.value = emailRes.data;
-});
+async function loadEmailData() {
+  loading.value = true;
+  loadError.value = '';
+  try {
+    const [settingsRes, emailRes] = await Promise.all([
+      api.get('/settings'),
+      api.get('/admin/email/status'),
+    ]);
+    settings.value = settingsRes.data;
+    emailStatus.value = emailRes.data;
+  } catch (e) {
+    loadError.value = e.response?.data?.error || t('adminPages.email.loadFailed');
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(loadEmailData);
 
 async function refreshEmailStatus() {
   const { data } = await api.get('/admin/email/status');

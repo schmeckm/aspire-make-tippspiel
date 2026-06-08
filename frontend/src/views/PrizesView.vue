@@ -38,6 +38,8 @@
           :src="prize.imageUrl"
           :alt="prize.title || t('prizes.place', { rank: prize.rank })"
           class="prize-image"
+          loading="lazy"
+          decoding="async"
         />
         <h2 class="prize-title">{{ prize.title || t('prizes.place', { rank: prize.rank }) }}</h2>
         <p v-if="prize.value" class="prize-value">{{ prize.value }}</p>

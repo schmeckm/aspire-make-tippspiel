@@ -19,7 +19,7 @@
             :class="{ active: selectedTeam?.id === team.id }"
             @click="$emit('select-team', team)"
           >
-            <img v-if="team.crest" :src="team.crest" :alt="team.name" class="national-team-crest" />
+            <img v-if="team.crest" :src="team.crest" :alt="team.name" class="national-team-crest" loading="lazy" decoding="async" />
             <span v-else class="national-team-crest-fallback">⚽</span>
             <span class="national-team-name">{{ team.name }}</span>
             <span class="national-team-meta">{{ team.squadSize }} {{ t('nationalTeams.players') }}</span>
@@ -34,7 +34,7 @@
       </div>
       <div v-else class="card-body">
         <div class="national-team-detail-header">
-          <img v-if="selectedTeam.crest" :src="selectedTeam.crest" :alt="selectedTeam.name" class="national-team-detail-crest" />
+          <img v-if="selectedTeam.crest" :src="selectedTeam.crest" :alt="selectedTeam.name" class="national-team-detail-crest" loading="lazy" decoding="async" />
           <div>
             <h2>{{ selectedTeam.name }}</h2>
             <p v-if="selectedTeam.coach" class="text-muted">

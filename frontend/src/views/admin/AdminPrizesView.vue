@@ -6,7 +6,8 @@
     </div>
 
     <AlertMessage v-if="message" :message="message" type="success" />
-    <AlertMessage v-if="error" :message="error" type="error" />
+    <ErrorState v-if="loadError" :message="loadError" @retry="loadPrizes" />
+    <AlertMessage v-else-if="error" :message="error" type="error" />
 
     <LoadingSpinner v-if="loading" />
 
@@ -82,6 +83,7 @@ import { useI18n } from 'vue-i18n';
 import api from '../../services/api';
 import LoadingSpinner from '../../components/LoadingSpinner.vue';
 import AlertMessage from '../../components/AlertMessage.vue';
+import ErrorState from '../../components/ErrorState.vue';
 import { useAppSettingsStore } from '../../stores/appSettingsStore';
 
 const { t } = useI18n();
@@ -90,6 +92,7 @@ const appSettings = useAppSettingsStore();
 const loading = ref(true);
 const saving = ref(false);
 const message = ref('');
+const loadError = ref('');
 const error = ref('');
 const imageBusyRanks = ref(new Set());
 const previewUrls = ref({});
@@ -141,14 +144,20 @@ function applyFormFromSettings(data) {
   });
 }
 
-onMounted(async () => {
+async function loadPrizes() {
+  loading.value = true;
+  loadError.value = '';
   try {
     const { data } = await api.get('/settings');
     applyFormFromSettings(data);
+  } catch (err) {
+    loadError.value = err.response?.data?.error || t('adminPages.prizes.loadFailed');
   } finally {
     loading.value = false;
   }
-});
+}
+
+onMounted(loadPrizes);
 
 onUnmounted(() => {
   Object.keys(previewUrls.value).forEach((rank) => clearPreview(Number(rank)));

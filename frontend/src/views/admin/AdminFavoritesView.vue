@@ -7,7 +7,7 @@
       </div>
     </div>
 
-    <AlertMessage v-if="error" :message="error" type="error" />
+    <ErrorState v-if="loadError" :message="loadError" @retry="loadFavorites" />
 
     <LoadingSpinner v-if="loading" />
 
@@ -212,7 +212,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import api from '../../services/api';
 import LoadingSpinner from '../../components/LoadingSpinner.vue';
-import AlertMessage from '../../components/AlertMessage.vue';
+import ErrorState from '../../components/ErrorState.vue';
 import PlayerAvatar from '../../components/PlayerAvatar.vue';
 import UserAvatar from '../../components/UserAvatar.vue';
 import TeamFlag from '../../components/TeamFlag.vue';
@@ -220,7 +220,7 @@ import TeamFlag from '../../components/TeamFlag.vue';
 const { t } = useI18n();
 
 const loading = ref(true);
-const error = ref('');
+const loadError = ref('');
 const search = ref('');
 const expandedKey = ref(null);
 const data = ref({
@@ -270,16 +270,20 @@ function toggleExpanded(key) {
   expandedKey.value = expandedKey.value === key ? null : key;
 }
 
-onMounted(async () => {
+async function loadFavorites() {
+  loading.value = true;
+  loadError.value = '';
   try {
     const { data: response } = await api.get('/statistics/admin/favorites');
     data.value = response;
   } catch (err) {
-    error.value = err.response?.data?.error || t('adminPages.favorites.loadFailed');
+    loadError.value = err.response?.data?.error || t('adminPages.favorites.loadFailed');
   } finally {
     loading.value = false;
   }
-});
+}
+
+onMounted(loadFavorites);
 </script>
 
 <style scoped>

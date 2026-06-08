@@ -8,7 +8,8 @@
     </div>
 
     <AlertMessage v-if="message" :message="message" type="success" />
-    <AlertMessage v-if="error" :message="error" type="error" />
+    <ErrorState v-if="loadError" :message="loadError" @retry="loadPredictions" />
+    <AlertMessage v-else-if="error" :message="error" type="error" />
 
     <div v-if="!loading" class="filter-bar">
       <input
@@ -213,6 +214,7 @@ import api from '../../services/api';
 import { useFormatters } from '../../composables/useFormatters';
 import LoadingSpinner from '../../components/LoadingSpinner.vue';
 import AlertMessage from '../../components/AlertMessage.vue';
+import ErrorState from '../../components/ErrorState.vue';
 import UserAvatar from '../../components/UserAvatar.vue';
 import TeamFlag from '../../components/TeamFlag.vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
@@ -230,6 +232,7 @@ const showModal = ref(false);
 const editingPred = ref(null);
 const editForm = ref({ homeScore: 0, awayScore: 0 });
 const message = ref('');
+const loadError = ref('');
 const error = ref('');
 
 const filteredPredictions = computed(() => {
@@ -250,9 +253,12 @@ function statusLabel(status) {
 
 async function loadPredictions() {
   loading.value = true;
+  loadError.value = '';
   try {
     const { data } = await api.get('/admin/predictions');
     predictions.value = data;
+  } catch (err) {
+    loadError.value = err.response?.data?.error || t('adminPages.predictions.loadFailed');
   } finally {
     loading.value = false;
   }

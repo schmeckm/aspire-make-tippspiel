@@ -16,7 +16,8 @@
     </div>
 
     <AlertMessage v-if="message" :message="message" type="success" />
-    <AlertMessage v-if="error" :message="error" type="error" />
+    <ErrorState v-if="loadError" :message="loadError" @retry="loadTeams" />
+    <AlertMessage v-else-if="error" :message="error" type="error" />
 
     <LoadingSpinner v-if="loading" />
 
@@ -117,6 +118,7 @@ import api from '../../services/api';
 import LoadingSpinner from '../../components/LoadingSpinner.vue';
 import AdminTable from '../../components/AdminTable.vue';
 import AlertMessage from '../../components/AlertMessage.vue';
+import ErrorState from '../../components/ErrorState.vue';
 import TeamAvatar from '../../components/TeamAvatar.vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useConfirmModal } from '../../composables/useConfirmModal';
@@ -132,6 +134,7 @@ const editingTeam = ref(null);
 const saving = ref(false);
 const imageBusy = ref(false);
 const message = ref('');
+const loadError = ref('');
 const error = ref('');
 const selectedFile = ref(null);
 const previewUrl = ref('');
@@ -162,12 +165,12 @@ function clearFileSelection() {
 
 async function loadTeams() {
   loading.value = true;
-  error.value = '';
+  loadError.value = '';
   try {
     const { data } = await api.get('/teams');
     teams.value = data;
   } catch (err) {
-    error.value = err.response?.data?.error || t('adminPages.teams.loadFailed');
+    loadError.value = err.response?.data?.error || t('adminPages.teams.loadFailed');
     teams.value = [];
   } finally {
     loading.value = false;

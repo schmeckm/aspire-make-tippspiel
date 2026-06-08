@@ -962,6 +962,7 @@
     },
     "matches": {
       "title": "Gestion des matchs",
+      "loadFailed": "Impossible de charger les matchs.",
       "newMatch": "Nouveau match",
       "editMatch": "Modifier le match",
       "createMatch": "Nouveau match",
@@ -985,6 +986,7 @@
     },
     "results": {
       "title": "Gestion des résultats",
+      "loadFailed": "Impossible de charger les matchs.",
       "resultSaved": "Résultat enregistré et points calculés.",
       "saveFailed": "Erreur lors de l'enregistrement.",
       "lockFailed": "Échec du verrouillage.",

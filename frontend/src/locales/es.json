@@ -962,6 +962,7 @@
     },
     "matches": {
       "title": "Gestión de partidos",
+      "loadFailed": "No se pudieron cargar los partidos.",
       "newMatch": "Nuevo partido",
       "editMatch": "Editar partido",
       "createMatch": "Nuevo partido",
@@ -985,6 +986,7 @@
     },
     "results": {
       "title": "Gestión de resultados",
+      "loadFailed": "No se pudieron cargar los partidos.",
       "resultSaved": "Resultado guardado y puntos calculados.",
       "saveFailed": "Error al guardar.",
       "lockFailed": "Error al bloquear.",

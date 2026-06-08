@@ -8,7 +8,8 @@
     </div>
 
     <AlertMessage v-if="message" :message="message" type="success" />
-    <AlertMessage v-if="error" :message="error" type="error" />
+    <ErrorState v-if="loadError" :message="loadError" @retry="loadRecords" />
+    <AlertMessage v-else-if="error" :message="error" type="error" />
 
     <div class="card mb-3">
       <div class="card-body">
@@ -212,6 +213,7 @@ import { useI18n } from 'vue-i18n';
 import api from '../../services/api';
 import LoadingSpinner from '../../components/LoadingSpinner.vue';
 import AlertMessage from '../../components/AlertMessage.vue';
+import ErrorState from '../../components/ErrorState.vue';
 import PlayerAvatar from '../../components/PlayerAvatar.vue';
 import { useFormatters } from '../../composables/useFormatters';
 
@@ -228,6 +230,7 @@ const saving = ref(false);
 const busy = ref(false);
 const searchBusy = ref(false);
 const message = ref('');
+const loadError = ref('');
 const error = ref('');
 const providerResults = ref([]);
 const selectedResult = ref(null);
@@ -256,14 +259,14 @@ async function loadStatus() {
 
 async function loadRecords() {
   loading.value = true;
-  error.value = '';
+  loadError.value = '';
   try {
     const { data } = await api.get('/admin/player-images', {
       params: { search: searchQuery.value.trim() },
     });
     records.value = data.items || [];
   } catch (err) {
-    error.value = err.response?.data?.error || t('adminPlayerImages.loadFailed');
+    loadError.value = err.response?.data?.error || t('adminPlayerImages.loadFailed');
   } finally {
     loading.value = false;
   }

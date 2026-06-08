@@ -6,6 +6,8 @@
     class="player-avatar"
     :class="sizeClass"
     :title="attributionTitle"
+    loading="lazy"
+    decoding="async"
     @error="onImageError"
   />
   <span

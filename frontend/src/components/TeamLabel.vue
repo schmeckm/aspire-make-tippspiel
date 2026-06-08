@@ -1,6 +1,6 @@
 <template>
   <span class="team-label">
-    <img v-if="crest" :src="crest" :alt="displayName" class="team-label-crest" />
+    <img v-if="crest" :src="crest" :alt="displayName" class="team-label-crest" loading="lazy" decoding="async" />
     <span>{{ displayName }}</span>
   </span>
 </template>

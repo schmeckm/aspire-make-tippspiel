@@ -5,6 +5,8 @@
     :alt="name"
     class="user-avatar"
     :class="sizeClass"
+    loading="lazy"
+    decoding="async"
   />
   <span
     v-else

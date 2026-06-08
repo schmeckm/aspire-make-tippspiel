@@ -11,8 +11,12 @@ function initRedis() {
       lazyConnect: true,
     });
     connectPromise = redisClient.connect?.()
-      .then(() => { redisReady = true; })
-      .catch(() => {
+      .then(() => {
+        redisReady = true;
+        console.log('Redis connected');
+      })
+      .catch((error) => {
+        console.warn('Redis unavailable, using in-memory OAuth store:', error.message);
         redisClient = null;
         redisReady = false;
       });

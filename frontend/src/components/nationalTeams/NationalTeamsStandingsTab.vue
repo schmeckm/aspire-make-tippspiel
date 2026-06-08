@@ -26,7 +26,7 @@
                 <td>{{ row.position }}</td>
                 <td>
                   <span class="standing-team">
-                    <img v-if="row.team.crest" :src="row.team.crest" :alt="row.team.name" class="standing-crest" />
+                        <img v-if="row.team.crest" :src="row.team.crest" :alt="row.team.name" class="standing-crest" loading="lazy" decoding="async" />
                     {{ row.team.name }}
                   </span>
                 </td>

@@ -25,6 +25,8 @@
                 :src="crestFor(row.team.name)"
                 :alt="row.team.name"
                 class="standing-crest"
+                loading="lazy"
+                decoding="async"
               />
               <span>{{ displayName(row.team.name) }}</span>
             </span>

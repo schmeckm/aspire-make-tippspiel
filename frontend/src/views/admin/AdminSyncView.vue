@@ -2,7 +2,8 @@
   <div>
     <div class="page-header"><h1>{{ t('adminPages.sync.title') }}</h1></div>
     <AlertMessage v-if="message" :message="message" :type="messageType" />
-    <AlertMessage v-if="error" :message="error" type="error" />
+    <ErrorState v-if="loadError" :message="loadError" @retry="load" />
+    <AlertMessage v-else-if="error" :message="error" type="error" />
 
     <LoadingSpinner v-if="loading" />
     <template v-else>
@@ -122,6 +123,7 @@ import { useI18n } from 'vue-i18n';
 import api from '../../services/api';
 import LoadingSpinner from '../../components/LoadingSpinner.vue';
 import AlertMessage from '../../components/AlertMessage.vue';
+import ErrorState from '../../components/ErrorState.vue';
 import SyncStatusCard from '../../components/SyncStatusCard.vue';
 import SyncLogTable from '../../components/SyncLogTable.vue';
 import AdminManualModeBanner from '../../components/AdminManualModeBanner.vue';
@@ -135,6 +137,7 @@ const status = ref({});
 const logs = ref([]);
 const message = ref('');
 const messageType = ref('success');
+const loadError = ref('');
 const error = ref('');
 
 let playerImagePollTimer = null;
@@ -198,6 +201,7 @@ function isStaleRunningLog(log) {
 
 async function load() {
   loading.value = true;
+  loadError.value = '';
   try {
     const [statusRes, logsRes] = await Promise.all([
       api.get('/admin/sync/status'),
@@ -205,6 +209,8 @@ async function load() {
     ]);
     status.value = statusRes.data;
     logs.value = logsRes.data;
+  } catch (e) {
+    loadError.value = e.response?.data?.error || t('adminPages.sync.loadFailed');
   } finally {
     loading.value = false;
   }

@@ -17,6 +17,8 @@ const EXCHANGE_TTL_MS = 5 * 60 * 1000;
 
 const STATE_PREFIX = 'oauth:state:';
 const EXCHANGE_PREFIX = 'oauth:exchange:';
+const EXCHANGED_PREFIX = 'oauth:exchanged:';
+const EXCHANGED_TTL_MS = 2 * 60 * 1000;
 
 let googleClient = null;
 
@@ -77,6 +79,14 @@ async function consumeExchangeCode(code) {
 async function peekExchangeCode(code) {
   cleanupExpired();
   return temporaryStore.get(`${EXCHANGE_PREFIX}${code}`);
+}
+
+async function cacheExchangeResult(code, payload) {
+  await temporaryStore.set(`${EXCHANGED_PREFIX}${code}`, payload, EXCHANGED_TTL_MS);
+}
+
+async function getCachedExchangeResult(code) {
+  return temporaryStore.get(`${EXCHANGED_PREFIX}${code}`);
 }
 
 function getAllowedEmailDomains() {
@@ -365,6 +375,8 @@ module.exports = {
   createExchangeCode,
   consumeExchangeCode,
   peekExchangeCode,
+  cacheExchangeResult,
+  getCachedExchangeResult,
   isEmailDomainAllowed,
   getAppUrl,
   resetOAuthStateForTests,

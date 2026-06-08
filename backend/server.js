@@ -35,6 +35,11 @@ async function start() {
     await initDatabase();
     console.log('Datenbank verbunden und synchronisiert.');
 
+    if (process.env.REDIS_URL) {
+      const { ensureRedis } = require('./services/redisClient');
+      await ensureRedis();
+    }
+
     const { ensureBootstrapAdmin } = require('./services/bootstrapAdminService');
     await ensureBootstrapAdmin();
 

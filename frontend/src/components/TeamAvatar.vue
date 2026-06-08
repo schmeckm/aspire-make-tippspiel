@@ -5,6 +5,8 @@
     :alt="name"
     class="team-avatar"
     :class="sizeClass"
+    loading="lazy"
+    decoding="async"
   />
   <span v-else class="team-avatar team-avatar-fallback" :class="sizeClass">
     {{ initials }}

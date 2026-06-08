@@ -76,10 +76,12 @@ async function init(server, options = {}) {
     });
 
     socket.on('join-leaderboard', () => {
+      if (!socket.authenticated) return;
       socket.join('leaderboard');
     });
 
     socket.on('join-matches', () => {
+      if (!socket.authenticated) return;
       socket.join('matches');
     });
   });

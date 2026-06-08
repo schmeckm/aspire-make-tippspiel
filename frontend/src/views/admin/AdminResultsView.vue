@@ -5,7 +5,8 @@
     </div>
 
     <AlertMessage v-if="message" :message="message" type="success" />
-    <AlertMessage v-if="error" :message="error" type="error" />
+    <ErrorState v-if="loadError" :message="loadError" @retry="loadMatches" />
+    <AlertMessage v-else-if="error" :message="error" type="error" />
 
     <LoadingSpinner v-if="loading" />
 
@@ -62,6 +63,7 @@ import { useI18n } from 'vue-i18n';
 import api from '../../services/api';
 import LoadingSpinner from '../../components/LoadingSpinner.vue';
 import AlertMessage from '../../components/AlertMessage.vue';
+import ErrorState from '../../components/ErrorState.vue';
 
 const { t, locale } = useI18n();
 
@@ -70,6 +72,7 @@ const loading = ref(true);
 const editingId = ref(null);
 const resultForm = ref({ homeScore: 0, awayScore: 0 });
 const message = ref('');
+const loadError = ref('');
 const error = ref('');
 
 function formatDate(dateStr) {
@@ -82,9 +85,12 @@ function statusLabel(status) {
 
 async function loadMatches() {
   loading.value = true;
+  loadError.value = '';
   try {
     const { data } = await api.get('/matches');
     matches.value = data;
+  } catch (err) {
+    loadError.value = err.response?.data?.error || t('adminPages.results.loadFailed');
   } finally {
     loading.value = false;
   }

@@ -3,11 +3,10 @@ const { redisGet, redisSet, redisDel } = require('./redisClient');
 const memoryStore = new Map();
 
 async function set(key, value, ttlMs) {
-  const payload = JSON.stringify({ value, expiresAt: Date.now() + ttlMs });
-  const stored = await redisSet(key, payload, ttlMs);
-  if (!stored) {
-    memoryStore.set(key, { value, expiresAt: Date.now() + ttlMs });
-  }
+  const expiresAt = Date.now() + ttlMs;
+  memoryStore.set(key, { value, expiresAt });
+  const payload = JSON.stringify({ value, expiresAt });
+  await redisSet(key, payload, ttlMs);
 }
 
 async function get(key) {

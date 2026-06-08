@@ -34,6 +34,8 @@ const {
   createExchangeCode,
   consumeExchangeCode,
   peekExchangeCode,
+  cacheExchangeResult,
+  getCachedExchangeResult,
   isEmailDomainAllowed,
   getAppUrl,
 } = require('../services/oauthService');
@@ -139,13 +141,19 @@ router.get('/google/callback', async (req, res) => {
 
 router.post('/exchange', sensitiveAuthLimiter, async (req, res) => {
   try {
-    const { code } = req.body;
+    const code = typeof req.body?.code === 'string' ? req.body.code.trim() : '';
     if (!code) {
       return sendError(res, req, 400, 'errors.ssoInvalidCode');
     }
 
+    const cached = await getCachedExchangeResult(code);
+    if (cached) {
+      return res.json(cached);
+    }
+
     const data = await consumeExchangeCode(code);
     if (!data) {
+      console.warn('SSO exchange: code missing or expired');
       return sendError(res, req, 400, 'errors.ssoInvalidCode');
     }
 
@@ -162,14 +170,25 @@ router.post('/exchange', sensitiveAuthLimiter, async (req, res) => {
       return sendError(res, req, 400, 'errors.ssoTeamRequired');
     }
 
+    if (!data.user?.id) {
+      console.warn('SSO exchange: payload missing user id');
+      return sendError(res, req, 400, 'errors.ssoInvalidCode');
+    }
+
     const user = await User.findByPk(data.user.id, {
       include: [{ model: Team, as: 'team' }],
     });
+    if (!user) {
+      return sendError(res, req, 400, 'errors.ssoInvalidCode');
+    }
+
     const auth = await issueAuthResponse(user);
-    res.json({
+    const response = {
       message: translate(req, 'messages.loginSuccess'),
       ...auth,
-    });
+    };
+    await cacheExchangeResult(code, response);
+    res.json(response);
   } catch (error) {
     console.error('SSO exchange error:', error);
     sendError(res, req, 500, 'errors.ssoFailed');

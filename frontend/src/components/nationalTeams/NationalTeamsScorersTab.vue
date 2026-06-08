@@ -33,7 +33,7 @@
               </td>
               <td>
                 <span class="standing-team">
-                  <img v-if="entry.team.crest" :src="entry.team.crest" :alt="entry.team.name" class="standing-crest" />
+                  <img v-if="entry.team.crest" :src="entry.team.crest" :alt="entry.team.name" class="standing-crest" loading="lazy" decoding="async" />
                   {{ entry.team.name }}
                 </span>
               </td>

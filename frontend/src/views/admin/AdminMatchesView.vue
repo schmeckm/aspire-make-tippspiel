@@ -6,7 +6,8 @@
     </div>
 
     <AlertMessage v-if="message" :message="message" type="success" />
-    <AlertMessage v-if="error" :message="error" type="error" />
+    <ErrorState v-if="loadError" :message="loadError" @retry="loadMatches" />
+    <AlertMessage v-else-if="error" :message="error" type="error" />
 
     <LoadingSpinner v-if="loading" />
 
@@ -101,6 +102,7 @@ import api from '../../services/api';
 import LoadingSpinner from '../../components/LoadingSpinner.vue';
 import MatchTable from '../../components/MatchTable.vue';
 import AlertMessage from '../../components/AlertMessage.vue';
+import ErrorState from '../../components/ErrorState.vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useConfirmModal } from '../../composables/useConfirmModal';
 
@@ -113,6 +115,7 @@ const showModal = ref(false);
 const editingMatch = ref(null);
 const saving = ref(false);
 const message = ref('');
+const loadError = ref('');
 const error = ref('');
 
 const form = ref({
@@ -136,9 +139,12 @@ function onKeydown(event) {
 
 async function loadMatches() {
   loading.value = true;
+  loadError.value = '';
   try {
     const { data } = await api.get('/matches');
     matches.value = data;
+  } catch (err) {
+    loadError.value = err.response?.data?.error || t('adminPages.matches.loadFailed');
   } finally {
     loading.value = false;
   }

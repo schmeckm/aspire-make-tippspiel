@@ -20,17 +20,43 @@ const router = useRouter();
 const authStore = useAuthStore();
 const error = ref('');
 
+function normalizeCode(raw) {
+  if (Array.isArray(raw)) return raw[0] || '';
+  return typeof raw === 'string' ? raw : '';
+}
+
 onMounted(async () => {
-  const code = route.query.code;
+  const code = normalizeCode(route.query.code);
   if (!code) {
     error.value = t('auth.loginFailed');
     return;
   }
 
+  if (authStore.isAuthenticated) {
+    router.replace(authStore.isAdmin ? '/admin' : '/dashboard');
+    return;
+  }
+
+  const exchangeKey = `sso-exchange:${code}`;
+  if (sessionStorage.getItem(exchangeKey) === 'done') {
+    router.replace(authStore.isAdmin ? '/admin' : '/dashboard');
+    return;
+  }
+  if (sessionStorage.getItem(exchangeKey) === 'pending') {
+    return;
+  }
+  sessionStorage.setItem(exchangeKey, 'pending');
+
   try {
     await authStore.exchangeSsoCode(code);
+    sessionStorage.setItem(exchangeKey, 'done');
     router.replace(authStore.isAdmin ? '/admin' : '/dashboard');
   } catch (err) {
+    sessionStorage.removeItem(exchangeKey);
+    if (err.response?.data?.code === 'errors.ssoTeamRequired') {
+      router.replace({ path: '/auth/complete-registration', query: { code } });
+      return;
+    }
     error.value = err.response?.data?.error || t('auth.loginFailed');
   }
 });
