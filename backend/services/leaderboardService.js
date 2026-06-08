@@ -324,8 +324,8 @@ async function saveLeaderboardSnapshot() {
   return snapshotTime;
 }
 
-async function getTeamRanking() {
-  const leaderboard = await getLeaderboard();
+async function getTeamRanking(options = {}) {
+  const leaderboard = await getLeaderboard(options);
   const teams = await Team.findAll({ include: [{ model: User, as: 'users' }] });
 
   const teamEntries = teams.map((team) => {

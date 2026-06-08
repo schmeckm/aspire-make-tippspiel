@@ -3,7 +3,7 @@ const { test, describe, before } = require('node:test');
 const assert = require('node:assert/strict');
 const ExcelJS = require('exceljs');
 const { sequelize, User, Team, Match, ScoringRule } = require('../../models');
-const { buildExcelWorkbook, buildExcelExportBuffer } = require('../../services/excelExportService');
+const { buildExcelWorkbook, buildExcelExportBuffer, collectExportData } = require('../../services/excelExportService');
 
 describe('excelExportService', () => {
   before(async () => {
@@ -51,6 +51,23 @@ describe('excelExportService', () => {
     assert.equal(meta.sheetCount, 8);
     assert.ok(meta.userCount >= 1);
     assert.ok(meta.matchCount >= 1);
+  });
+
+  test('collectExportData includes admins in leaderboard for emergency export', async () => {
+    await User.create({
+      firstName: 'Admin',
+      lastName: 'Export',
+      email: 'admin-export@test.local',
+      password: 'test12345',
+      role: 'admin',
+      teamId: (await Team.findOne()).id,
+      emailVerified: true,
+    });
+
+    const data = await collectExportData();
+    const emails = data.leaderboard.map((entry) => entry.email);
+    assert.ok(emails.includes('admin-export@test.local'));
+    assert.equal(data.users.length, data.leaderboard.length);
   });
 
   test('buildExcelExportBuffer returns a valid xlsx file', async () => {

@@ -76,6 +76,12 @@ function buildExportFilename() {
   return `tippspiel-export-${stamp}.xlsx`;
 }
 
+const EXPORT_LEADERBOARD_OPTIONS = {
+  includeEmail: true,
+  includeAdmins: true,
+  skipCache: true,
+};
+
 async function collectExportData() {
   const [
     leaderboard,
@@ -87,8 +93,8 @@ async function collectExportData() {
     bonusPredictions,
     scoringRules,
   ] = await Promise.all([
-    getLeaderboard({ includeEmail: true }),
-    getTeamRanking(),
+    getLeaderboard(EXPORT_LEADERBOARD_OPTIONS),
+    getTeamRanking(EXPORT_LEADERBOARD_OPTIONS),
     User.findAll({
       include: [{ model: Team, as: 'team', attributes: ['name'] }],
       order: [['lastName', 'ASC'], ['firstName', 'ASC']],
@@ -151,10 +157,12 @@ async function buildExcelWorkbook() {
     entry.completionPercentage,
   ]));
 
+  const activeTeamRanking = data.teamRanking.filter((entry) => entry.userCount > 0);
+
   addSheet(workbook, 'Teamwertung', [
     'Rang', 'Team', 'Mitglieder', 'Gesamtpunkte', 'Ø Punkte', 'Exakte Tipps', 'Bester Tipper', 'Vollständigkeit %',
-  ], data.teamRanking.map((entry, index) => [
-    index + 1,
+  ], activeTeamRanking.map((entry) => [
+    entry.rank,
     entry.teamName,
     entry.userCount,
     entry.totalPoints,
@@ -253,12 +261,19 @@ async function buildExcelWorkbook() {
   ]));
 
   const rules = data.scoringRules[0];
-  addSheet(workbook, 'Punkte-Regeln', ['Regel', 'Punkte'], [
+  addSheet(workbook, 'Punkte-Regeln', ['Regel', 'Wert'], [
     ['Exaktes Ergebnis', rules?.exactResultPoints ?? ''],
     ['Richtige Tordifferenz (nur Sieg)', rules?.goalDifferencePoints ?? ''],
     ['Richtige Tendenz', rules?.tendencyPoints ?? ''],
     ['Falscher Tipp', rules?.wrongPredictionPoints ?? ''],
     ['Export erstellt am', data.exportedAt],
+    ['Nutzer gesamt', data.users.length],
+    ['Nutzer in Hitliste', data.leaderboard.length],
+    ['Teams mit Mitgliedern', activeTeamRanking.length],
+    ['Spiele', data.matches.length],
+    ['Spieltipps', data.predictions.length],
+    ['Bonustipps', data.bonusPredictions.length],
+    ['Bonusfragen', data.bonusQuestions.length],
   ]);
 
   return { workbook, meta: {
