@@ -121,6 +121,8 @@ async function widenPlayerImageTextColumns(queryInterface, tableInfo) {
   const textColumns = [
     { name: 'imageUrl', spec: { type: DataTypes.TEXT, allowNull: true } },
     { name: 'sourceId', spec: { type: DataTypes.TEXT, allowNull: true } },
+    { name: 'licenseInfo', spec: { type: DataTypes.TEXT, allowNull: true } },
+    { name: 'attributionText', spec: { type: DataTypes.TEXT, allowNull: true } },
   ];
 
   for (const column of textColumns) {

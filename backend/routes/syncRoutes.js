@@ -6,7 +6,11 @@ const { syncFixtures } = require('../services/fixtureSyncService');
 const { enrichMatchVenuesFromTheSportsDb, enrichCitiesFromWm2026Lookup } = require('../services/theSportsDbVenueService');
 const { syncOfficialWm2026Schedule } = require('../services/wm2026OfficialSyncService');
 const { testTheSportsDbConnection } = require('../services/playerImageProviderService');
-const { syncPlayerImages } = require('../services/playerImageSyncService');
+const {
+  syncPlayerImages,
+  isStaleRunningLog,
+  parseLogDetails,
+} = require('../services/playerImageSyncService');
 const { syncResults } = require('../services/resultSyncService');
 const { syncLiveScores } = require('../services/liveScoreSyncService');
 const { recalculateAllPoints } = require('../services/leaderboardService');
@@ -19,7 +23,6 @@ const {
   startSyncLog,
   failSyncLog,
 } = require('../services/syncLogService');
-const { isStaleRunningLog } = require('../services/playerImageSyncService');
 const { getSetting } = require('../services/settingsService');
 
 const router = express.Router();
@@ -159,6 +162,7 @@ router.post('/test-thesportsdb', async (req, res) => {
 
 router.post('/player-images', async (req, res) => {
   try {
+    let resumeFromIndex = 0;
     const running = await getLastSync('player_images');
     if (running?.status === 'running') {
       if (!isStaleRunningLog(running)) {
@@ -170,17 +174,23 @@ router.post('/player-images', async (req, res) => {
           message: `Spielerbild-Sync läuft bereits (${resolved} Bilder, ${running.skippedCount || 0} übersprungen)…`,
         });
       }
+      resumeFromIndex = parseLogDetails(running).processedCount || 0;
       await failSyncLog(running, new Error('Vorheriger Sync nach Timeout abgebrochen.'));
     }
 
     const forceRefresh = req.body?.forceRefresh === true;
     const log = await startSyncLog('player_images', 'thesportsdb+wikidata');
 
+    const resumeHint = resumeFromIndex > 0
+      ? ` Fortsetzung ab Spieler ${resumeFromIndex + 1}.`
+      : '';
+
     res.json({
       started: true,
       running: true,
       logId: log.id,
-      message: 'Spielerbild-Sync im Hintergrund gestartet (~20 Min. für alle Kader). Fortschritt in den Sync-Logs.',
+      resumeFromIndex,
+      message: `Spielerbild-Sync im Hintergrund gestartet (~20 Min. für alle Kader).${resumeHint} Fortschritt in den Sync-Logs.`,
     });
 
     syncPlayerImages({
@@ -188,6 +198,7 @@ router.post('/player-images', async (req, res) => {
       req,
       forceRefresh,
       log,
+      resumeFromIndex,
     }).catch((error) => {
       console.error('Background player image sync failed:', error);
     });

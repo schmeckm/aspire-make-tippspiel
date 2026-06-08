@@ -168,7 +168,7 @@ function parsePlayerImageLogDetails(log) {
     loaded + (log?.skippedCount || 0) + (log?.errorCount || 0)
   );
   const percent = total > 0
-    ? Math.min(100, Math.round((loaded / total) * 100))
+    ? Math.min(100, Math.round((processed / total) * 100))
     : 0;
 
   return {
@@ -192,10 +192,25 @@ function formatDate(d) {
   return new Date(d).toLocaleString(locale.value);
 }
 
+const STALE_IDLE_MS = 10 * 60 * 1000;
 const STALE_RUNNING_MS = 30 * 60 * 1000;
+
+function parseLogDetailsJson(log) {
+  try {
+    return typeof log?.detailsJson === 'string'
+      ? JSON.parse(log.detailsJson)
+      : (log?.detailsJson || {});
+  } catch {
+    return {};
+  }
+}
 
 function isStaleRunningLog(log) {
   if (!log || log.status !== 'running') return false;
+  const details = parseLogDetailsJson(log);
+  if (details.lastProgressAt) {
+    return Date.now() - new Date(details.lastProgressAt).getTime() >= STALE_IDLE_MS;
+  }
   return Date.now() - new Date(log.startedAt).getTime() >= STALE_RUNNING_MS;
 }
 
