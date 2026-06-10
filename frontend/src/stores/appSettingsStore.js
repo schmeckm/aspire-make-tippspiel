@@ -6,8 +6,25 @@ export const useAppSettingsStore = defineStore('appSettings', () => {
   const loaded = ref(false);
   const prizesEnabled = ref(false);
   const prizes = ref([]);
+  const prizeImageVersions = ref({ 1: 0, 2: 0, 3: 0 });
 
   const showPrizesNav = computed(() => prizesEnabled.value);
+
+  function bumpPrizeImageVersion(rank, version = Date.now()) {
+    prizeImageVersions.value = {
+      ...prizeImageVersions.value,
+      [rank]: version,
+    };
+  }
+
+  function resolvePrizeImageUrl(url, rank) {
+    if (!url) return '';
+    if (url.startsWith('blob:') || url.startsWith('data:')) return url;
+    const version = prizeImageVersions.value[rank];
+    if (!version) return url;
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}v=${version}`;
+  }
 
   async function load() {
     try {
@@ -31,8 +48,11 @@ export const useAppSettingsStore = defineStore('appSettings', () => {
     loaded,
     prizesEnabled,
     prizes,
+    prizeImageVersions,
     showPrizesNav,
     load,
     applySettings,
+    bumpPrizeImageVersion,
+    resolvePrizeImageUrl,
   };
 });

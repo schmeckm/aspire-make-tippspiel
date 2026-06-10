@@ -28,7 +28,7 @@
               <div class="prize-image-editor">
                 <div v-if="getPreviewUrl(prize.rank) || prize.imageUrl" class="prize-image-preview">
                   <img
-                    :src="getPreviewUrl(prize.rank) || prize.imageUrl"
+                    :src="getPreviewUrl(prize.rank) || appSettings.resolvePrizeImageUrl(prize.imageUrl, prize.rank)"
                     :alt="prize.title || t('adminPages.prizes.place', { rank: prize.rank })"
                   />
                 </div>
@@ -189,6 +189,7 @@ async function onFileSelected(event, rank) {
     const { data } = await api.post(`/admin/prizes/${rank}/image`, formData);
     applyFormFromSettings(data);
     appSettings.applySettings(data);
+    appSettings.bumpPrizeImageVersion(rank);
     clearPreview(rank);
     message.value = t('adminPages.prizes.imageUploaded');
   } catch (err) {
@@ -208,6 +209,7 @@ async function removeImage(rank) {
     const { data } = await api.delete(`/admin/prizes/${rank}/image`);
     applyFormFromSettings(data);
     appSettings.applySettings(data);
+    appSettings.bumpPrizeImageVersion(rank);
     message.value = t('adminPages.prizes.imageRemoved');
   } catch (err) {
     error.value = err.response?.data?.error || t('adminPages.prizes.imageRemoveFailed');
@@ -283,8 +285,8 @@ async function handleSave() {
 }
 
 .prize-image-preview {
-  width: 120px;
-  height: 120px;
+  width: 160px;
+  aspect-ratio: 4 / 3;
   border-radius: var(--radius-sm);
   overflow: hidden;
   border: 1px solid var(--color-border);
@@ -296,6 +298,7 @@ async function handleSave() {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 

@@ -18,10 +18,17 @@ const authLimiter = buildLimiter({
   legacyHeaders: false,
 });
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+function isLocalDevRequest(req) {
+  const ip = req.ip || '';
+  return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+}
+
 const apiLimiter = buildLimiter({
   windowMs: 1 * 60 * 1000,
-  max: 300,
-  skip: (req) => req.path === '/health',
+  max: isProduction ? 300 : 2000,
+  skip: (req) => req.path === '/health' || (!isProduction && isLocalDevRequest(req)),
   message: { error: 'Rate limit erreicht.' },
   standardHeaders: true,
   legacyHeaders: false,

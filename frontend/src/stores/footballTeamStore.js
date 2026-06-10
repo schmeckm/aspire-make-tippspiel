@@ -10,6 +10,8 @@ export const useFootballTeamStore = defineStore('footballTeams', {
     loaded: false,
     loading: false,
     error: null,
+    retryAfter: 0,
+    loadPromise: null,
   }),
 
   getters: {
@@ -59,20 +61,35 @@ export const useFootballTeamStore = defineStore('footballTeams', {
     },
 
     async ensureLoaded() {
-      if (this.loaded || this.loading) return;
+      if (this.loaded) return;
+      if (this.retryAfter && Date.now() < this.retryAfter) return;
+      if (this.loadPromise) return this.loadPromise;
+
       this.loading = true;
       this.error = null;
-      try {
-        const { data } = await api.get('/football/teams');
-        for (const team of data) {
-          this.registerTeam(team);
+      this.loadPromise = (async () => {
+        try {
+          const { data } = await api.get('/football/teams');
+          for (const team of data) {
+            this.registerTeam(team);
+          }
+          this.loaded = true;
+          this.retryAfter = 0;
+        } catch (err) {
+          this.error = err.response?.data?.error || err.message;
+          if (err.response?.status === 429) {
+            this.retryAfter = Date.now() + 60_000;
+          } else if (err.response?.status === 503) {
+            // Manual mode without football-data.org — use flag fallbacks only
+            this.loaded = true;
+          }
+        } finally {
+          this.loading = false;
+          this.loadPromise = null;
         }
-        this.loaded = true;
-      } catch (err) {
-        this.error = err.response?.data?.error || err.message;
-      } finally {
-        this.loading = false;
-      }
+      })();
+
+      return this.loadPromise;
     },
   },
 });

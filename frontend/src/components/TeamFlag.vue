@@ -58,10 +58,6 @@ const displayCrest = computed(() => {
   if (flagFailed.value) return '';
   if (apiCrestFailed.value) return flagFallback.value;
   if (props.crest) return props.crest;
-  if (!footballTeamStore.loaded && !footballTeamStore.loading) {
-    footballTeamStore.ensureLoaded();
-  }
-  void footballTeamStore.loaded;
   const crest = footballTeamStore.crestFor(props.name);
   return crest || flagFallback.value;
 });

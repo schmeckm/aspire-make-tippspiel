@@ -33,14 +33,16 @@
           <RankTrophyIcon :rank="prize.rank" class="prize-trophy" />
           <span class="prize-rank">{{ t('prizes.place', { rank: prize.rank }) }}</span>
         </div>
-        <img
-          v-if="prize.imageUrl"
-          :src="prize.imageUrl"
-          :alt="prize.title || t('prizes.place', { rank: prize.rank })"
-          class="prize-image"
-          loading="lazy"
-          decoding="async"
-        />
+        <div class="prize-image-wrap">
+          <img
+            v-if="prize.imageUrl"
+            :src="appSettings.resolvePrizeImageUrl(prize.imageUrl, prize.rank)"
+            :alt="prize.title || t('prizes.place', { rank: prize.rank })"
+            class="prize-image"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
         <h2 class="prize-title">{{ prize.title || t('prizes.place', { rank: prize.rank }) }}</h2>
         <p v-if="prize.value" class="prize-value">{{ prize.value }}</p>
         <p v-if="prize.description" class="prize-description">{{ prize.description }}</p>
@@ -79,6 +81,9 @@ async function loadPrizes() {
     const { data } = await api.get('/settings');
     prizesEnabled.value = !!data.prizesEnabled;
     prizes.value = Array.isArray(data.prizes) ? data.prizes : [];
+    prizes.value.forEach((prize) => {
+      if (prize.imageUrl) appSettings.bumpPrizeImageVersion(prize.rank);
+    });
     appSettings.applySettings(data);
   } catch (err) {
     error.value = err.response?.data?.error || t('prizes.loadFailed');
@@ -95,7 +100,7 @@ onMounted(loadPrizes);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
-  align-items: end;
+  align-items: stretch;
 }
 
 .prize-card {
@@ -155,12 +160,23 @@ onMounted(loadPrizes);
   margin: 0;
 }
 
-.prize-image {
+.prize-image-wrap {
   width: 100%;
-  max-height: 180px;
-  object-fit: cover;
+  aspect-ratio: 4 / 3;
+  min-height: 10rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.prize-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 .prize-value {
