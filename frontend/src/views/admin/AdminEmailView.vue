@@ -55,7 +55,7 @@
       <div class="card-header"><h3>{{ t('adminPages.email.reminderLanguageTitle') }}</h3></div>
       <div class="card-body">
         <p class="text-muted">
-          {{ t('adminPages.email.reminderLanguageDesc', { langs: 'de, en, es, fr' }) }}
+          {{ t('adminPages.email.reminderLanguageDesc', { langs: 'de, en, es, fr, pt' }) }}
         </p>
         <p class="text-muted mb-0">
           {{ t('adminPages.email.reminderLanguageNote') }}

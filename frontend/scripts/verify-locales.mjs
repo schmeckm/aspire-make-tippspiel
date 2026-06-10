@@ -6,6 +6,7 @@ const de = require('../src/locales/de.json');
 const en = require('../src/locales/en.json');
 const es = require('../src/locales/es.json');
 const fr = require('../src/locales/fr.json');
+const pt = require('../src/locales/pt.json');
 
 function escapeI18nAtSign(text) {
   if (typeof text !== 'string' || text.includes("{'@'}")) return text;
@@ -39,7 +40,7 @@ function walk(obj, prefix, locale) {
   }
 }
 
-for (const [locale, messages] of Object.entries({ de, en, es, fr })) {
+for (const [locale, messages] of Object.entries({ de, en, es, fr, pt })) {
   walk(messages, '', locale);
 }
 

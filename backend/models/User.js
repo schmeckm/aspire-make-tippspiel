@@ -49,7 +49,7 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING(5),
     allowNull: false,
     defaultValue: 'de',
-    validate: { isIn: [['de', 'en', 'es', 'fr']] },
+    validate: { isIn: [['de', 'en', 'es', 'fr', 'pt']] },
   },
   favoriteNationalTeamId: {
     type: DataTypes.INTEGER,

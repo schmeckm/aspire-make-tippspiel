@@ -3,6 +3,7 @@ export const LOCALE_FLAGS = {
   en: '🇬🇧',
   es: '🇪🇸',
   fr: '🇫🇷',
+  pt: '🇵🇹',
 };
 
 export const LOCALE_FLAG_IMAGES = {
@@ -10,6 +11,7 @@ export const LOCALE_FLAG_IMAGES = {
   en: 'https://flagcdn.com/w40/gb.png',
   es: 'https://flagcdn.com/w40/es.png',
   fr: 'https://flagcdn.com/w40/fr.png',
+  pt: 'https://flagcdn.com/w40/pt.png',
 };
 
 const TEAM_TO_ISO = {

@@ -8,6 +8,7 @@ const DATE_LOCALES = {
   en: 'en-GB',
   es: 'es-ES',
   fr: 'fr-FR',
+  pt: 'pt-PT',
 };
 
 function formatKickoff(kickoffTime, locale) {

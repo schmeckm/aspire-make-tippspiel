@@ -31,7 +31,7 @@
     "ssoLocalAccountExists": "Este correo está registrado con contraseña. Inicie sesión de forma clásica.",
     "ssoOtherProvider": "Este correo está vinculado a otro método de inicio de sesión.",
     "ssoTeamRequired": "Complete el registro seleccionando un equipo.",
-    "invalidLanguage": "Idioma inválido. Permitidos: de, en, es, fr.",
+    "invalidLanguage": "Idioma inválido. Permitidos: de, en, es, fr, pt.",
     "usersLoadFailed": "No se pudieron cargar los usuarios.",
     "userCreateFailed": "No se pudo crear el usuario.",
     "userLoadFailed": "No se pudo cargar el usuario.",

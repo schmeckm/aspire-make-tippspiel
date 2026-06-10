@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const SUPPORTED_LOCALES = ['de', 'en', 'es', 'fr'];
+const SUPPORTED_LOCALES = ['de', 'en', 'es', 'fr', 'pt'];
 const DEFAULT_LOCALE = 'de';
 const EMAIL_FALLBACK_LOCALE = 'en';
 

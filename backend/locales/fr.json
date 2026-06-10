@@ -31,7 +31,7 @@
     "ssoLocalAccountExists": "Cet e-mail est enregistré avec un mot de passe. Connectez-vous de manière classique.",
     "ssoOtherProvider": "Cet e-mail est lié à une autre méthode de connexion.",
     "ssoTeamRequired": "Veuillez terminer l'inscription en choisissant une équipe.",
-    "invalidLanguage": "Langue invalide. Autorisées : de, en, es, fr.",
+    "invalidLanguage": "Langue invalide. Autorisées : de, en, es, fr, pt.",
     "usersLoadFailed": "Impossible de charger les utilisateurs.",
     "userCreateFailed": "Impossible de créer l'utilisateur.",
     "userLoadFailed": "Impossible de charger l'utilisateur.",

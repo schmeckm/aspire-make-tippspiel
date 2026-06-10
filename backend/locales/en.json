@@ -31,7 +31,7 @@
     "ssoLocalAccountExists": "This email is registered with a password account. Please sign in with email and password.",
     "ssoOtherProvider": "This email is linked to a different sign-in method.",
     "ssoTeamRequired": "Please complete registration by selecting a team.",
-    "invalidLanguage": "Invalid language. Allowed: de, en, es, fr.",
+    "invalidLanguage": "Invalid language. Allowed: de, en, es, fr, pt.",
     "usersLoadFailed": "Users could not be loaded.",
     "userCreateFailed": "User could not be created.",
     "userLoadFailed": "User could not be loaded.",

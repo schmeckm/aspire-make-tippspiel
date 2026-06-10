@@ -1,7 +1,7 @@
 import { createI18n } from 'vue-i18n';
 import de from '../locales/de.json';
 
-export const SUPPORTED_LOCALES = ['de', 'en', 'es', 'fr'];
+export const SUPPORTED_LOCALES = ['de', 'en', 'es', 'fr', 'pt'];
 export const DEFAULT_LOCALE = 'de';
 export const LOCALE_STORAGE_KEY = 'locale';
 
@@ -9,6 +9,7 @@ const localeLoaders = {
   en: () => import('../locales/en.json'),
   es: () => import('../locales/es.json'),
   fr: () => import('../locales/fr.json'),
+  pt: () => import('../locales/pt.json'),
 };
 
 const loadedLocales = new Set([DEFAULT_LOCALE]);

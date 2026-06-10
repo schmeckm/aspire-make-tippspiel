@@ -2,7 +2,7 @@ const { Op } = require('sequelize');
 const { User, Team, Match, Prediction, LeaderboardSnapshot } = require('../models');
 const emailService = require('./emailService');
 const { getAppUrl } = require('./authTokenService');
-const { t, resolveUserEmailLocale } = require('./i18nService');
+const { t, resolveUserEmailLocale, SUPPORTED_LOCALES } = require('./i18nService');
 const { escapeHtml, wrapBrandedEmail } = require('./emailLayoutService');
 const { getLeaderboard, getTeamRanking, getScoringRules } = require('./leaderboardService');
 const { calculatePoints, classifyPrediction } = require('./pointsCalculationService');
@@ -24,7 +24,6 @@ const { checkAiAvailability } = require('./llmService');
 const TOP_PLAYERS = 5;
 const TOP_TEAMS = 3;
 const NIGHT_WINDOW_HOURS = 18;
-const SUPPORTED_LOCALES = ['de', 'en', 'es', 'fr'];
 
 function getDigestTimezone() {
   return process.env.REMINDER_TIMEZONE
