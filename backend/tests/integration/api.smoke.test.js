@@ -21,6 +21,8 @@ describe('GET /api/health', () => {
     assert.ok(Array.isArray(res.body.externalApis));
     assert.ok(res.body.externalApis.length >= 4);
     assert.ok(res.body.externalApis.every((entry) => ['online', 'offline', 'inactive'].includes(entry.state)));
+    assert.ok(res.body.playerDataBackup);
+    assert.equal(typeof res.body.playerDataBackup.enabled, 'boolean');
   });
 });
 

@@ -9,6 +9,7 @@
     "seed": "node database/seed.js",
     "db:migrate": "node database/migrate-cli.js",
     "db:backup-pg": "node database/postgres-backup-cli.js",
+    "backup:player-data": "node database/player-data-backup-cli.js",
     "db:reset": "node database/reset.js",
     "db:create-admin": "node database/create-admin.js",
     "db:seed-teams": "node database/seed-teams.js",

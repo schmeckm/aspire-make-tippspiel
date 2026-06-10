@@ -16,6 +16,7 @@ const { apiLimiter, leaderboardLimiter, displayLimiter, publicReadLimiter } = re
 const { seedDefaultSettings } = require('./services/settingsService');
 const { isAiEnabled, isApiKeyConfigured, getAiConfig } = require('./services/llmService');
 const { getExternalApiHealth } = require('./services/externalApiHealthService');
+const { getLastBackupInfo } = require('./services/backupService');
 
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -110,6 +111,7 @@ app.get('/api/health', async (req, res) => {
     const aiEnabled = isAiEnabled();
     const aiKeyConfigured = isApiKeyConfigured();
     const externalApis = await getExternalApiHealth();
+    const playerDataBackup = getLastBackupInfo();
     res.json({
       status: 'ok',
       version: getAppVersion(),
@@ -121,6 +123,7 @@ app.get('/api/health', async (req, res) => {
       },
       externalApis: externalApis.apis,
       externalApisCheckedAt: externalApis.checkedAt,
+      playerDataBackup,
     });
   } catch (error) {
     res.status(503).json({ status: 'error', reason: 'database_unavailable' });

@@ -22,6 +22,9 @@ describe('Admin player data backup', () => {
     assert.equal(res.status, 200);
     assert.ok(res.body.current);
     assert.ok(Array.isArray(res.body.backups));
+    assert.ok(res.body.autoBackup);
+    assert.equal(res.body.autoBackup.enabled, true);
+    assert.equal(res.body.autoBackup.cron, '0 * * * *');
     assert.ok(res.body.current.userCount >= 1);
   });
 

@@ -61,6 +61,15 @@ const CRON_MONITORS = {
       maxRuntime: 20,
     },
   },
+  playerDataBackup: {
+    slug: 'wm2026-player-data-backup',
+    config: {
+      schedule: { type: 'interval', value: 1, unit: 'hour' },
+      timezone: CRON_TZ,
+      checkinMargin: 10,
+      maxRuntime: 5,
+    },
+  },
 };
 
 function isTournamentActive() {
@@ -237,11 +246,16 @@ async function startScheduler() {
   }));
 
   // Hourly player data backup (users, teams, predictions)
-  const { runScheduledPlayerBackup, isPlayerBackupEnabled } = require('./backupService');
-  const playerBackupCron = process.env.PLAYER_DATA_BACKUP_CRON || '0 * * * *';
-  if (isPlayerBackupEnabled()) {
+  const { runScheduledPlayerBackup, isPlayerBackupEnabled, getPlayerBackupCron } = require('./backupService');
+  const playerBackupCron = getPlayerBackupCron();
+  const playerBackupEnabled = isPlayerBackupEnabled();
+  if (playerBackupEnabled) {
     jobs.push(cron.schedule(playerBackupCron, async () => {
-      await safeRun(() => runScheduledPlayerBackup(), 'Spielerdaten-Backup (stündlich)');
+      await safeRun(
+        () => runScheduledPlayerBackup(),
+        'Spielerdaten-Backup (stündlich)',
+        CRON_MONITORS.playerDataBackup,
+      );
     }, { timezone: CRON_TZ }));
   }
 
@@ -251,7 +265,13 @@ async function startScheduler() {
     await safeRun(() => cleanupExpiredTokens(), 'Token-Blacklist-Bereinigung');
   }));
 
-  console.log(`[Scheduler] ${jobs.length} Cron-Jobs gestartet (Erinnerungen: ${reminderCron}, Digest: ${morningDigestCron}, TZ ${REMINDER_TZ}).`);
+  const playerBackupInfo = playerBackupEnabled
+    ? `Spielerdaten-Backup: ${playerBackupCron} (${CRON_TZ})`
+    : 'Spielerdaten-Backup: aus';
+  console.log(
+    `[Scheduler] ${jobs.length} Cron-Jobs gestartet `
+    + `(Erinnerungen: ${reminderCron}, Digest: ${morningDigestCron}, ${playerBackupInfo}, TZ ${REMINDER_TZ}).`,
+  );
 }
 
 async function restartScheduler() {

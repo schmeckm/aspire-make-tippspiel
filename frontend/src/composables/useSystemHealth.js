@@ -14,18 +14,23 @@ const EXTERNAL_API_LABEL_KEYS = {
 
 export function useSystemHealth() {
   const frontendAiEnabled = import.meta.env.VITE_AI_FEATURES_ENABLED !== 'false';
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   const backendState = ref('checking');
   const frontendState = ref('checking');
   const aiBackendState = ref('checking');
+  const backupState = ref('checking');
   const externalApiItems = ref([]);
   const version = ref(import.meta.env.VITE_APP_VERSION || null);
   const expandedKey = ref(null);
 
   const backendDetail = ref('');
   const aiBackendDetail = ref('');
+  const backupDetail = ref('');
+  const backupLastRunAt = ref(null);
   const externalApiDetails = ref({});
+
+  const BACKUP_STALE_MS = 90 * 60 * 1000;
 
   function stateText(state, type = 'connection') {
     if (state === 'checking') return t('systemHealth.checking');
@@ -57,6 +62,53 @@ export function useSystemHealth() {
     return '';
   }
 
+  function formatBackupTime(value) {
+    if (!value) return t('systemHealth.backupNever');
+    return new Date(value).toLocaleString(locale.value, {
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  function resolveBackupState(info) {
+    if (!info?.enabled) {
+      return {
+        state: 'inactive',
+        text: t('systemHealth.backupDisabled'),
+        detail: t('systemHealth.detailBackupDisabled'),
+      };
+    }
+    if (!info.lastRunAt) {
+      return {
+        state: 'offline',
+        text: t('systemHealth.backupNever'),
+        detail: t('systemHealth.detailBackupNever'),
+      };
+    }
+
+    const ageMs = Date.now() - new Date(info.lastRunAt).getTime();
+    const text = formatBackupTime(info.lastRunAt);
+    if (ageMs > BACKUP_STALE_MS) {
+      return {
+        state: 'offline',
+        text,
+        detail: t('systemHealth.detailBackupStale'),
+      };
+    }
+
+    return {
+      state: 'online',
+      text,
+      detail: info.source === 'auto'
+        ? t('systemHealth.detailBackupAuto', { time: text })
+        : t('systemHealth.detailBackupManual', { time: text }),
+    };
+  }
+
+  const backupText = ref('');
+
   const coreItems = computed(() => [
     {
       key: 'backend',
@@ -84,9 +136,20 @@ export function useSystemHealth() {
     },
   ]);
 
+  const backupItem = computed(() => ({
+    key: 'backup',
+    label: t('systemHealth.playerBackup'),
+    state: backupState.value,
+    text: backupState.value === 'checking' ? stateText('checking') : backupText.value,
+    detail: backupDetail.value,
+    clickable: (backupState.value === 'offline' || backupState.value === 'inactive')
+      && !!backupDetail.value,
+  }));
+
   const items = computed(() => [
     ...coreItems.value,
     ...externalApiItems.value,
+    backupItem.value,
   ]);
 
   const expandedItem = computed(() => {
@@ -131,6 +194,14 @@ export function useSystemHealth() {
     externalApiDetails.value = details;
   }
 
+  function applyBackupInfo(info) {
+    const resolved = resolveBackupState(info || {});
+    backupState.value = resolved.state;
+    backupText.value = resolved.text;
+    backupDetail.value = resolved.detail;
+    backupLastRunAt.value = info?.lastRunAt || null;
+  }
+
   async function checkHealth() {
     frontendState.value = 'online';
     backendDetail.value = '';
@@ -160,6 +231,7 @@ export function useSystemHealth() {
       }
 
       applyExternalApis(Array.isArray(data?.externalApis) ? data.externalApis : []);
+      applyBackupInfo(data?.playerDataBackup);
 
       if (data?.version) version.value = data.version;
     } catch {
@@ -167,6 +239,9 @@ export function useSystemHealth() {
       backendDetail.value = t('systemHealth.detailBackendOffline');
       aiBackendState.value = 'checking';
       aiBackendDetail.value = t('systemHealth.detailBackendOfflineAi');
+      backupState.value = 'checking';
+      backupText.value = stateText('checking');
+      backupDetail.value = '';
       externalApiItems.value = externalApiItems.value.map((item) => ({
         ...item,
         state: 'checking',

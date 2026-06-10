@@ -21,6 +21,36 @@
         </div>
       </div>
 
+      <div
+        v-if="overview.autoBackup?.enabled"
+        class="card mb-2 auto-backup-status"
+      >
+        <div class="card-body auto-backup-body">
+          <div>
+            <strong>{{ t('adminPages.backup.autoJobTitle') }}</strong>
+            <p class="text-muted mb-0">
+              {{ t('adminPages.backup.autoJobActive', {
+                schedule: t('adminPages.backup.autoJobScheduleHourly'),
+                timezone: overview.autoBackup.timezone,
+                retention: overview.autoBackup.retention,
+              }) }}
+            </p>
+            <p v-if="latestBackup" class="text-muted auto-backup-last mb-0">
+              {{ t('adminPages.backup.lastBackupAt', {
+                time: formatDate(latestBackup.exportedAt || latestBackup.createdAt),
+              }) }}
+            </p>
+          </div>
+          <button
+            class="btn btn-primary"
+            :disabled="saving"
+            @click="saveBackup"
+          >
+            {{ saving ? t('adminPages.backup.runningBackup') : t('adminPages.backup.runBackupNow') }}
+          </button>
+        </div>
+      </div>
+
       <div class="stats-grid mb-2">
         <div class="stat-card">
           <div class="stat-value">{{ overview.current?.userCount || 0 }}</div>
@@ -44,14 +74,14 @@
         <div class="card">
           <div class="card-header"><h3>{{ t('adminPages.backup.createTitle') }}</h3></div>
           <div class="card-body backup-actions">
+            <button class="btn btn-accent" :disabled="saving" @click="saveBackup">
+              {{ saving ? t('adminPages.backup.runningBackup') : t('adminPages.backup.runBackupNow') }}
+            </button>
             <button class="btn btn-primary" :disabled="exporting" @click="downloadBackup">
               {{ exporting ? t('adminPages.backup.downloading') : t('adminPages.backup.download') }}
             </button>
             <button class="btn btn-secondary" :disabled="exportingExcel" @click="downloadExcelExport">
               {{ exportingExcel ? t('adminPages.backup.exportingExcel') : t('adminPages.backup.downloadExcel') }}
-            </button>
-            <button class="btn btn-secondary" :disabled="saving" @click="saveBackup">
-              {{ saving ? t('adminPages.backup.saving') : t('adminPages.backup.saveOnServer') }}
             </button>
           </div>
           <p class="text-muted excel-hint">{{ t('adminPages.backup.excelHint') }}</p>
@@ -164,7 +194,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import api from '../../services/api';
 import LoadingSpinner from '../../components/LoadingSpinner.vue';
@@ -184,9 +214,11 @@ const restoring = ref(false);
 const message = ref('');
 const loadError = ref('');
 const error = ref('');
-const overview = ref({ current: {}, backups: [] });
+const overview = ref({ current: {}, backups: [], autoBackup: {} });
 const restoreFile = ref(null);
 const restoreSummary = ref(null);
+
+const latestBackup = computed(() => overview.value.backups?.[0] || null);
 
 function apiErrorMessage(err, fallback) {
   if (!err.response) return t('adminPages.backup.serverUnreachable');
@@ -402,6 +434,18 @@ onMounted(loadOverview);
 .mb-2 { margin-bottom: 1.5rem; }
 .mt-2 { margin-top: 1.5rem; }
 .backup-notice { border-left: 3px solid var(--color-primary); }
+.auto-backup-status { border-left: 3px solid #16a34a; }
+.auto-backup-body {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.auto-backup-last {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
 .backup-actions {
   display: flex;
   flex-wrap: wrap;

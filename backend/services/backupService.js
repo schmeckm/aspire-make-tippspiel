@@ -53,6 +53,66 @@ function getPlayerBackupRetention() {
   return Number.isFinite(raw) && raw >= 1 ? raw : 168;
 }
 
+function getPlayerBackupCron() {
+  return process.env.PLAYER_DATA_BACKUP_CRON || '0 * * * *';
+}
+
+function getPlayerBackupTimezone() {
+  return process.env.SENTRY_CRON_TIMEZONE
+    || process.env.FOOTBALL_API_TIMEZONE
+    || process.env.REMINDER_TIMEZONE
+    || 'Europe/Zurich';
+}
+
+function getAutoBackupSettings() {
+  return {
+    enabled: isPlayerBackupEnabled(),
+    cron: getPlayerBackupCron(),
+    retention: getPlayerBackupRetention(),
+    timezone: getPlayerBackupTimezone(),
+    scheduleLabel: 'hourly',
+  };
+}
+
+function getLastBackupInfo() {
+  ensureBackupDir();
+  const files = fs.readdirSync(BACKUP_DIR)
+    .filter((name) => name.endsWith('.json') && name.startsWith('spieler-backup-'))
+    .map((filename) => {
+      const filePath = path.join(BACKUP_DIR, filename);
+      const stat = fs.statSync(filePath);
+      return { filename, mtime: stat.mtimeMs, filePath };
+    })
+    .sort((a, b) => b.mtime - a.mtime);
+
+  const latest = files[0];
+  if (!latest) {
+    return {
+      enabled: isPlayerBackupEnabled(),
+      lastRunAt: null,
+      filename: null,
+      source: null,
+    };
+  }
+
+  let exportedAt = null;
+  let source = 'manual';
+  try {
+    const content = JSON.parse(fs.readFileSync(latest.filePath, 'utf-8'));
+    exportedAt = content.exportedAt || null;
+    source = content.source || 'manual';
+  } catch {
+    exportedAt = null;
+  }
+
+  return {
+    enabled: isPlayerBackupEnabled(),
+    lastRunAt: exportedAt || new Date(latest.mtime).toISOString(),
+    filename: latest.filename,
+    source,
+  };
+}
+
 async function collectPlayerData() {
   const [
     users,
@@ -144,6 +204,7 @@ async function getBackupOverview() {
       settingCount,
     },
     backups: listBackups(),
+    autoBackup: getAutoBackupSettings(),
   };
 }
 
@@ -498,4 +559,7 @@ module.exports = {
   buildFilename,
   isPlayerBackupEnabled,
   getPlayerBackupRetention,
+  getPlayerBackupCron,
+  getAutoBackupSettings,
+  getLastBackupInfo,
 };
