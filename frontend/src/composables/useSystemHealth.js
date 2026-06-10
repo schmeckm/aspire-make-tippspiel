@@ -5,6 +5,13 @@ import api from '../services/api';
 const POLL_INTERVAL_ONLINE_MS = 30000;
 const POLL_INTERVAL_OFFLINE_MS = 5000;
 
+const EXTERNAL_API_LABEL_KEYS = {
+  football: 'systemHealth.externalFootball',
+  theSportsDb: 'systemHealth.externalTheSportsDb',
+  email: 'systemHealth.externalEmail',
+  google: 'systemHealth.externalGoogle',
+};
+
 export function useSystemHealth() {
   const frontendAiEnabled = import.meta.env.VITE_AI_FEATURES_ENABLED !== 'false';
   const { t } = useI18n();
@@ -12,16 +19,17 @@ export function useSystemHealth() {
   const backendState = ref('checking');
   const frontendState = ref('checking');
   const aiBackendState = ref('checking');
-  const aiFrontendState = ref(frontendAiEnabled ? 'online' : 'offline');
+  const externalApiItems = ref([]);
   const version = ref(import.meta.env.VITE_APP_VERSION || null);
   const expandedKey = ref(null);
 
   const backendDetail = ref('');
   const aiBackendDetail = ref('');
-  const aiFrontendDetail = ref('');
+  const externalApiDetails = ref({});
 
   function stateText(state, type = 'connection') {
     if (state === 'checking') return t('systemHealth.checking');
+    if (state === 'inactive') return t('systemHealth.inactive');
     if (type === 'ai') {
       return state === 'online' ? t('systemHealth.aiActive') : t('systemHealth.aiInactive');
     }
@@ -34,7 +42,22 @@ export function useSystemHealth() {
     return '';
   }
 
-  const items = computed(() => [
+  function externalReasonDetail(api) {
+    if (api.reason === 'not_configured') {
+      if (api.id === 'football') return t('systemHealth.detailFootballNotConfigured');
+      if (api.id === 'email') return t('systemHealth.detailEmailNotConfigured');
+      if (api.id === 'google') return t('systemHealth.detailGoogleNotConfigured');
+      return t('systemHealth.detailExternalNotConfigured');
+    }
+    if (api.reason === 'disabled') return t('systemHealth.detailExternalDisabled');
+    if (api.reason === 'rate_limited') return t('systemHealth.detailExternalRateLimited');
+    if (api.reason === 'unreachable') {
+      return api.detail || t('systemHealth.detailExternalUnreachable');
+    }
+    return '';
+  }
+
+  const coreItems = computed(() => [
     {
       key: 'backend',
       label: t('systemHealth.backend'),
@@ -52,21 +75,18 @@ export function useSystemHealth() {
       clickable: false,
     },
     {
-      key: 'aiBackend',
-      label: t('systemHealth.aiBackend'),
+      key: 'llm',
+      label: t('systemHealth.llm'),
       state: aiBackendState.value,
       text: stateText(aiBackendState.value, 'ai'),
       detail: aiBackendDetail.value,
       clickable: aiBackendState.value === 'offline' && !!aiBackendDetail.value,
     },
-    {
-      key: 'aiFrontend',
-      label: t('systemHealth.aiFrontend'),
-      state: aiFrontendState.value,
-      text: stateText(aiFrontendState.value, 'ai'),
-      detail: aiFrontendDetail.value,
-      clickable: aiFrontendState.value === 'offline' && !!aiFrontendDetail.value,
-    },
+  ]);
+
+  const items = computed(() => [
+    ...coreItems.value,
+    ...externalApiItems.value,
   ]);
 
   const expandedItem = computed(() => {
@@ -74,10 +94,8 @@ export function useSystemHealth() {
     return items.value.find((item) => item.key === expandedKey.value) || null;
   });
 
-  const hasIssues = computed(() => (
-    backendState.value === 'offline'
-    || aiBackendState.value === 'offline'
-    || aiFrontendState.value === 'offline'
+  const hasIssues = computed(() => items.value.some(
+    (item) => item.state === 'offline' || item.state === 'checking',
   ));
 
   function toggleDetail(key) {
@@ -92,16 +110,31 @@ export function useSystemHealth() {
   }
 
   async function fetchHealth() {
-    return api.get('/health', { timeout: 8000 });
+    return api.get('/health', { timeout: 12000 });
+  }
+
+  function applyExternalApis(apis = []) {
+    const details = {};
+    externalApiItems.value = apis.map((apiStatus) => {
+      const detail = externalReasonDetail(apiStatus);
+      details[apiStatus.id] = detail;
+      const state = apiStatus.state || 'inactive';
+      return {
+        key: `external-${apiStatus.id}`,
+        label: t(EXTERNAL_API_LABEL_KEYS[apiStatus.id] || 'systemHealth.externalApi'),
+        state,
+        text: stateText(state),
+        detail,
+        clickable: (state === 'offline' || state === 'inactive') && !!detail,
+      };
+    });
+    externalApiDetails.value = details;
   }
 
   async function checkHealth() {
     frontendState.value = 'online';
     backendDetail.value = '';
     aiBackendDetail.value = '';
-    aiFrontendDetail.value = frontendAiEnabled
-      ? ''
-      : t('systemHealth.detailAiFrontendDisabled');
 
     try {
       let response;
@@ -126,12 +159,20 @@ export function useSystemHealth() {
         aiBackendDetail.value = aiReasonDetail(data?.ai?.reason) || t('systemHealth.detailAiInactive');
       }
 
+      applyExternalApis(Array.isArray(data?.externalApis) ? data.externalApis : []);
+
       if (data?.version) version.value = data.version;
     } catch {
       backendState.value = 'offline';
       backendDetail.value = t('systemHealth.detailBackendOffline');
       aiBackendState.value = 'checking';
       aiBackendDetail.value = t('systemHealth.detailBackendOfflineAi');
+      externalApiItems.value = externalApiItems.value.map((item) => ({
+        ...item,
+        state: 'checking',
+        text: stateText('checking'),
+        clickable: false,
+      }));
     }
 
     if (expandedKey.value) {
@@ -146,8 +187,8 @@ export function useSystemHealth() {
 
   function scheduleNextPoll() {
     if (intervalId) clearInterval(intervalId);
-    const anyOffline = [backendState, aiBackendState, aiFrontendState].some(
-      (state) => state.value === 'offline' || state.value === 'checking',
+    const anyOffline = items.value.some(
+      (item) => item.state === 'offline' || item.state === 'checking',
     );
     const delay = anyOffline ? POLL_INTERVAL_OFFLINE_MS : POLL_INTERVAL_ONLINE_MS;
     intervalId = setTimeout(async () => {

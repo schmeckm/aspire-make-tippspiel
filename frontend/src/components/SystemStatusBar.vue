@@ -1,7 +1,6 @@
 <template>
   <footer
     class="system-status-bar"
-    :class="{ 'system-status-bar--compact': !showHealthIndicators }"
     role="status"
     :aria-label="t('systemHealth.title')"
   >
@@ -13,7 +12,7 @@
       <strong>{{ expandedItem.label }}:</strong> {{ expandedItem.detail }}
     </div>
     <div class="system-status-bar-inner">
-      <div v-if="showHealthIndicators" class="system-status-items">
+      <div class="system-status-items">
         <button
           v-for="item in items"
           :key="item.key"
@@ -70,14 +69,6 @@ const { items, version, expandedItem, toggleDetail } = useSystemHealth();
   padding: 0.625rem 2rem;
 }
 
-.system-status-bar--compact {
-  padding: 0.4rem 2rem;
-}
-
-.system-status-bar--compact .system-status-bar-inner {
-  justify-content: flex-end;
-}
-
 .system-status-detail {
   margin-bottom: 0.5rem;
   padding: 0.5rem 0.75rem;
@@ -100,10 +91,10 @@ const { items, version, expandedItem, toggleDetail } = useSystemHealth();
 .system-status-items {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1.25rem;
   flex: 1;
   min-width: 0;
+  flex-wrap: wrap;
 }
 
 .system-status-meta {
@@ -151,7 +142,7 @@ const { items, version, expandedItem, toggleDetail } = useSystemHealth();
   align-items: center;
   justify-content: center;
   gap: 0.375rem;
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
   font-size: 0.75rem;
   white-space: nowrap;
@@ -218,6 +209,21 @@ const { items, version, expandedItem, toggleDetail } = useSystemHealth();
   color: var(--color-danger);
 }
 
+.system-status-item.inactive .system-status-dot {
+  background: var(--color-text-muted);
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+.system-status-item.inactive .system-status-value {
+  color: var(--color-text-muted);
+}
+
+.system-status-item.inactive.clickable:hover .system-status-value,
+.system-status-item.inactive.clickable.expanded .system-status-value {
+  text-decoration: underline;
+}
+
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
@@ -229,14 +235,18 @@ const { items, version, expandedItem, toggleDetail } = useSystemHealth();
   }
 
   .system-status-bar-inner {
-    gap: 0.75rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
   }
 
   .system-status-items {
-    gap: 0.75rem;
+    gap: 0.5rem 0.75rem;
+    justify-content: flex-start;
   }
 
   .system-status-meta {
+    justify-content: flex-end;
     gap: 0.5rem;
   }
 

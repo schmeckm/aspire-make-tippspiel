@@ -18,6 +18,9 @@ describe('GET /api/health', () => {
     assert.ok(res.body.ai);
     assert.equal(typeof res.body.ai.active, 'boolean');
     assert.ok(['ok', 'disabled', 'no_api_key'].includes(res.body.ai.reason));
+    assert.ok(Array.isArray(res.body.externalApis));
+    assert.ok(res.body.externalApis.length >= 4);
+    assert.ok(res.body.externalApis.every((entry) => ['online', 'offline', 'inactive'].includes(entry.state)));
   });
 });
 

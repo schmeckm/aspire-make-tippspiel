@@ -15,6 +15,7 @@ const requestIdMiddleware = require('./middleware/requestIdMiddleware');
 const { apiLimiter, leaderboardLimiter, displayLimiter, publicReadLimiter } = require('./middleware/rateLimiter');
 const { seedDefaultSettings } = require('./services/settingsService');
 const { isAiEnabled, isApiKeyConfigured, getAiConfig } = require('./services/llmService');
+const { getExternalApiHealth } = require('./services/externalApiHealthService');
 
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -108,6 +109,7 @@ app.get('/api/health', async (req, res) => {
     await sequelize.authenticate();
     const aiEnabled = isAiEnabled();
     const aiKeyConfigured = isApiKeyConfigured();
+    const externalApis = await getExternalApiHealth();
     res.json({
       status: 'ok',
       version: getAppVersion(),
@@ -117,6 +119,8 @@ app.get('/api/health', async (req, res) => {
         active: aiEnabled && aiKeyConfigured,
         reason: !aiEnabled ? 'disabled' : !aiKeyConfigured ? 'no_api_key' : 'ok',
       },
+      externalApis: externalApis.apis,
+      externalApisCheckedAt: externalApis.checkedAt,
     });
   } catch (error) {
     res.status(503).json({ status: 'error', reason: 'database_unavailable' });
