@@ -113,6 +113,7 @@
                 <tr>
                   <th>{{ t('adminPages.backup.columns.filename') }}</th>
                   <th>{{ t('adminPages.backup.columns.created') }}</th>
+                  <th>{{ t('adminPages.backup.columns.source') }}</th>
                   <th>{{ t('adminPages.backup.columns.users') }}</th>
                   <th>{{ t('adminPages.backup.columns.predictions') }}</th>
                   <th>{{ t('adminPages.backup.columns.size') }}</th>
@@ -122,11 +123,19 @@
               <tbody>
                 <tr v-for="backup in overview.backups" :key="backup.filename">
                   <td>{{ backup.filename }}</td>
-                  <td>{{ formatDate(backup.createdAt) }}</td>
+                  <td>{{ formatDate(backup.exportedAt || backup.createdAt) }}</td>
+                  <td>
+                    <span class="backup-source" :class="backup.source === 'auto' ? 'auto' : 'manual'">
+                      {{ backupSourceLabel(backup.source) }}
+                    </span>
+                  </td>
                   <td>{{ backup.meta?.userCount ?? '–' }}</td>
                   <td>{{ backup.meta?.predictionCount ?? '–' }}</td>
                   <td>{{ formatSize(backup.size) }}</td>
                   <td class="backup-row-actions">
+                    <button class="btn btn-accent btn-sm" @click="requestRestoreFromServer(backup.filename)">
+                      {{ t('adminPages.backup.restore') }}
+                    </button>
                     <button class="btn btn-secondary btn-sm" @click="downloadSavedBackup(backup.filename)">
                       {{ t('adminPages.backup.download') }}
                     </button>
@@ -194,6 +203,12 @@ function formatSize(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function backupSourceLabel(source) {
+  return source === 'auto'
+    ? t('adminPages.backup.sourceAuto')
+    : t('adminPages.backup.sourceManual');
 }
 
 function triggerDownload(blob, filename) {
@@ -347,6 +362,32 @@ async function handleRestore() {
   }
 }
 
+function requestRestoreFromServer(filename) {
+  openConfirm({
+    title: t('adminPages.backup.restore'),
+    message: t('adminPages.backup.confirmRestoreServer', { name: filename }),
+    action: () => restoreFromServer(filename),
+  });
+}
+
+async function restoreFromServer(filename) {
+  restoring.value = true;
+  error.value = '';
+  message.value = '';
+  restoreSummary.value = null;
+
+  try {
+    const { data } = await api.post(`/admin/backup/restore/${encodeURIComponent(filename)}`);
+    restoreSummary.value = data.summary;
+    message.value = data.message || t('adminPages.backup.restoreSuccess');
+    await loadOverview();
+  } catch (err) {
+    error.value = err.response?.data?.error || t('adminPages.backup.restoreFailed');
+  } finally {
+    restoring.value = false;
+  }
+}
+
 onMounted(loadOverview);
 </script>
 
@@ -378,5 +419,20 @@ onMounted(loadOverview);
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+}
+.backup-source {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.backup-source.auto {
+  background: rgba(34, 197, 94, 0.15);
+  color: #15803d;
+}
+.backup-source.manual {
+  background: rgba(59, 130, 246, 0.15);
+  color: #1d4ed8;
 }
 </style>

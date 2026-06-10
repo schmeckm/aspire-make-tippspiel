@@ -5,6 +5,7 @@ const { resolveCityFromStadium } = require('../data/wm2026Venues');
 const { syncFixtures } = require('./fixtureSyncService');
 const { enrichMatchVenuesFromTheSportsDb, enrichCitiesFromWm2026Lookup } = require('./theSportsDbVenueService');
 const { logAudit } = require('./auditService');
+const { safeDestroyMatch } = require('./predictionProtectionService');
 
 function isTestVenue(match) {
   return /test/i.test(match.stadium || '') || /test/i.test(match.city || '');
@@ -55,11 +56,18 @@ async function removeOrphanManualMatches() {
   });
 
   let removedCount = 0;
+  let skippedWithPredictions = 0;
   const removed = [];
 
   for (const match of manualMatches) {
     const inOfficialSchedule = !!resolveVenueFromWm2026Schedule(match.homeTeam, match.awayTeam);
     if (inOfficialSchedule && !isTestVenue(match)) continue;
+
+    const destroyResult = await safeDestroyMatch(match, { context: 'wm2026_official_sync' });
+    if (destroyResult.skipped) {
+      skippedWithPredictions += 1;
+      continue;
+    }
 
     removed.push({
       id: match.id,
@@ -67,16 +75,18 @@ async function removeOrphanManualMatches() {
       homeTeam: match.homeTeam,
       awayTeam: match.awayTeam,
     });
-    await match.destroy();
-    removedCount++;
+    removedCount += 1;
   }
 
   return {
     removedCount,
+    skippedWithPredictions,
     removed,
     message: removedCount
       ? `${removedCount} Test-/Sonder-Spiel(e) entfernt.`
-      : 'Keine Test-/Sonder-Spiele zum Entfernen gefunden.',
+      : skippedWithPredictions
+        ? `${skippedWithPredictions} Spiel(e) mit Tipps geschützt (nicht gelöscht).`
+        : 'Keine Test-/Sonder-Spiele zum Entfernen gefunden.',
   };
 }
 

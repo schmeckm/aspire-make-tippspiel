@@ -7,6 +7,7 @@ const { shouldApplyFixtureUpdate, buildFixtureUpdateData } = require('./matchSyn
 const { shouldSkipSyncDueToRateLimit } = require('./footballDataRateLimitService');
 const { fixLegacyApiMatchNumbers, getNextMatchNumber } = require('./matchNumberService');
 const { enrichMatchVenuesFromTheSportsDb } = require('./theSportsDbVenueService');
+const { findManualMatchForFixture } = require('./predictionProtectionService');
 
 async function syncFixtures({ userId = null, req = null } = {}) {
   const config = await footballProviderService.getProviderConfig();
@@ -70,13 +71,25 @@ async function syncFixtures({ userId = null, req = null } = {}) {
           await match.update(matchData);
           summary.updatedCount++;
         } else {
-          nextMatchNumber += 1;
-          await Match.create({
-            ...matchData,
-            matchNumber: nextMatchNumber,
-            status: fixture.status || 'scheduled',
-          });
-          summary.createdCount++;
+          const linkTarget = await findManualMatchForFixture(fixture);
+          if (linkTarget) {
+            if (linkTarget.status !== 'finished') {
+              matchData.status = fixture.status === 'finished' ? linkTarget.status : fixture.status;
+            }
+            await linkTarget.update({
+              ...matchData,
+              matchNumber: linkTarget.matchNumber,
+            });
+            summary.updatedCount++;
+          } else {
+            nextMatchNumber += 1;
+            await Match.create({
+              ...matchData,
+              matchNumber: nextMatchNumber,
+              status: fixture.status || 'scheduled',
+            });
+            summary.createdCount++;
+          }
         }
       } catch (err) {
         summary.errorCount++;

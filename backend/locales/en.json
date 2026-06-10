@@ -65,6 +65,7 @@
     "userImageDeleteFailed": "Profile image could not be removed.",
     "matchesLoadFailed": "Matches could not be loaded.",
     "matchNotFound": "Match not found.",
+    "matchHasPredictions": "Cannot delete match – it already has {{count}} prediction(s).",
     "matchLoadFailed": "Match could not be loaded.",
     "matchCreateFailed": "Match could not be created.",
     "matchUpdateFailed": "Match could not be updated.",

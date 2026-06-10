@@ -45,10 +45,14 @@ describe('Admin player data backup', () => {
 
     assert.equal(createRes.status, 200);
     assert.ok(createRes.body.filename);
+    assert.ok(createRes.body.exportedAt);
 
     const filename = createRes.body.filename;
     const filePath = path.join(BACKUP_DIR, filename);
     assert.ok(fs.existsSync(filePath));
+    const saved = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    assert.equal(saved.source, 'manual');
+    assert.ok(saved.exportedAt);
 
     const downloadRes = await api
       .get(`/api/admin/backup/${filename}`)
@@ -64,5 +68,26 @@ describe('Admin player data backup', () => {
 
     assert.equal(deleteRes.status, 200);
     assert.equal(fs.existsSync(filePath), false);
+  });
+
+  it('restores player data from a saved server backup', async () => {
+    const createRes = await api
+      .post('/api/admin/backup')
+      .set('Authorization', `Bearer ${token}`);
+
+    assert.equal(createRes.status, 200);
+    const filename = createRes.body.filename;
+
+    const restoreRes = await api
+      .post(`/api/admin/backup/restore/${encodeURIComponent(filename)}`)
+      .set('Authorization', `Bearer ${token}`);
+
+    assert.equal(restoreRes.status, 200);
+    assert.ok(restoreRes.body.summary);
+    assert.ok(restoreRes.body.summary.usersUpdated >= 0);
+
+    await api
+      .delete(`/api/admin/backup/${filename}`)
+      .set('Authorization', `Bearer ${token}`);
   });
 });

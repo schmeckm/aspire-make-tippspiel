@@ -9,6 +9,7 @@ const { saveLeaderboardSnapshot } = require('../services/leaderboardService');
 const { logAudit } = require('../services/auditService');
 const socketService = require('../services/socketService');
 const { isMatchEditable } = require('../services/matchLockService');
+const { countPredictionsForMatch } = require('../services/predictionProtectionService');
 const { attachStadiumImage, attachStadiumImages } = require('../services/matchPresentationService');
 const { getGroupStandings } = require('../services/groupStandingsService');
 const { validatePredictionScores } = require('../utils/predictionValidation');
@@ -190,7 +191,11 @@ router.delete('/:id', authMiddleware, adminMiddleware, async (req, res) => {
       return sendError(res, req, 404, 'errors.matchNotFound');
     }
 
-    await Prediction.destroy({ where: { matchId: match.id } });
+    const predictionCount = await countPredictionsForMatch(match.id);
+    if (predictionCount > 0) {
+      return sendError(res, req, 409, 'errors.matchHasPredictions', { count: predictionCount });
+    }
+
     await match.destroy();
     res.json({ message: 'Spiel gelöscht.' });
   } catch (error) {

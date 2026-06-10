@@ -3,6 +3,7 @@ const { Match, Prediction } = require('../models');
 const { WM2026_MATCH_SCHEDULE } = require('../data/wm2026MatchSchedule');
 const { WM2026_KNOCKOUT_BRACKET } = require('../data/wm2026KnockoutBracket');
 const { teamsMatch } = require('../data/wm2026ScheduleLookup');
+const { safeDestroyMatch } = require('./predictionProtectionService');
 
 const GROUP_LETTERS = 'ABCDEFGHIJKL'.split('');
 const MATCHES_PER_GROUP = 6;
@@ -68,6 +69,7 @@ async function removeConflictingManualMatches(officialByNumber, knockoutByNumber
   });
 
   let removedCount = 0;
+  let skippedWithPredictions = 0;
   for (const match of manualMatches) {
     const officialGroup = officialByNumber.get(match.matchNumber);
     const officialKnockout = knockoutByNumber.get(match.matchNumber);
@@ -82,14 +84,15 @@ async function removeConflictingManualMatches(officialByNumber, knockoutByNumber
 
     if (keep) continue;
 
-    const predictionCount = await Prediction.count({ where: { matchId: match.id } });
-    if (predictionCount > 0) continue;
-
-    await match.destroy();
+    const destroyResult = await safeDestroyMatch(match, { context: 'wm2026_schedule_seed' });
+    if (destroyResult.skipped) {
+      skippedWithPredictions += 1;
+      continue;
+    }
     removedCount += 1;
   }
 
-  return removedCount;
+  return { removedCount, skippedWithPredictions };
 }
 
 async function upsertOfficialFixtures(fixtures) {
@@ -148,7 +151,7 @@ async function seedOfficialWm2026MatchesIfNeeded() {
   const officialByNumber = new Map(groupFixtures.map((fixture) => [fixture.matchNumber, fixture]));
   const knockoutByNumber = new Map(knockoutFixtures.map((fixture) => [fixture.matchNumber, fixture]));
 
-  const removedCount = await removeConflictingManualMatches(officialByNumber, knockoutByNumber);
+  const { removedCount, skippedWithPredictions } = await removeConflictingManualMatches(officialByNumber, knockoutByNumber);
   const groupResult = await upsertOfficialFixtures(groupFixtures);
   const knockoutResult = await upsertOfficialFixtures(knockoutFixtures);
 
@@ -161,7 +164,9 @@ async function seedOfficialWm2026MatchesIfNeeded() {
     totalMatches: total,
     message: `WM-2026-Spielplan: ${groupResult.createdCount + knockoutResult.createdCount} Spiele angelegt, `
       + `${groupResult.updatedCount + knockoutResult.updatedCount} aktualisiert, `
-      + `${removedCount} Test-Spiele entfernt (${total} gesamt).`,
+      + `${removedCount} Test-Spiele entfernt`
+      + (skippedWithPredictions ? `, ${skippedWithPredictions} mit Tipps geschützt` : '')
+      + ` (${total} gesamt).`,
   };
 }
 

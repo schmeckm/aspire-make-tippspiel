@@ -1375,7 +1375,7 @@
       "refresh": "Refresh",
       "refreshing": "Loading...",
       "noticeTitle": "Back up player and user data",
-      "noticeDesc": "JSON backup for restoring data. Also: Excel export with leaderboard and all tips for offline worst-case evaluation.",
+      "noticeDesc": "JSON backup for restoring data. Automatic hourly backups run in the background. Also: Excel export with leaderboard and all tips for offline worst-case evaluation.",
       "stats": {
         "users": "Users",
         "teams": "Teams",
@@ -1406,12 +1406,15 @@
       "noBackups": "No backups saved on the server yet.",
       "columns": {
         "filename": "Filename",
-        "created": "Created",
+        "created": "Date & time",
+        "source": "Source",
         "users": "Users",
         "predictions": "Predictions",
         "size": "Size",
         "actions": "Actions"
       },
+      "sourceAuto": "Automatic",
+      "sourceManual": "Manual",
       "loadFailed": "Could not load backup overview.",
       "serverUnreachable": "Server unreachable. Please check if the backend is running (port 3000).",
       "downloadSuccess": "Backup downloaded.",
@@ -1423,6 +1426,7 @@
       "deleteFailed": "Could not delete backup.",
       "confirmDelete": "Delete backup \"{name}\"?",
       "confirmRestore": "Restore data from backup? Existing users will be updated by email.",
+      "confirmRestoreServer": "Restore data from \"{name}\"? Existing predictions will be kept.",
       "restoreSuccess": "Data restored.",
       "restoreFailed": "Restore failed."
     },

@@ -1374,7 +1374,7 @@
       "refresh": "Aktualisieren",
       "refreshing": "Lädt...",
       "noticeTitle": "Spieler- und Benutzerdaten sichern",
-      "noticeDesc": "JSON-Backup zum Wiederherstellen der Daten. Zusätzlich: Excel-Export mit Hitliste und allen Tipps zur Offline-Auswertung im Notfall.",
+      "noticeDesc": "JSON-Backup zum Wiederherstellen der Daten. Automatische Sicherung stündlich im Hintergrund. Zusätzlich: Excel-Export mit Hitliste und allen Tipps zur Offline-Auswertung im Notfall.",
       "stats": {
         "users": "Benutzer",
         "teams": "Teams",
@@ -1405,12 +1405,15 @@
       "noBackups": "Noch keine Backups auf dem Server gespeichert.",
       "columns": {
         "filename": "Dateiname",
-        "created": "Erstellt",
+        "created": "Datum & Uhrzeit",
+        "source": "Quelle",
         "users": "Benutzer",
         "predictions": "Tipps",
         "size": "Größe",
         "actions": "Aktionen"
       },
+      "sourceAuto": "Automatisch",
+      "sourceManual": "Manuell",
       "loadFailed": "Backup-Übersicht konnte nicht geladen werden.",
       "serverUnreachable": "Server nicht erreichbar. Bitte prüfen, ob das Backend läuft (Port 3000).",
       "downloadSuccess": "Backup wurde heruntergeladen.",
@@ -1422,6 +1425,7 @@
       "deleteFailed": "Backup konnte nicht gelöscht werden.",
       "confirmDelete": "Backup \"{name}\" wirklich löschen?",
       "confirmRestore": "Daten aus dem Backup wiederherstellen? Bestehende Benutzer werden anhand der E-Mail aktualisiert.",
+      "confirmRestoreServer": "Daten aus \"{name}\" wiederherstellen? Bestehende Tipps bleiben erhalten.",
       "restoreSuccess": "Daten wiederhergestellt.",
       "restoreFailed": "Wiederherstellung fehlgeschlagen."
     },

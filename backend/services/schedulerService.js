@@ -236,6 +236,15 @@ async function startScheduler() {
     await safeRun(() => createUploadsBackup(), 'Uploads-Backup');
   }));
 
+  // Hourly player data backup (users, teams, predictions)
+  const { runScheduledPlayerBackup, isPlayerBackupEnabled } = require('./backupService');
+  const playerBackupCron = process.env.PLAYER_DATA_BACKUP_CRON || '0 * * * *';
+  if (isPlayerBackupEnabled()) {
+    jobs.push(cron.schedule(playerBackupCron, async () => {
+      await safeRun(() => runScheduledPlayerBackup(), 'Spielerdaten-Backup (stündlich)');
+    }, { timezone: CRON_TZ }));
+  }
+
   // Cleanup expired revoked tokens daily at 04:00
   const { cleanupExpiredTokens } = require('./tokenBlacklistService');
   jobs.push(cron.schedule('0 4 * * *', async () => {

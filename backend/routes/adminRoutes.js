@@ -231,7 +231,7 @@ router.get('/backup/export-excel', async (req, res) => {
 
 router.post('/backup', async (req, res) => {
   try {
-    const { filename, payload } = await createBackupFile();
+    const { filename, payload } = await createBackupFile({ source: 'manual' });
     await logAudit({
       userId: req.user.id,
       action: 'PLAYER_DATA_BACKUP',
@@ -296,12 +296,35 @@ router.post('/backup/restore', backupUpload.single('file'), async (req, res) => 
     await logAudit({
       userId: req.user.id,
       action: 'PLAYER_DATA_RESTORE',
-      newValue: summary,
+      newValue: { ...summary, source: 'upload' },
       req,
     });
     res.json({ message: 'Daten wiederhergestellt.', summary });
   } catch (error) {
     if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+    if (error.message === 'INVALID_BACKUP') {
+      return sendError(res, req, 400, 'errors.invalidBackupFile');
+    }
+    console.error(error);
+    sendError(res, req, 500, 'errors.backupRestoreFailed');
+  }
+});
+
+router.post('/backup/restore/:filename', async (req, res) => {
+  try {
+    const payload = readBackupFile(req.params.filename);
+    const summary = await restorePlayerData(payload);
+    await logAudit({
+      userId: req.user.id,
+      action: 'PLAYER_DATA_RESTORE',
+      newValue: { ...summary, filename: req.params.filename, source: 'server' },
+      req,
+    });
+    res.json({ message: 'Daten wiederhergestellt.', summary });
+  } catch (error) {
+    if (error.message === 'BACKUP_NOT_FOUND' || error.message === 'INVALID_BACKUP_FILE') {
+      return sendError(res, req, 404, 'errors.backupNotFound');
+    }
     if (error.message === 'INVALID_BACKUP') {
       return sendError(res, req, 400, 'errors.invalidBackupFile');
     }

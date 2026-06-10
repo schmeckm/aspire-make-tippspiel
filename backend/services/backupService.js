@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { applyRetention } = require('./backupRetentionService');
 const {
   sequelize,
   User,
@@ -39,6 +40,17 @@ function sanitizeUser(user) {
 function buildFilename() {
   const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
   return `spieler-backup-${stamp}.json`;
+}
+
+function isPlayerBackupEnabled() {
+  const val = process.env.PLAYER_DATA_BACKUP_ENABLED;
+  if (val === undefined || val === '') return true;
+  return !['0', 'false', 'no', 'off'].includes(String(val).toLowerCase());
+}
+
+function getPlayerBackupRetention() {
+  const raw = parseInt(process.env.PLAYER_DATA_BACKUP_RETENTION || '168', 10);
+  return Number.isFinite(raw) && raw >= 1 ? raw : 168;
 }
 
 async function collectPlayerData() {
@@ -143,29 +155,59 @@ function listBackups() {
       const filePath = path.join(BACKUP_DIR, filename);
       const stat = fs.statSync(filePath);
       let meta = {};
+      let exportedAt = null;
+      let source = 'manual';
       try {
         const content = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
         meta = content.meta || {};
+        exportedAt = content.exportedAt || null;
+        source = content.source || 'manual';
       } catch {
         meta = {};
       }
+      const createdAt = exportedAt || stat.mtime.toISOString();
       return {
         filename,
         size: stat.size,
-        createdAt: stat.mtime.toISOString(),
+        createdAt,
+        exportedAt: createdAt,
+        source,
         meta,
       };
     })
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 }
 
-async function createBackupFile() {
+async function createBackupFile(options = {}) {
+  const source = options.source || 'manual';
   const payload = await collectPlayerData();
+  payload.source = source;
   ensureBackupDir();
   const filename = buildFilename();
   const filePath = path.join(BACKUP_DIR, filename);
   fs.writeFileSync(filePath, JSON.stringify(payload, null, 2), 'utf-8');
   return { filename, payload };
+}
+
+async function runScheduledPlayerBackup() {
+  if (!isPlayerBackupEnabled()) {
+    return { skipped: true, reason: 'disabled' };
+  }
+
+  const { filename, payload } = await createBackupFile({ source: 'auto' });
+  const retention = applyRetention(BACKUP_DIR, {
+    extension: '.json',
+    prefix: 'spieler-backup-',
+    keepCount: getPlayerBackupRetention(),
+  });
+
+  return {
+    filename,
+    exportedAt: payload.exportedAt,
+    source: payload.source,
+    meta: payload.meta,
+    retention,
+  };
 }
 
 function readBackupFile(filename) {
@@ -216,7 +258,9 @@ async function restorePlayerData(payload) {
     usersCreated: 0,
     usersUpdated: 0,
     predictionsRestored: 0,
+    preservedPredictions: 0,
     bonusPredictionsRestored: 0,
+    preservedBonusPredictions: 0,
     skippedPredictions: 0,
     skippedBonusPredictions: 0,
   };
@@ -396,12 +440,8 @@ async function restorePlayerData(payload) {
       });
 
       if (!created) {
-        await prediction.update({
-          predictedHomeScore: predictionData.predictedHomeScore,
-          predictedAwayScore: predictionData.predictedAwayScore,
-          points: predictionData.points ?? null,
-          submittedAt: predictionData.submittedAt || prediction.submittedAt,
-        }, { transaction });
+        summary.preservedPredictions += 1;
+        continue;
       }
 
       summary.predictionsRestored += 1;
@@ -427,11 +467,8 @@ async function restorePlayerData(payload) {
       });
 
       if (!created) {
-        await bonusPrediction.update({
-          answerJson: bonusData.answerJson,
-          points: bonusData.points ?? null,
-          submittedAt: bonusData.submittedAt || bonusPrediction.submittedAt,
-        }, { transaction });
+        summary.preservedBonusPredictions += 1;
+        continue;
       }
 
       summary.bonusPredictionsRestored += 1;
@@ -454,8 +491,11 @@ module.exports = {
   getBackupOverview,
   listBackups,
   createBackupFile,
+  runScheduledPlayerBackup,
   readBackupFile,
   deleteBackupFile,
   restorePlayerData,
   buildFilename,
+  isPlayerBackupEnabled,
+  getPlayerBackupRetention,
 };
