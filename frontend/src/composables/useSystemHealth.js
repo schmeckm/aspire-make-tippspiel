@@ -22,6 +22,7 @@ export function useSystemHealth() {
   const backupState = ref('checking');
   const externalApiItems = ref([]);
   const version = ref(import.meta.env.VITE_APP_VERSION || null);
+  const commitSha = ref((import.meta.env.VITE_APP_COMMIT_SHA || '').trim() || null);
   const expandedKey = ref(null);
 
   const backendDetail = ref('');
@@ -157,6 +158,11 @@ export function useSystemHealth() {
     return items.value.find((item) => item.key === expandedKey.value) || null;
   });
 
+  const commitShort = computed(() => (commitSha.value ? commitSha.value.slice(0, 7) : null));
+  const commitUrl = computed(() => (
+    commitSha.value ? `https://github.com/schmeckm/aspire-make-tippspiel/commit/${commitSha.value}` : null
+  ));
+
   const hasIssues = computed(() => items.value.some(
     (item) => item.state === 'offline' || item.state === 'checking',
   ));
@@ -281,5 +287,13 @@ export function useSystemHealth() {
     if (intervalId) clearTimeout(intervalId);
   });
 
-  return { items, version, expandedItem, toggleDetail, hasIssues };
+  return {
+    items,
+    version,
+    commitShort,
+    commitUrl,
+    expandedItem,
+    toggleDetail,
+    hasIssues,
+  };
 }

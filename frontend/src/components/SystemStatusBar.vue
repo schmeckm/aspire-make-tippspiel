@@ -45,6 +45,15 @@
           </svg>
           <span>{{ t('systemHealth.github') }}</span>
         </a>
+        <a
+          v-if="commitUrl && commitShort"
+          :href="commitUrl"
+          class="system-status-commit"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ commitShort }}
+        </a>
         <span v-if="version" class="system-status-version">v{{ version }}</span>
       </div>
     </div>
@@ -56,7 +65,14 @@ import { useI18n } from 'vue-i18n';
 import { useSystemHealth } from '../composables/useSystemHealth';
 
 const { t } = useI18n();
-const { items, version, expandedItem, toggleDetail } = useSystemHealth();
+const {
+  items,
+  version,
+  commitShort,
+  commitUrl,
+  expandedItem,
+  toggleDetail,
+} = useSystemHealth();
 </script>
 
 <style scoped>
@@ -135,6 +151,20 @@ const { items, version, expandedItem, toggleDetail } = useSystemHealth();
   font-weight: 600;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
+}
+
+.system-status-commit {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.system-status-commit:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
 }
 
 .system-status-item {
@@ -260,6 +290,10 @@ const { items, version, expandedItem, toggleDetail } = useSystemHealth();
   }
 
   .system-status-version {
+    font-size: 0.65rem;
+  }
+
+  .system-status-commit {
     font-size: 0.65rem;
   }
 

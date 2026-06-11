@@ -58,6 +58,7 @@ jobs:
           push: true
           build-args: |
             APP_VERSION=${{ steps.version.outputs.value }}
+            VITE_APP_COMMIT_SHA=${{ github.sha }}
             VITE_SENTRY_DSN=${{ secrets.VITE_SENTRY_DSN }}
             VITE_SENTRY_ENVIRONMENT=production
             VITE_SENTRY_RELEASE=${{ steps.version.outputs.value }}
