@@ -86,7 +86,6 @@ function buildResultUpdateData(fixture, match) {
 
   if (isFinished && match.status !== 'finished') {
     updateData.status = 'finished';
-    updateData.isManuallyLocked = true;
     if (fixture.homeScore !== null && fixture.awayScore !== null) {
       updateData.homeScore = fixture.homeScore;
       updateData.awayScore = fixture.awayScore;

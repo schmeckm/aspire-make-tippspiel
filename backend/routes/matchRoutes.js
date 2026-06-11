@@ -281,7 +281,7 @@ router.post('/:id/toggle-api', authMiddleware, adminMiddleware, async (req, res)
     if (!match) return sendError(res, req, 404, 'errors.matchNotFound');
 
     const isApiManaged = req.body.isApiManaged !== undefined ? req.body.isApiManaged : !match.isApiManaged;
-    await match.update({ isApiManaged, isManuallyLocked: !isApiManaged });
+    await match.update({ isApiManaged });
     await logAudit({
       userId: req.user.id,
       action: 'MATCH_API_TOGGLE',
