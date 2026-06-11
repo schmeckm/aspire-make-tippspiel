@@ -452,7 +452,20 @@ async function fetchForSync(config, syncType = 'fixtures') {
     rateLimitsCollected.push(rateLimits);
     mergeFixtures(merged, data.matches);
   } else if (syncType === 'results') {
-    const finishedRes = await fetchCompetitionMatches(config, { status: 'FINISHED' });
+    // Keep result-sync lightweight: only fetch recently finished matches.
+    // This avoids re-fetching the entire season history once results are already in the DB.
+    const now = new Date();
+    const addDays = (date, days) => {
+      const d = new Date(date);
+      d.setUTCDate(d.getUTCDate() + days);
+      return d;
+    };
+    const asDate = (date) => date.toISOString().slice(0, 10);
+    const finishedRes = await fetchCompetitionMatches(config, {
+      status: 'FINISHED',
+      dateFrom: asDate(addDays(now, -7)),
+      dateTo: asDate(addDays(now, 1)),
+    });
     rateLimitsCollected.push(finishedRes.rateLimits);
     competitionUsed = finishedRes.competitionUsed;
     usedFallback = finishedRes.usedFallback;

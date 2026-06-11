@@ -109,6 +109,17 @@ function getIO() {
   return io;
 }
 
+function getClientCount() {
+  if (!io) return 0;
+  return io.engine?.clientsCount ?? 0;
+}
+
+function getRoomSize(room) {
+  if (!io) return 0;
+  const set = io.sockets?.adapter?.rooms?.get(room);
+  return set ? set.size : 0;
+}
+
 module.exports = {
   init,
   emitToUser,
@@ -116,4 +127,6 @@ module.exports = {
   emitToLeaderboard,
   broadcast,
   getIO,
+  getClientCount,
+  getRoomSize,
 };

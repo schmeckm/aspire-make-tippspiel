@@ -3,12 +3,14 @@ const { Match } = require('../models');
 const { syncFixtures } = require('./fixtureSyncService');
 const { syncResults } = require('./resultSyncService');
 const { syncLiveScores } = require('./liveScoreSyncService');
+const { syncPlayerImagesWave } = require('./playerImageSyncService');
 const { sendMissingPredictionReminders, sendBonusQuestionReminders, sendSyncErrorToAdmin, sendUpcomingMatchesSummary, sendLeaderboardUpdates } = require('./reminderService');
 const { sendMorningDigests } = require('./morningDigestService');
 const { getSetting } = require('./settingsService');
 const { isEmailRemindersEnabled, isMorningDigestEnabled } = require('./emailReminderSettingsService');
 const { buildReminderCron } = require('../utils/reminderCron');
 const footballProviderService = require('./footballProviderService');
+const socketService = require('./socketService');
 const { runWithCronMonitor, captureException } = require('./sentryCronService');
 
 let jobs = [];
@@ -19,7 +21,7 @@ const CRON_MONITORS = {
   resultSync: {
     slug: 'wm2026-result-sync',
     config: {
-      schedule: { type: 'interval', value: 15, unit: 'minute' },
+      schedule: { type: 'interval', value: 60, unit: 'minute' },
       timezone: CRON_TZ,
       checkinMargin: 5,
       maxRuntime: 12,
@@ -84,6 +86,12 @@ async function hasLiveMatches() {
   return Match.count({ where: { status: { [Op.in]: ['live', 'halftime'] } } }) > 0;
 }
 
+function hasActiveUsers() {
+  // Prefer the matches room (only when someone watches match updates),
+  // fall back to any connected client on this instance.
+  return socketService.getRoomSize('matches') > 0 || socketService.getClientCount() > 0;
+}
+
 async function isSyncAllowed() {
   const config = await footballProviderService.getProviderConfig();
   if (!config.syncEnabled) return false;
@@ -146,15 +154,16 @@ async function startScheduler() {
   }));
 
   // Every 15 minutes on active match days
-  jobs.push(cron.schedule('*/15 * * * *', async () => {
+  jobs.push(cron.schedule('0 * * * *', async () => {
     if (isTournamentActive()) {
-      await safeSyncRun(() => syncResults(), 'Ergebnis-Sync (15min)', CRON_MONITORS.resultSync);
+      await safeSyncRun(() => syncResults(), 'Ergebnis-Sync (stündlich)', CRON_MONITORS.resultSync);
     }
   }));
 
-  // Every 5 minutes while matches are live (football-data.org rate limit friendly)
-  jobs.push(cron.schedule('*/5 * * * *', async () => {
-    if (await hasLiveMatches()) {
+  // Check every minute, but only sync when someone is online and live matches exist.
+  // The live sync service enforces its own 5-minute minimum interval + quota checks.
+  jobs.push(cron.schedule('* * * * *', async () => {
+    if (hasActiveUsers() && await hasLiveMatches()) {
       await safeSyncRun(() => syncLiveScores(), 'Live-Score-Sync (5min)', CRON_MONITORS.liveScoreSync);
     }
   }));
@@ -256,6 +265,15 @@ async function startScheduler() {
         'Spielerdaten-Backup (stündlich)',
         CRON_MONITORS.playerDataBackup,
       );
+    }, { timezone: CRON_TZ }));
+  }
+
+  // Player images wave sync (small batches to reduce external load)
+  const waveEnabled = process.env.PLAYER_IMAGE_WAVE_ENABLED !== 'false';
+  if (waveEnabled) {
+    const waveCron = process.env.PLAYER_IMAGE_WAVE_CRON || '15 * * * *';
+    jobs.push(cron.schedule(waveCron, async () => {
+      await safeRun(() => syncPlayerImagesWave(), 'Spielerbild-Sync (Wave)');
     }, { timezone: CRON_TZ }));
   }
 
