@@ -9,6 +9,8 @@
     "es": "Espagnol",
     "fr": "Français",
     "pt": "Portugais",
+    "pl": "Polonais",
+    "tr": "Turc",
     "label": "Langue"
   },
   "common": {
@@ -56,6 +58,7 @@
     "leaderboard": "Classement",
     "prizes": "Prix",
     "teamRanking": "Classement par Équipe",
+    "teamPerformance": "Performance d'équipe",
     "statistics": "Statistiques",
     "notifications": "Notifications",
     "profile": "Profil",
@@ -420,6 +423,7 @@
   },
   "teamDashboard": {
     "title": "Mon équipe",
+    "teamPerformance": "Performance d'équipe",
     "fullRanking": "Classement équipes",
     "avgPoints": "Pts moy.",
     "totalPoints": "Points équipe",
@@ -428,6 +432,32 @@
     "colleagues": "Collègues",
     "noTeam": "Pas encore assigné à une équipe.",
     "goToProfile": "Choisir l'équipe dans le profil"
+  },
+  "teamPerformance": {
+    "title": "Performance d'équipe",
+    "subtitle": "Qui pronostique particulièrement bien dans ton équipe",
+    "privacyHint": "Les statistiques d'équipe sont affichées pour motiver. Les pronostics de score ne sont pas affichés avant le coup d'envoi.",
+    "noTeam": "Pas encore assigné à une équipe.",
+    "goToProfile": "Choisir l'équipe dans le profil",
+    "teamRank": "Rang de l'équipe : #{rank}",
+    "memberCount": "{count} membres",
+    "avgPoints": "Pts moy.",
+    "totalPoints": "Points équipe",
+    "exactTips": "Pronostics exacts",
+    "completion": "Complétion",
+    "highlightsTitle": "Temps forts",
+    "membersTitle": "Membres de l'équipe",
+    "noHighlights": "Pas encore de temps forts.",
+    "loadFailed": "Impossible de charger la performance d'équipe.",
+    "empty": "Aucune entrée pour l'instant.",
+    "total": "Total",
+    "correct": "Corrects",
+    "highlightBestPointsTitle": "Meilleur score",
+    "highlightBestPointsText": "{name} est en tête avec {points} points.",
+    "highlightBestExactTitle": "Plus d'exacts",
+    "highlightBestExactText": "{name} a {count} pronostics exacts.",
+    "highlightBestCorrectTitle": "Plus de bons pronostics",
+    "highlightBestCorrectText": "{name} a {count} pronostics corrects."
   },
   "groupStandings": {
     "title": "Classements par groupe",

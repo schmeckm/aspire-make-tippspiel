@@ -102,7 +102,10 @@
                     compact
                     @saved="loadPredictions"
                   />
-                  <span v-else>{{ pred.predictedHomeScore }} : {{ pred.predictedAwayScore }}</span>
+                  <span v-else>
+                    <span class="lock-inline" :title="predictionLockTitle(pred.match)" aria-label="locked">🔒</span>
+                    {{ pred.predictedHomeScore }} : {{ pred.predictedAwayScore }}
+                  </span>
                 </td>
                 <td class="col-score">
                   <span v-if="pred.match?.status === 'finished'">
@@ -155,7 +158,11 @@
                 compact
                 @saved="loadPredictions"
               />
-              <span v-else>{{ pred.predictedHomeScore }} : {{ pred.predictedAwayScore }}</span>
+              <div v-else class="prediction-locked-inline">
+                <span class="lock-inline" :title="predictionLockTitle(pred.match)" aria-label="locked">🔒</span>
+                {{ pred.predictedHomeScore }} : {{ pred.predictedAwayScore }}
+                <div class="lock-reason text-muted">{{ predictionLockTitle(pred.match) }}</div>
+              </div>
             </div>
             <div class="prediction-card-row">
               <span>{{ t('matchTable.result') }}</span>
@@ -192,9 +199,10 @@ import PredictionForm from '../components/PredictionForm.vue';
 import { useFormatters } from '../composables/useFormatters';
 import { useMatchMeta } from '../composables/useMatchMeta';
 import { useTableSort } from '../composables/useTableSort';
+import { getPredictionLockReason } from '../utils/predictionLockReason';
 
 const { t } = useI18n();
-const { formatDate, formatPoints } = useFormatters();
+const { formatDate, formatTime, formatPoints } = useFormatters();
 const { matchRoundLabel, matchRoundSortValue } = useMatchMeta();
 const predictions = ref([]);
 const loading = ref(true);
@@ -236,6 +244,14 @@ const { sortKey, sortDir, sortedItems, toggleSort } = useTableSort(predictions, 
 
 function statusLabel(status) {
   return t(`matchStatus.${status}`, status);
+}
+
+function predictionLockTitle(match) {
+  const { key, kickoffTime } = getPredictionLockReason(match);
+  if (key === 'predictions.lockReasonKickoff' && kickoffTime) {
+    return t(key, { time: formatTime(kickoffTime), date: formatDate(kickoffTime) });
+  }
+  return t(key);
 }
 
 async function loadPredictions() {
@@ -280,6 +296,25 @@ onMounted(async () => {
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: lowercase;
+}
+
+.lock-inline {
+  display: inline-flex;
+  margin-right: 0.25rem;
+  opacity: 0.85;
+}
+
+.prediction-locked-inline {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.lock-reason {
+  width: 100%;
+  margin-top: 0.1rem;
+  font-size: 0.8rem;
 }
 
 .predictions-mobile { display: none; }

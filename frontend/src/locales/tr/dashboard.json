@@ -1,0 +1,39 @@
+{
+  "dashboard": {
+    "welcome": "Hoş geldin, {name}!",
+    "nextMatches": "Yaklaşan maçlar",
+    "allMatches": "Tüm maçlar",
+    "topPlayers": "En iyi oyuncular",
+    "openPredictions": "Açık tahminler",
+    "myRank": "Sıram",
+    "myPoints": "Puanlarım",
+    "completion": "Tamamlama",
+    "currentRank": "Mevcut sıra",
+    "totalPoints": "Toplam puan",
+    "tipsSubmitted": "Gönderilen tahminler",
+    "missingTips": "Eksik tahminler",
+    "missingTipsAction": "Şimdi tahmin gönder →",
+    "onboarding": {
+      "title": "Hâlâ açık tahminler var",
+      "text": "Henüz {count} maç için tahmin girmediniz. Ne kadar erken tahmin yaparsanız o kadar çok puan toplayabilirsiniz.",
+      "tipNow": "Eksik tahminleri gönder",
+      "bonus": "Bonus sorular",
+      "rules": "Oyun kuralları"
+    },
+    "noUpcoming": "Yaklaşan maç yok.",
+    "top5": "İlk 5 lider tablosu",
+    "fullLeaderboard": "Tüm lider tablosu",
+    "loadFailed": "Pano yüklenemedi."
+  },
+  "teamDashboard": {
+    "title": "Takımım",
+    "fullRanking": "Takım sıralaması",
+    "avgPoints": "Ort. puan",
+    "totalPoints": "Takım puanı",
+    "members": "Üyeler",
+    "myRankInTeam": "Takımdaki sıram",
+    "colleagues": "İş arkadaşları",
+    "noTeam": "Henüz bir takıma atanmadınız.",
+    "goToProfile": "Profilde takım seç"
+  }
+}

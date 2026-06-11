@@ -9,6 +9,8 @@
     "es": "Espanhol",
     "fr": "Francês",
     "pt": "Português",
+    "pl": "Polaco",
+    "tr": "Turco",
     "label": "Idioma"
   },
   "common": {
@@ -56,6 +58,7 @@
     "leaderboard": "Classificação",
     "prizes": "Prémios",
     "teamRanking": "Classificação por Equipas",
+    "teamPerformance": "Desempenho da equipa",
     "statistics": "Estatísticas",
     "notifications": "Notificações",
     "profile": "Perfil",
@@ -457,6 +460,7 @@
   },
   "teamDashboard": {
     "title": "A minha equipa",
+    "teamPerformance": "Desempenho da equipa",
     "fullRanking": "Classificação por equipas",
     "avgPoints": "Média de pontos",
     "totalPoints": "Pontos da equipa",
@@ -465,6 +469,32 @@
     "colleagues": "Colegas",
     "noTeam": "Ainda não atribuído a uma equipa.",
     "goToProfile": "Escolher equipa no perfil"
+  },
+  "teamPerformance": {
+    "title": "Desempenho da equipa",
+    "subtitle": "Quem está a palpitar especialmente bem na tua equipa",
+    "privacyHint": "As estatísticas da equipa são mostradas para motivar. Os palpites concretos não são mostrados antes do início.",
+    "noTeam": "Ainda não atribuído a uma equipa.",
+    "goToProfile": "Escolher equipa no perfil",
+    "teamRank": "Posição da equipa: #{rank}",
+    "memberCount": "{count} membros",
+    "avgPoints": "Média de pontos",
+    "totalPoints": "Pontos da equipa",
+    "exactTips": "Palpites exatos",
+    "completion": "Completude",
+    "highlightsTitle": "Destaques",
+    "membersTitle": "Membros da equipa",
+    "noHighlights": "Ainda não há destaques.",
+    "loadFailed": "Não foi possível carregar o desempenho da equipa.",
+    "empty": "Ainda não há entradas.",
+    "total": "Total",
+    "correct": "Corretos",
+    "highlightBestPointsTitle": "Melhor pontuação",
+    "highlightBestPointsText": "{name} lidera com {points} pontos.",
+    "highlightBestExactTitle": "Mais exatos",
+    "highlightBestExactText": "{name} tem {count} palpites exatos.",
+    "highlightBestCorrectTitle": "Mais acertos",
+    "highlightBestCorrectText": "{name} tem {count} palpites corretos."
   },
   "groupStandings": {
     "title": "Classificação por grupos",

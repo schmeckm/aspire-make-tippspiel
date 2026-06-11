@@ -1,0 +1,85 @@
+{
+  "privacy": {
+    "title": "Gizlilik Politikası",
+    "lastUpdated": "Son güncelleme: Haziran 2026",
+    "backToLogin": "Girişe dön",
+    "intro": "Bu gizlilik politikası, kurum içi FIFA Dünya Kupası 2026 tahmin oyununda kişisel verilerin nasıl işlendiğini açıklar. Uygulama, kuruluş içindeki çalışanlar ve ekipler için tasarlanmıştır. Mümkünse lütfen kişisel bir e-posta adresiyle (iş/şirket adresi değil) kayıt olun.",
+    "sections": {
+      "controller": {
+        "title": "1. Veri sorumlusu",
+        "text": "Kişisel verilerin bu uygulamada işlenmesinden kuruluş sorumludur. Gizlilikle ilgili sorularınız varsa lütfen aşağıda belirtilen iletişim kanalına başvurun."
+      },
+      "dataCollected": {
+        "title": "2. İşlediğimiz veriler",
+        "items": [
+          "Hesap verileri: ad, soyad, e-posta adresi ve şifre (hash olarak saklanır)",
+          "Takım ataması: kurum içi bir takıma bağlantı (ör. departman veya proje grubu)",
+          "Profil verileri: profil fotoğrafı, dil tercihi, favori milli takım ve gol kralı seçimi",
+          "Oyun verileri: tahminler, bonus cevaplar, puanlar, lider tablosu sırası ve istatistikler",
+          "Kullanım verileri: bildirimler, isteğe bağlı AI koç istekleri ve teknik günlükler",
+          "İletişim verileri: e-posta doğrulama ve şifre sıfırlama token'ları",
+          "Görünürlük: ad, takım, profil fotoğrafı, tahminler ve favoriler diğer kayıtlı katılımcılara görünür olabilir"
+        ]
+      },
+      "purpose": {
+        "title": "3. İşleme amaçları",
+        "items": [
+          "Tahmin oyununu sağlamak ve işletmek",
+          "Kullanıcı hesaplarını ve takım sıralamalarını yönetmek",
+          "Puanları, lider tablolarını ve istatistikleri hesaplamak",
+          "E-posta hatırlatmaları ve uygulama içi bildirimler göndermek",
+          "Güvenlik, hata analizi ve kötüye kullanımın önlenmesi",
+          "Maç analizi ve destek için isteğe bağlı AI özellikleri"
+        ]
+      },
+      "teamData": {
+        "title": "4. Takım ve iş arkadaşları verileri",
+        "text": "Oyun takım bazlı kullanıldığı için verileriniz, takım sıralamaları ve lider tabloları için kuruluşunuzdaki diğer katılımcılarla ilişkilendirilir. Buna özellikle adınız, atandığınız takım, tahminleriniz, puanlarınız ve — sağladıysanız — Dünya Kupası favorileriniz dahildir. Veriler kuruluş dışına yayınlanmaz."
+      },
+      "legalBasis": {
+        "title": "5. Hukuki dayanaklar",
+        "items": [
+          "Hesap ve oyun özellikleri için sözleşmenin ifası veya sözleşme öncesi adımlar (GDPR Mad. 6(1)(b))",
+          "İşletim, güvenlik ve kurum içi takım sıralamalarında meşru menfaatler (GDPR Mad. 6(1)(f))",
+          "İsteğe bağlı özellikleri veya e-posta hatırlatmalarını kullandığınızda rıza (GDPR Mad. 6(1)(a))",
+          "Yasal saklama yükümlülükleri geçerliyse yasal yükümlülükler (GDPR Mad. 6(1)(c))"
+        ]
+      },
+      "sharing": {
+        "title": "6. Paylaşım ve işleyenler",
+        "items": [
+          "Kuruluş içinde: oyun kurallarına göre kayıtlı katılımcılar için görünürlük",
+          "BT operasyonları: uygulamanın barındırılması ve teknik işletimi",
+          "E-posta hizmeti: doğrulama, sıfırlama ve hatırlatma e-postalarının teslimi",
+          "Harici spor veri API'leri: fikstür, sonuç ve takım verilerinin alınması (hesap verileriniz paylaşılmaz)",
+          "İsteğe bağlı AI özellikleri: etkinse, AI yanıtları üretmek için girdiler ve bağlam verileri harici bir AI/LLM sağlayıcısına (örn. OpenAI) aktarılır",
+          "Hata/performans izleme: yapılandırıldıysa, teknik hata verileri bir izleme hizmetine (örn. Sentry) gönderilebilir",
+          "Kişisel verilerin üçüncü taraflara satışı yoktur"
+        ]
+      },
+      "retention": {
+        "title": "7. Saklama",
+        "text": "Kişisel verileri yalnızca tahmin oyununu işletmek için gerekli olduğu sürece veya yasal gereklilikler doğrultusunda saklarız. Profilinizden istediğiniz zaman hesabınızı silebilirsiniz. Bu işlem kullanıcı hesabınızı ve ilgili oyun verilerini kalıcı olarak kaldırır. İsteğe bağlı profil verilerini (örn. profil fotoğrafı) profilinizden istediğiniz zaman kaldırabilirsiniz. İsteğe bağlı AI etkileşimlerinin günlükleri, etkinse, varsayılan olarak 90 gün sonra silinir ve hesap silme ile birlikte kaldırılır."
+      },
+      "rights": {
+        "title": "8. Haklarınız",
+        "items": [
+          "Hakkınızda işlediğimiz kişisel verilere erişim",
+          "Profilinizdeki hatalı verilerin düzeltilmesi",
+          "Hesabınızın ve ilgili verilerin silinmesi",
+          "Yasal olarak uygulanabilir durumlarda işlemenin kısıtlanması",
+          "Meşru menfaatlere dayalı işlemeye itiraz",
+          "Yetkili veri koruma denetim makamına şikayet"
+        ]
+      },
+      "security": {
+        "title": "9. Veri güvenliği",
+        "text": "Verilerinizi kayıp, kötüye kullanım ve yetkisiz erişime karşı korumak için uygun teknik ve organizasyonel önlemler uygularız. Bunlara şifrelerin hash olarak saklanması, rol tabanlı erişim kontrolleri ve güvenli sunucu bağlantıları dahildir."
+      },
+      "contact": {
+        "title": "10. İletişim",
+        "text": "Bu gizlilik politikasıyla ilgili sorularınız veya haklarınızı kullanmak için lütfen yöneticinizle veya kuruluşunuzdaki tahmin oyunu için belirlenen iletişim kişisiyle iletişime geçin."
+      }
+    }
+  }
+}

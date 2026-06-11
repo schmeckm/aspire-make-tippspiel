@@ -31,7 +31,7 @@
     "ssoLocalAccountExists": "Este e-mail está registado com uma conta de palavra-passe. Por favor, inicie sessão com e-mail e palavra-passe.",
     "ssoOtherProvider": "Este e-mail está associado a outro método de início de sessão.",
     "ssoTeamRequired": "Por favor, conclua o registo selecionando uma equipa.",
-    "invalidLanguage": "Idioma inválido. Permitidos: de, en, es, fr, pt.",
+    "invalidLanguage": "Idioma inválido. Permitidos: de, en, es, fr, pt, pl, tr.",
     "usersLoadFailed": "Não foi possível carregar os utilizadores.",
     "userCreateFailed": "Não foi possível criar o utilizador.",
     "userLoadFailed": "Não foi possível carregar o utilizador.",

@@ -4,6 +4,8 @@ export const LOCALE_FLAGS = {
   es: '🇪🇸',
   fr: '🇫🇷',
   pt: '🇵🇹',
+  pl: '🇵🇱',
+  tr: '🇹🇷',
 };
 
 export const LOCALE_FLAG_IMAGES = {
@@ -12,6 +14,8 @@ export const LOCALE_FLAG_IMAGES = {
   es: 'https://flagcdn.com/w40/es.png',
   fr: 'https://flagcdn.com/w40/fr.png',
   pt: 'https://flagcdn.com/w40/pt.png',
+  pl: 'https://flagcdn.com/w40/pl.png',
+  tr: 'https://flagcdn.com/w40/tr.png',
 };
 
 const TEAM_TO_ISO = {
@@ -71,7 +75,7 @@ const TEAM_TO_ISO = {
   südkorea: 'KR', suedkorea: 'KR', sudkorea: 'KR', 'south korea': 'KR', 'korea republic': 'KR',
   südafrika: 'ZA', suedafrika: 'ZA', sudafrika: 'ZA', 'south africa': 'ZA',
   tunesien: 'TN', tunisia: 'TN',
-  türkei: 'TR', turkei: 'TR', tuerkei: 'TR', turkey: 'TR',
+  türkei: 'TR', turkei: 'TR', tuerkei: 'TR', turkey: 'TR', türkiye: 'TR', turkiye: 'TR',
   uruguay: 'UY',
   usa: 'US', 'united states': 'US', 'vereinigte staaten': 'US',
   usbekistan: 'UZ', uzbekistan: 'UZ',

@@ -1,0 +1,178 @@
+{
+  "help": {
+    "nav": "Oyun kuralları",
+    "eyebrow": "Resmi yönerge",
+    "title": "Release Train Engineer",
+    "titleAccent": "Oyun Kuralları",
+    "subtitle": "Dünya Kupası 2026 havuzu nasıl çalışır — adil, şeffaf ve manuel müdahale olmadan.",
+    "sections": {
+      "winner": {
+        "title": "Kim kazanır?",
+        "text": "Lider tablosunda en çok puanı olan oyuncu kazanır. Ayrıca her departmanın üye başına ortalama puanına göre bir takım sıralaması vardır (örn. IT, Finance)."
+      },
+      "scoring": {
+        "title": "Maç başına puan",
+        "intro": "Her maç için skor tahmin edersiniz. Maç bittikten sonra yalnızca en iyi kategori sayılır — aynı anda birden fazlası değil:"
+      },
+      "deadline": {
+        "title": "Ne zamana kadar tahmin yapabilirim?",
+        "text": "Tahminler başlama vuruşuna kadar yapılabilir. Sonrasında maçlar kilitlenir — canlı, bitmiş veya yönetici tarafından kilitlenmiş maçlar dahil."
+      },
+      "participation": {
+        "title": "Her maçı tahmin etmek zorunda mıyım?",
+        "intro": "Sistemde 104 Dünya Kupası maçı vardır (72 grup maçı + 32 eleme). Her maçı tamamlamak için teknik veya yasal bir zorunluluk yoktur — sadece seçtiğiniz maçları tahmin edebilirsiniz. Eksik tahminler 0 puan getirir ve lider tablosundaki tamamlama oranınızı düşürür.",
+        "rteRule": "Bu havuz için RTE kuralı: her katılımcı tüm maçları kendisi tahmin eder. İş yükünü iş arkadaşları arasında bölmek (örn. “Sen Grup A'yı al, ben Grup B'yi”) yasaktır.",
+        "tableTitle": "Tipik modeller karşılaştırması",
+        "tableModel": "Model",
+        "tableEffort": "Kişi başı efor",
+        "tableNote": "Vurgulanan satır kullandığımız modeldir. Diğer varyantlar bu havuz için geçerli değildir.",
+        "variants": {
+          "all": "Herkes her şeyi tahmin eder",
+          "allEffort": "104 tahmin",
+          "split": "Böl (örn. 4 kişi × 26 maç)",
+          "splitEffort": "Kişi başı 26",
+          "mandatory": "Sadece zorunlu maçlar herkes için",
+          "mandatoryEffort": "104'ten az",
+          "optional": "Sadece bildiğin maçları tahmin et",
+          "optionalEffort": "değişken"
+        }
+      },
+      "profile": {
+        "title": "Profil: favori takım ve gol kralı",
+        "text": "Profilinizde favori milli takımınızı ve gol kralı seçiminizi belirleyin. Favori takımınız, “Takımınız ne kadar ilerler?” bonus sorusunda kullanılır ve tüm katılımcılara görünür."
+      },
+      "bonus": {
+        "title": "Bonus sorular",
+        "text": "Maçlara ek olarak bonus sorular vardır (örn. şampiyon, gol kralı). Bunlar toplam puanınıza eklenen ekstra puanlar kazandırır."
+      },
+      "leaderboard": {
+        "title": "Lider tablosu",
+        "text": "Lider tablosu sıralamanızı, maç puanlarınızı, bonus puanlarınızı ve toplamı gösterir. Toplam, maç veya bonus puanlarına göre filtreleyebilirsiniz."
+      },
+      "teams": {
+        "title": "Takım sıralaması",
+        "text": "Her oyuncu bir takıma aittir. Takım sıralaması üye başına ortalama puanı kullanır — en büyük departman otomatik kazanmaz."
+      },
+      "ai": {
+        "title": "AI koça sor",
+        "text": "AI koç strateji, eksik tahminler ve puanlar konusunda yardımcı olabilir. Resmi kuralların yerine geçmez — puanlar her zaman sistem tarafından hesaplanır.",
+        "link": "AI koça git"
+      }
+    },
+    "scoring": {
+      "exact": "Tam skor: {exact} puan",
+      "goalDiff": "Doğru averaj (sadece galibiyet): {goalDiff} puan",
+      "tendency": "Doğru eğilim (galibiyet/beraberlik): {tendency} puan",
+      "wrong": "Yanlış tahmin: {wrong} puan"
+    },
+    "example": {
+      "title": "Örnek",
+      "result": "Maç sonucu: Almanya 2:1 Fransa",
+      "exact": "Tahmin 2:1 → {exact} puan (tam)",
+      "goalDiff": "Tahmin 3:2 → {goalDiff} puan (averaj)",
+      "tendency": "Tahmin 1:0 → {tendency} puan (eğilim)",
+      "wrong": "Tahmin 1:2 → {wrong} puan (yanlış)"
+    },
+    "tiebreaker": {
+      "title": "Lider tablosunda eşitlik bozma",
+      "item1": "Daha fazla tam skor",
+      "item2": "Daha fazla doğru averaj",
+      "item3": "Daha fazla tahmin gönderimi",
+      "item4": "Soyada göre alfabetik"
+    }
+  },
+  "ai": {
+    "coachTitle": "AI Koç",
+    "coachSubtitle": "Kişisel tahmin asistanınız",
+    "askPlaceholder": "AI koçunuza bir soru sorun…",
+    "send": "Gönder",
+    "preview": "AI önizleme",
+    "regenerate": "Yeniden üret",
+    "coachUnavailable": "AI koç kullanılamıyor.",
+    "showPreview": "AI önizlemeyi göster",
+    "matchPreviewTitle": "AI maç önizlemesi",
+    "leaderboardSummaryTitle": "AI lider tablosu özeti",
+    "cached": "Önbellek",
+    "disclaimer": "AI görüşü — garanti yok.",
+    "previewUnavailable": "AI önizleme kullanılamıyor.",
+    "leaderboardSummaryUnavailable": "AI yorumu geçici olarak kullanılamıyor.",
+    "leaderboardSummaryRateLimit": "Günlük AI yorum limiti aşıldı. Yarın tekrar kullanılabilir.",
+    "suggestedQuestions": {
+      "rules": "Oyun kurallarını ve puanların nasıl verildiğini açıkla.",
+      "missingTips": "Hangi tahminlerim eksik?",
+      "catchUp": "Lider tablosunda nasıl yetişebilirim?",
+      "maxPoints": "Bugün en fazla kaç puan alabilirim?",
+      "openMatches": "En önemli açık maçlarımı göster",
+      "teamMatches": "Almanya'nın daha hangi maçları var?"
+    }
+  },
+  "notifications": {
+    "title": "Bildirimler",
+    "empty": "Bildirim yok",
+    "markAllRead": "Hepsini okundu işaretle",
+    "markAllReadLong": "Tümünü okundu olarak işaretle",
+    "bellLabel": "Bildirimler",
+    "toggleDropdown": "Bildirim panelini aç/kapat",
+    "loadFailed": "Bildirimler yüklenemedi."
+  },
+  "display": {
+    "subtitle": "Canlı lider tablosu",
+    "updated": "Güncellendi",
+    "liveMatches": "Maçlar",
+    "noMatches": "Maç yok."
+  },
+  "statistics": {
+    "title": "İstatistikler",
+    "rankTrend": "Sıra trendi",
+    "pointsTrend": "Puan trendi",
+    "pointsOverTime": "Zamana göre puan",
+    "rankOverTime": "Zamana göre sıra",
+    "accuracyByStage": "Aşamaya göre doğruluk",
+    "phase": "Aşama",
+    "tips": "Tahminler",
+    "exact": "Tam",
+    "points": "Puan",
+    "loadFailed": "İstatistikler yüklenemedi."
+  },
+  "tipCopilot": {
+    "title": "Tahmin Eş Pilotu",
+    "subtitle": "Bugünün (veya açık) maçlarını hızlıca girin — 2:1 yazın ve kaydedin.",
+    "backToMatches": "Maçlara dön",
+    "refresh": "Yenile",
+    "filters": {
+      "today": "Bugün",
+      "tomorrow": "Yarın",
+      "open": "Açık",
+      "missingOnly": "Sadece eksikler",
+      "myTeamFirst": "Önce takımım"
+    },
+    "modeList": "Liste",
+    "modeWizard": "Tek tek",
+    "summary": "{count} maç",
+    "emptyToday": "Bugün tahmin edilecek açık maç yok.",
+    "emptyTomorrow": "Yarın tahmin edilecek açık maç yok.",
+    "emptyOpen": "Şu anda tahmin edilecek açık maç yok.",
+    "wizardProgress": "{total} maçtan {current}.",
+    "scorePlaceholder": "2:1",
+    "currentTip": "Mevcut tahmin: {score}",
+    "lockSoon": "Yakında kilitlenir",
+    "myTeamNotSet": "Profilinizde favori takım seçilmemiş (Profil → favori takım seç).",
+    "showAll": "Tüm {count} maç",
+    "saved": "Tahmin kaydedildi ({score})",
+    "loadFailed": "Maçlar yüklenemedi.",
+    "bulk": {
+      "title": "Toplu giriş",
+      "hint": "Her maç için bir satır, maç numarasıyla birlikte.",
+      "placeholder": "#1 2:1\n#2 0:0\n#7 1-3",
+      "apply": "Hepsini kaydet",
+      "lineInvalid": "Geçersiz satır (format: #<no> 2:1)",
+      "matchNotFound": "Maç #{number} bulunamadı (mevcut filtre).",
+      "saveFailed": "Kaydetme başarısız"
+    },
+    "errors": {
+      "invalidFormat": "Tahmininizi 2:1 veya 2-1 olarak girin.",
+      "outOfRange": "Tahmin 0 ile {max} arasında olmalı.",
+      "saveFailed": "Tahmin kaydedilemedi."
+    }
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "admin": {
+    "manualMode": {
+      "csvTitle": "Manuel CSV modu",
+      "apiTitle": "API modu aktif",
+      "defaultMessage": "Futbol API yapılandırılmamış. Uygulama manuel CSV modunda çalışıyor.",
+      "csvImport": "CSV içe aktar",
+      "results": "Sonuçlar",
+      "resultsCopilot": "Sonuç Eş Pilotu",
+      "editMatches": "Maçları düzenle",
+      "recalculate": "Puanları yeniden hesapla",
+      "recalculating": "Yeniden hesaplanıyor..."
+    },
+    "leaderboard": {
+      "includeAdmins": "Lider tablosunda yöneticileri göster",
+      "includeAdminsHint": "Varsayılan olarak hariç tutulur.",
+      "saved": "Lider tablosu ayarı kaydedildi."
+    },
+    "ai": {
+      "placeholder": "Bir yönetici sorusu sorun...",
+      "actions": {
+        "missingTips": "Eksik tahminleri analiz et",
+        "pointsIssue": "Puan sorununu kontrol et",
+        "csvImport": "CSV içe aktarmayı incele",
+        "reminderText": "Hatırlatma metni oluştur",
+        "bonusSuggestions": "Bonus sorular öner"
+      },
+      "questions": {
+        "missingTips": "Bugün hangi kullanıcılar tahmin göndermedi?",
+        "pointsIssue": "Bir maç için puanlar neden hesaplanmamış olabilir?",
+        "csvImport": "CSV içe aktarmadan sonra hangi veriler eksik olabilir?",
+        "reminderText": "Eksik tahminler için nazik bir hatırlatma metni oluştur.",
+        "bonusSuggestions": "Dünya Kupası 2026 için uygun 5 bonus soru öner."
+      },
+      "bonusSuggestions": {
+        "generate": "🤖 AI önerileri üret",
+        "generating": "Üretiliyor...",
+        "apply": "Uygula",
+        "unavailable": "AI önerileri kullanılamıyor."
+      },
+      "reminderText": {
+        "hintIntro": "Tahmin hatırlatmaları için özel metin oluşturun. Yer tutucular:",
+        "generate": "🤖 AI metni üret",
+        "generating": "Üretiliyor...",
+        "saveTemplate": "Şablonu kaydet",
+        "saving": "Kaydediliyor...",
+        "sendWithText": "Bu metinle gönder",
+        "sending": "Gönderiliyor...",
+        "subject": "Konu",
+        "emailBody": "E-posta gövdesi",
+        "notificationText": "Uygulama içi bildirim",
+        "subjectPlaceholder": "örn. {{appTitle}} – {{missingCount}} tahmin hâlâ açık",
+        "emailBodyPlaceholder": "Merhaba {{firstName}}, hâlâ {{missingCount}} açık tahmininiz var...",
+        "notificationPlaceholder": "Hâlâ gönderilecek {{missingCount}} tahmin var!",
+        "generatedMessage": "AI metni üretildi – lütfen kontrol edin ve kaydedin veya gönderin.",
+        "savedMessage": "Hatırlatma şablonu kaydedildi.",
+        "unavailable": "AI hatırlatma kullanılamıyor.",
+        "fillRequired": "Lütfen konu ve e-posta gövdesini doldurun (ikisi de zorunlu).",
+        "disabled": "Hatırlatmalar devre dışı.",
+        "noRecipients": "E-posta gönderilmedi – eksik tahmin yok veya alıcı yok.",
+        "sentMessage": "{count} hatırlatma gönderildi.",
+        "saveFailed": "Şablon kaydedilemedi.",
+        "sendFailed": "Hatırlatmalar gönderilemedi."
+      }
+    },
+    "manualModeLegacy": "Manuel CSV modu",
+    "apiMode": "API modu aktif",
+    "syncFixtures": "Takvimi senkronize et",
+    "syncResults": "Sonuçları senkronize et",
+    "recalculate": "Puanları yeniden hesapla",
+    "importCsv": "CSV içe aktar"
+  },
+  "countdown": {
+    "started": "Başladı",
+    "days": "g",
+    "hours": "s",
+    "minutes": "d",
+    "seconds": "sn"
+  },
+  "chart": {
+    "rank": "Sıra",
+    "points": "Puan"
+  },
+  "adminPlayerImages": {
+    "title": "Oyuncu Resimleri",
+    "addRecord": "Kayıt ekle",
+    "searchPlaceholder": "Oyuncu veya takım ara…",
+    "search": "Ara",
+    "statusEnabled": "Oyuncu görselleri etkin",
+    "empty": "Henüz oyuncu görsel kaydı yok.",
+    "preview": "Önizleme",
+    "player": "Oyuncu",
+    "team": "Takım",
+    "source": "Kaynak",
+    "approvedStatus": "Onaylandı",
+    "editTitle": "Oyuncu görselini düzenle",
+    "createTitle": "Oyuncu görseli ekle",
+    "countryCode": "Ülke kodu",
+    "searchProviders": "Sağlayıcılarda ara",
+    "searching": "Aranıyor…",
+    "uploadHint": "JPG, PNG, WebP veya GIF, en fazla 2 MB",
+    "providerResults": "Sağlayıcı sonuçları",
+    "useImage": "Bu görseli kullan",
+    "licenseInfo": "Lisans bilgisi",
+    "sourceId": "Kaynak ID",
+    "license": "Lisans",
+    "attribution": "Atıf",
+    "lastChecked": "Son kontrol",
+    "removeImage": "Görseli kaldır",
+    "approve": "Onayla",
+    "loadFailed": "Oyuncu görselleri yüklenemedi.",
+    "searchFailed": "Sağlayıcı araması başarısız.",
+    "noProviderResults": "Yapılandırılmış sağlayıcılarda görsel bulunamadı.",
+    "imageApplied": "Görsel uygulandı.",
+    "approvedMessage": "Görsel onaylandı.",
+    "approveFailed": "Onay başarısız.",
+    "imageRemoved": "Görsel kaldırıldı.",
+    "removeFailed": "Görsel kaldırılamadı.",
+    "saved": "Kaydedildi.",
+    "saveFailed": "Kaydetme başarısız.",
+    "applyFailed": "Görsel uygulanamadı.",
+    "fileTooLarge": "Görsel çok büyük (en fazla 2 MB).",
+    "providerConfigured": "yapılandırıldı",
+    "providerNotConfigured": "yapılandırılmadı"
+  }
+}

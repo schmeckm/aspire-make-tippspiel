@@ -31,7 +31,7 @@
     "ssoLocalAccountExists": "Diese E-Mail ist mit einem Passwort-Konto registriert. Bitte melden Sie sich klassisch an.",
     "ssoOtherProvider": "Diese E-Mail ist mit einem anderen Anmeldeverfahren verknüpft.",
     "ssoTeamRequired": "Bitte schließen Sie die Registrierung mit Team-Auswahl ab.",
-    "invalidLanguage": "Ungültige Sprache. Erlaubt: de, en, es, fr, pt.",
+    "invalidLanguage": "Ungültige Sprache. Erlaubt: de, en, es, fr, pt, pl, tr.",
     "usersLoadFailed": "Benutzer konnten nicht geladen werden.",
     "userCreateFailed": "Benutzer konnte nicht erstellt werden.",
     "userLoadFailed": "Benutzer konnte nicht geladen werden.",

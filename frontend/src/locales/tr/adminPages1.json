@@ -1,0 +1,203 @@
+{
+  "adminPages": {
+    "table": {
+      "noEntries": "Kayıt bulunamadı."
+    },
+    "dashboard": {
+      "title": "Yönetici panosu",
+      "recalculate": "Puanları yeniden hesapla",
+      "recalculating": "Hesaplanıyor...",
+      "loadFailed": "Yönetici panosu yüklenemedi.",
+      "top10": "İlk 10 lider tablosu",
+      "stats": {
+        "users": "Kullanıcılar",
+        "teams": "Takımlar",
+        "totalMatches": "Toplam maç",
+        "finished": "Bitti",
+        "open": "Açık",
+        "predictions": "Toplam tahmin",
+        "missing": "Eksik tahminler"
+      }
+    },
+    "users": {
+      "title": "Kullanıcı yönetimi",
+      "loadFailed": "Kullanıcılar yüklenemedi.",
+      "newUser": "Yeni kullanıcı",
+      "editUser": "Kullanıcıyı düzenle",
+      "createUser": "Yeni kullanıcı",
+      "selectAll": "Tüm kullanıcıları seç",
+      "selectUser": "{name} seç",
+      "selectedCount": "{count} seçildi",
+      "sendTipReminders": "Tahmin hatırlatması gönder",
+      "sendStatusUpdate": "Durum güncellemesi gönder",
+      "confirmTipReminders": "{count} kullanıcıya tahmin hatırlatması gönderilsin mi?",
+      "confirmStatusUpdate": "{count} kullanıcıya durum güncellemesi gönderilsin mi?",
+      "confirmDelete": "\"{name}\" kullanıcısı silinsin mi?",
+      "sending": "Gönderiliyor…",
+      "noSelection": "Lütfen en az bir kullanıcı seçin.",
+      "roleAdmin": "Yönetici",
+      "roleUser": "Kullanıcı",
+      "verified": "Doğrulandı",
+      "pending": "Beklemede",
+      "passwordOptionalHint": "(değişmeden bırakmak için boş bırakın)",
+      "profileImage": "Profil fotoğrafı",
+      "uploadHint": "JPG, PNG, WebP veya GIF, en fazla 2 MB",
+      "removeImage": "Görseli kaldır",
+      "emailVerifiedLabel": "E-posta doğrulandı",
+      "createImageHint": "Kullanıcıyı oluşturduktan sonra profil fotoğrafı yükleyebilirsiniz.",
+      "imageTooLarge": "Görsel çok büyük (en fazla 2 MB).",
+      "imageRemoved": "Profil fotoğrafı kaldırıldı.",
+      "imageRemoveFailed": "Görsel kaldırılamadı.",
+      "userUpdated": "Kullanıcı güncellendi.",
+      "userCreated": "Kullanıcı oluşturuldu.",
+      "userUpdatedWithImage": "Kullanıcı ve profil fotoğrafı güncellendi.",
+      "userCreatedWithImage": "Kullanıcı oluşturuldu ve profil fotoğrafı yüklendi.",
+      "saveFailed": "Kullanıcı kaydedilemedi.",
+      "userDeleted": "Kullanıcı silindi.",
+      "deleteFailed": "Kullanıcı silinemedi.",
+      "emailsSent": "{count} e-posta gönderildi.",
+      "emailsFailed": "E-postalar gönderilemedi.",
+      "statusUpdatesFailed": "Durum güncellemeleri gönderilemedi.",
+      "columns": {
+        "image": "Görsel",
+        "firstName": "Ad",
+        "lastName": "Soyad",
+        "email": "E-posta",
+        "emailVerified": "Doğrulandı",
+        "role": "Rol",
+        "team": "Takım"
+      },
+      "form": {
+        "firstName": "Ad",
+        "lastName": "Soyad",
+        "email": "E-posta",
+        "password": "Şifre",
+        "role": "Rol",
+        "team": "Takım"
+      }
+    },
+    "teams": {
+      "title": "Takım yönetimi",
+      "newTeam": "Yeni takım",
+      "editTeam": "Takımı düzenle",
+      "createTeam": "Yeni takım",
+      "seedDefaults": "Varsayılan takımları yükle",
+      "seedingDefaults": "Takımlar yükleniyor...",
+      "loadFailed": "Takımlar yüklenemedi.",
+      "seedFailed": "Varsayılan takımlar yüklenemedi.",
+      "seedSuccess": "Varsayılan takımlar yüklendi.",
+      "seedAllPresent": "Tüm varsayılan takımlar zaten mevcut.",
+      "seedCreated": "{count} yeni",
+      "teamImage": "Takım görseli",
+      "uploadHint": "JPG, PNG, WebP veya GIF, en fazla 2 MB",
+      "removeImage": "Görseli kaldır",
+      "createImageHint": "Takımı oluşturduktan sonra bir görsel yükleyebilirsiniz.",
+      "imageTooLarge": "Görsel çok büyük (en fazla 2 MB).",
+      "imageRemoved": "Takım görseli kaldırıldı.",
+      "imageRemoveFailed": "Görsel kaldırılamadı.",
+      "teamUpdated": "Takım güncellendi.",
+      "teamCreated": "Takım oluşturuldu.",
+      "teamUpdatedWithImage": "Takım ve görsel güncellendi.",
+      "teamCreatedWithImage": "Takım oluşturuldu ve görsel yüklendi.",
+      "saveFailed": "Takım kaydedilemedi.",
+      "teamDeleted": "Takım silindi.",
+      "deleteFailed": "Takım silinemedi.",
+      "confirmDelete": "\"{name}\" takımı silinsin mi?",
+      "columns": {
+        "image": "Görsel",
+        "name": "Ad",
+        "description": "Açıklama"
+      },
+      "form": {
+        "name": "Ad",
+        "description": "Açıklama"
+      }
+    },
+    "matches": {
+      "title": "Maç yönetimi",
+      "loadFailed": "Maçlar yüklenemedi.",
+      "newMatch": "Yeni maç",
+      "editMatch": "Maçı düzenle",
+      "createMatch": "Yeni maç",
+      "matchUpdated": "Maç güncellendi.",
+      "matchCreated": "Maç oluşturuldu.",
+      "saveFailed": "Maç kaydedilemedi.",
+      "matchDeleted": "Maç silindi.",
+      "deleteFailed": "Maç silinemedi.",
+      "confirmDelete": "#{number} maçı silinsin mi?",
+      "form": {
+        "matchNumber": "Maç numarası",
+        "stage": "Aşama",
+        "stagePlaceholder": "Grup Aşaması",
+        "group": "Grup",
+        "kickoffTime": "Başlama saati",
+        "homeTeam": "Ev sahibi takım",
+        "awayTeam": "Deplasman takım",
+        "stadium": "Stadyum",
+        "city": "Şehir"
+      }
+    },
+    "results": {
+      "title": "Sonuç yönetimi",
+      "loadFailed": "Maçlar yüklenemedi.",
+      "resultSaved": "Sonuç kaydedildi ve puanlar hesaplandı.",
+      "saveFailed": "Sonuç kaydedilemedi.",
+      "lockFailed": "Maç kilitlenemedi.",
+      "unlockFailed": "Maç kilidi açılamadı.",
+      "matchLocked": "Maç kilitlendi.",
+      "matchUnlocked": "Maç kilidi açıldı.",
+      "setResult": "Sonuç",
+      "lock": "Kilitle",
+      "unlock": "Kilidi aç",
+      "columns": {
+        "number": "#",
+        "match": "Maç",
+        "date": "Tarih",
+        "status": "Durum",
+        "result": "Sonuç",
+        "actions": "İşlemler"
+      },
+      "statusLabels": {
+        "scheduled": "Planlandı",
+        "locked": "Kilitli",
+        "finished": "Bitti",
+        "live": "Canlı",
+        "halftime": "Devre arası"
+      }
+    },
+    "resultsCopilot": {
+      "title": "Sonuç Eş Pilotu",
+      "subtitle": "Bugünün sonuçlarını hızlıca girin – 2:1 yazın ve Enter'a basın",
+      "dayYesterday": "Dün",
+      "dayToday": "Bugün",
+      "dayTomorrow": "Yarın",
+      "openFull": "Tam görünüm",
+      "fullResultsLink": "Tüm sonuçlar",
+      "modeList": "Liste",
+      "modeWizard": "Tek tek",
+      "refresh": "Yenile",
+      "summary": "{pending} açık · {finished} tamam ({date})",
+      "noMatchesForDay": "{date} tarihinde planlı maç yok.",
+      "allDone": "Bugünün tüm sonuçları girildi.",
+      "wizardProgress": "{total} maçtan {current}.",
+      "scorePlaceholder": "2:1",
+      "showAll": "Tüm {count} maç",
+      "saved": "{home} vs {away}: {score} kaydedildi",
+      "loadFailed": "Bugünün maçları yüklenemedi.",
+      "bulk": {
+        "title": "Toplu giriş",
+        "hint": "Her maç için bir satır, maç numarasıyla birlikte.",
+        "placeholder": "#1 2:1\n#2 0:0\n#7 1-3",
+        "apply": "Hepsini kaydet",
+        "lineInvalid": "Geçersiz satır (format: #<no> 2:1)",
+        "matchNotFound": "Açık listede maç #{number} bulunamadı.",
+        "saveFailed": "Kaydetme başarısız"
+      },
+      "errors": {
+        "invalidFormat": "Skoru 2:1 veya 2-1 olarak girin.",
+        "outOfRange": "Skor 0 ile {max} arasında olmalı.",
+        "matchNotFound": "Bugünün listesinde maç #{number} bulunamadı."
+      }
+    }
+  }
+}

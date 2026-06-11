@@ -26,6 +26,7 @@ export function useUserNavLinks() {
 
     links.push(
       { to: '/team-ranking', label: t('nav.teamRanking'), icon: 'users' },
+      { to: '/team-performance', label: t('nav.teamPerformance'), icon: 'users' },
       { to: '/statistics', label: t('nav.statistics'), icon: 'chart' },
       { to: '/notifications', label: t('nav.notifications'), icon: 'bell' },
       { to: '/profile', label: t('nav.profile'), icon: 'user' },

@@ -2,6 +2,14 @@
   <div>
     <div class="page-header">
       <h1>{{ t('teamRanking.title') }}</h1>
+      <button
+        v-if="authStore.user?.teamId && ranking.length"
+        class="btn btn-secondary btn-sm"
+        type="button"
+        @click="scrollToMyTeam"
+      >
+        {{ t('teamRanking.jumpToMyTeam') }}
+      </button>
     </div>
 
     <LoadingSpinner v-if="loading" />
@@ -22,7 +30,12 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="team in ranking" :key="team.teamId">
+              <tr
+                v-for="team in ranking"
+                :id="rowId(team.teamId)"
+                :key="team.teamId"
+                :class="{ 'my-team-row': isMyTeam(team) }"
+              >
                 <td :class="rankClass(team.rank)">
                   <span class="rank-cell">
                     <RankTrophyIcon v-if="showRankTrophy(team.rank)" :rank="team.rank" />
@@ -33,6 +46,7 @@
                   <div class="team-name-cell">
                     <TeamAvatar :image-url="team.imageUrl" :name="team.teamName" size="sm" />
                     <strong>{{ team.teamName }}</strong>
+                    <span v-if="isMyTeam(team)" class="badge badge-info">{{ t('teamRanking.myTeam') }}</span>
                   </div>
                 </td>
                 <td>{{ formatNumber(team.userCount) }}</td>
@@ -48,12 +62,19 @@
         </div>
 
         <div class="team-ranking-mobile">
-          <article v-for="team in ranking" :key="`mobile-${team.teamId}`" class="team-ranking-card">
+          <article
+            v-for="team in ranking"
+            :id="rowId(team.teamId)"
+            :key="`mobile-${team.teamId}`"
+            class="team-ranking-card"
+            :class="{ 'my-team-card': isMyTeam(team) }"
+          >
             <div class="team-ranking-card-header">
               <span :class="rankClass(team.rank)">#{{ team.rank }}</span>
               <div class="team-name-cell">
                 <TeamAvatar :image-url="team.imageUrl" :name="team.teamName" size="sm" />
                 <strong>{{ team.teamName }}</strong>
+                <span v-if="isMyTeam(team)" class="badge badge-info">{{ t('teamRanking.myTeam') }}</span>
               </div>
             </div>
             <dl class="team-ranking-card-fields">
@@ -79,9 +100,11 @@ import ErrorState from '../components/ErrorState.vue';
 import RankTrophyIcon from '../components/RankTrophyIcon.vue';
 import TeamAvatar from '../components/TeamAvatar.vue';
 import { useFormatters } from '../composables/useFormatters';
+import { useAuthStore } from '../stores/authStore';
 
 const { t } = useI18n();
 const { formatNumber, formatPoints } = useFormatters();
+const authStore = useAuthStore();
 
 const ranking = ref([]);
 const loading = ref(true);
@@ -96,6 +119,21 @@ function rankClass(rank) {
 function showRankTrophy(rank) {
   const n = Number(rank);
   return n >= 1 && n <= 3;
+}
+
+function isMyTeam(team) {
+  return !!authStore.user?.teamId && team?.teamId === authStore.user.teamId;
+}
+
+function rowId(teamId) {
+  return `team-ranking-${teamId}`;
+}
+
+function scrollToMyTeam() {
+  const teamId = authStore.user?.teamId;
+  if (!teamId) return;
+  const el = document.getElementById(rowId(teamId));
+  el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 async function loadRanking() {
@@ -125,6 +163,15 @@ onMounted(loadRanking);
   display: flex;
   align-items: center;
   gap: 0.625rem;
+}
+
+.my-team-row td {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.my-team-card {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
 }
 
 .team-ranking-mobile {

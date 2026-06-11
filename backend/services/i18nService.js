@@ -1,14 +1,22 @@
 const fs = require('fs');
 const path = require('path');
 
-const SUPPORTED_LOCALES = ['de', 'en', 'es', 'fr', 'pt'];
+const SUPPORTED_LOCALES = ['de', 'en', 'es', 'fr', 'pt', 'pl', 'tr'];
 const DEFAULT_LOCALE = 'de';
 const EMAIL_FALLBACK_LOCALE = 'en';
 
 const catalogs = {};
 for (const locale of SUPPORTED_LOCALES) {
   const filePath = path.join(__dirname, '../locales', `${locale}.json`);
-  catalogs[locale] = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  try {
+    catalogs[locale] = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch (err) {
+    // Don't crash the backend if a locale file is missing/corrupt.
+    // Fallbacks in `t()` will take over.
+    // eslint-disable-next-line no-console
+    console.warn(`[i18n] Failed to load locale ${locale} from ${filePath}:`, err.message || err);
+    catalogs[locale] = {};
+  }
 }
 
 function normalizeLocale(locale) {

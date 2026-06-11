@@ -9,6 +9,8 @@
     "es": "Español",
     "fr": "Francés",
     "pt": "Portugués",
+    "pl": "Polaco",
+    "tr": "Turco",
     "label": "Idioma"
   },
   "common": {
@@ -56,6 +58,7 @@
     "leaderboard": "Clasificación",
     "prizes": "Premios",
     "teamRanking": "Ranking por Equipos",
+    "teamPerformance": "Rendimiento del equipo",
     "statistics": "Estadísticas",
     "notifications": "Notificaciones",
     "profile": "Perfil",
@@ -426,6 +429,7 @@
   },
   "teamDashboard": {
     "title": "Mi equipo",
+    "teamPerformance": "Rendimiento del equipo",
     "fullRanking": "Ranking de equipos",
     "avgPoints": "Puntos prom.",
     "totalPoints": "Puntos del equipo",
@@ -434,6 +438,32 @@
     "colleagues": "Compañeros",
     "noTeam": "Aún no asignado a un equipo.",
     "goToProfile": "Elegir equipo en el perfil"
+  },
+  "teamPerformance": {
+    "title": "Rendimiento del equipo",
+    "subtitle": "Quién está acertando especialmente bien en tu equipo",
+    "privacyHint": "Las estadísticas del equipo se muestran para motivar. Los pronósticos concretos no se muestran antes del inicio.",
+    "noTeam": "Aún no asignado a un equipo.",
+    "goToProfile": "Elegir equipo en el perfil",
+    "teamRank": "Puesto del equipo: #{rank}",
+    "memberCount": "{count} miembros",
+    "avgPoints": "Puntos prom.",
+    "totalPoints": "Puntos del equipo",
+    "exactTips": "Aciertos exactos",
+    "completion": "Completitud",
+    "highlightsTitle": "Destacados",
+    "membersTitle": "Miembros del equipo",
+    "noHighlights": "Aún no hay destacados.",
+    "loadFailed": "No se pudo cargar el rendimiento del equipo.",
+    "empty": "Aún no hay entradas.",
+    "total": "Total",
+    "correct": "Correctos",
+    "highlightBestPointsTitle": "Mejor puntuación",
+    "highlightBestPointsText": "{name} lidera con {points} puntos.",
+    "highlightBestExactTitle": "Más exactos",
+    "highlightBestExactText": "{name} tiene {count} aciertos exactos.",
+    "highlightBestCorrectTitle": "Más aciertos",
+    "highlightBestCorrectText": "{name} tiene {count} aciertos correctos."
   },
   "groupStandings": {
     "title": "Clasificación por grupos",

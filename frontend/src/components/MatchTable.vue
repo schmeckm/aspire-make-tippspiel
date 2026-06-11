@@ -39,8 +39,24 @@
                 compact
                 @saved="$emit('saved', match)"
               />
-              <span v-else-if="match.prediction">{{ match.prediction.predictedHomeScore }} : {{ match.prediction.predictedAwayScore }}</span>
-              <span v-else class="text-muted">–</span>
+              <span v-else-if="match.prediction">
+                <span
+                  v-if="editable && !match.canPredict"
+                  class="lock-inline"
+                  :title="predictionLockTitle(match)"
+                  aria-label="locked"
+                >🔒</span>
+                {{ match.prediction.predictedHomeScore }} : {{ match.prediction.predictedAwayScore }}
+              </span>
+              <span v-else class="text-muted">
+                <span
+                  v-if="editable && !match.canPredict"
+                  class="lock-inline"
+                  :title="predictionLockTitle(match)"
+                  aria-label="locked"
+                >🔒</span>
+                –
+              </span>
             </td>
             <td v-if="showPrediction">
               <span v-if="match.prediction?.points !== null && match.prediction?.points !== undefined">{{ formatPoints(match.prediction.points) }}</span>
@@ -97,8 +113,30 @@
                 compact
                 @saved="$emit('saved', match)"
               />
-              <span v-else-if="match.prediction">{{ match.prediction.predictedHomeScore }} : {{ match.prediction.predictedAwayScore }}</span>
-              <span v-else class="text-muted">–</span>
+              <div v-else-if="match.prediction">
+                <span
+                  v-if="editable && !match.canPredict"
+                  class="lock-inline"
+                  :title="predictionLockTitle(match)"
+                  aria-label="locked"
+                >🔒</span>
+                {{ match.prediction.predictedHomeScore }} : {{ match.prediction.predictedAwayScore }}
+                <div v-if="editable && !match.canPredict" class="lock-reason text-muted">
+                  {{ predictionLockTitle(match) }}
+                </div>
+              </div>
+              <div v-else class="text-muted">
+                <span
+                  v-if="editable && !match.canPredict"
+                  class="lock-inline"
+                  :title="predictionLockTitle(match)"
+                  aria-label="locked"
+                >🔒</span>
+                –
+                <div v-if="editable && !match.canPredict" class="lock-reason">
+                  {{ predictionLockTitle(match) }}
+                </div>
+              </div>
             </dd>
             <dt>{{ t('matchTable.points') }}</dt>
             <dd>
@@ -134,6 +172,7 @@ import { useMatchMeta } from '../composables/useMatchMeta';
 import TeamFlag from './TeamFlag.vue';
 import MatchRefCell from './MatchRefCell.vue';
 import PredictionForm from './PredictionForm.vue';
+import { getPredictionLockReason } from '../utils/predictionLockReason';
 
 const props = defineProps({
   matches: { type: Array, default: () => [] },
@@ -160,6 +199,14 @@ const colspan = computed(() => {
 function statusLabel(status) {
   return t(`matchStatus.${status}`, status);
 }
+
+function predictionLockTitle(match) {
+  const { key, kickoffTime } = getPredictionLockReason(match);
+  if (key === 'predictions.lockReasonKickoff' && kickoffTime) {
+    return t(key, { time: formatTime(kickoffTime), date: formatDate(kickoffTime) });
+  }
+  return t(key);
+}
 </script>
 
 <style scoped>
@@ -172,6 +219,17 @@ function statusLabel(status) {
   border-radius: var(--radius-sm);
   padding: 0.875rem;
   background: var(--color-surface);
+}
+
+.lock-inline {
+  display: inline-flex;
+  margin-right: 0.25rem;
+  opacity: 0.85;
+}
+
+.lock-reason {
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
 }
 
 .match-table-card-teams {

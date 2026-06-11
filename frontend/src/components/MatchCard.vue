@@ -69,11 +69,12 @@
       />
     </div>
     <div v-else-if="!match.canPredict" class="match-locked text-center">
-      <span class="match-lock-icon" :title="t('predictions.locked')">🔒</span>
+      <span class="match-lock-icon" :title="lockTitle">🔒</span>
       <span v-if="match.prediction" class="badge badge-info">
         {{ t('matches.yourTip') }}: {{ match.prediction.predictedHomeScore }} : {{ match.prediction.predictedAwayScore }}
       </span>
       <span v-else class="text-muted">{{ t('matches.noTipGiven') }}</span>
+      <div class="text-muted match-lock-reason">{{ lockTitle }}</div>
     </div>
     <div v-else-if="!match.hasPrediction" class="text-center text-muted">
       {{ t('matches.noTipGiven') }}
@@ -89,7 +90,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PredictionForm from './PredictionForm.vue';
 import LiveScoreBadge from './LiveScoreBadge.vue';
@@ -99,19 +100,35 @@ import AIMatchPreview from './AIMatchPreview.vue';
 import MatchVenueModal from './MatchVenueModal.vue';
 import { useFormatters } from '../composables/useFormatters';
 import { useMatchMeta } from '../composables/useMatchMeta';
+import { getPredictionLockReason } from '../utils/predictionLockReason';
 
 const showVenueModal = ref(false);
-
-defineProps({
-  match: { type: Object, required: true },
-  showForm: { type: Boolean, default: true },
-  showAiPreview: { type: Boolean, default: true },
-  highlighted: { type: Boolean, default: false },
-});
 
 defineEmits(['saved']);
 
 const { t } = useI18n();
 const { formatDate, formatTime, formatPoints } = useFormatters();
 const { matchRoundLabel } = useMatchMeta();
+
+const props = defineProps({
+  match: { type: Object, required: true },
+  showForm: { type: Boolean, default: true },
+  showAiPreview: { type: Boolean, default: true },
+  highlighted: { type: Boolean, default: false },
+});
+
+const lockTitle = computed(() => {
+  const { key, kickoffTime } = getPredictionLockReason(props.match);
+  if (key === 'predictions.lockReasonKickoff' && kickoffTime) {
+    return t(key, { time: formatTime(kickoffTime), date: formatDate(kickoffTime) });
+  }
+  return t(key);
+});
 </script>
+
+<style scoped>
+.match-lock-reason {
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+}
+</style>

@@ -76,6 +76,7 @@ const routes = [
       { path: 'leaderboard', name: 'Leaderboard', component: () => import('../views/LeaderboardView.vue') },
       { path: 'prizes', name: 'Prizes', component: () => import('../views/PrizesView.vue') },
       { path: 'team-ranking', name: 'TeamRanking', component: () => import('../views/TeamRankingView.vue') },
+      { path: 'team-performance', name: 'TeamPerformance', component: () => import('../views/TeamPerformanceView.vue') },
       { path: 'profile', name: 'Profile', component: () => import('../views/ProfileView.vue') },
       { path: 'statistics', name: 'Statistics', component: () => import('../views/StatisticsView.vue') },
       { path: 'bonus', name: 'Bonus', component: () => import('../views/BonusView.vue') },

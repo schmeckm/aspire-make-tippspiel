@@ -151,7 +151,13 @@ async function handleSubmit() {
     toast.success(t('predictions.saved'));
     emit('saved');
   } catch (err) {
-    toast.error(err.response?.data?.error || t('predictions.saveFailed'));
+    const status = err.response?.status;
+    const apiMessage = err.response?.data?.error;
+    if (status === 403) {
+      toast.error(apiMessage || t('predictions.closed'));
+    } else {
+      toast.error(apiMessage || t('predictions.saveFailed'));
+    }
   } finally {
     loading.value = false;
   }

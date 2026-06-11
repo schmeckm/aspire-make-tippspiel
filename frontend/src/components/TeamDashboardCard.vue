@@ -2,9 +2,14 @@
   <div v-if="authStore.user?.teamId" class="card team-dashboard mb-2">
     <div class="card-header">
       <h3>👥 {{ t('teamDashboard.title') }}</h3>
-      <router-link to="/team-ranking" class="btn btn-secondary btn-sm">
-        {{ t('teamDashboard.fullRanking') }}
-      </router-link>
+      <div class="btn-group">
+        <router-link to="/team-performance" class="btn btn-secondary btn-sm">
+          {{ t('teamDashboard.teamPerformance') }}
+        </router-link>
+        <router-link to="/team-ranking" class="btn btn-secondary btn-sm">
+          {{ t('teamDashboard.fullRanking') }}
+        </router-link>
+      </div>
     </div>
     <div class="card-body">
       <LoadingSpinner v-if="loading" />
