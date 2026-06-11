@@ -1,12 +1,13 @@
 <template>
   <img
-    v-if="imageSrc"
+    v-if="showImage"
     :src="imageSrc"
     :alt="name"
     class="team-avatar"
     :class="sizeClass"
     loading="lazy"
     decoding="async"
+    @error="onImageError"
   />
   <span v-else class="team-avatar team-avatar-fallback" :class="sizeClass">
     {{ initials }}
@@ -14,7 +15,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps({
   imageUrl: { type: String, default: null },
@@ -22,7 +23,14 @@ const props = defineProps({
   size: { type: String, default: 'md' },
 });
 
+const imageFailed = ref(false);
+
+watch(() => props.imageUrl, () => {
+  imageFailed.value = false;
+});
+
 const imageSrc = computed(() => props.imageUrl || null);
+const showImage = computed(() => !!imageSrc.value && !imageFailed.value);
 
 const initials = computed(() => {
   const parts = (props.name || '').trim().split(/\s+/).filter(Boolean);
@@ -32,6 +40,10 @@ const initials = computed(() => {
 });
 
 const sizeClass = computed(() => `team-avatar-${props.size}`);
+
+function onImageError() {
+  imageFailed.value = true;
+}
 </script>
 
 <style scoped>

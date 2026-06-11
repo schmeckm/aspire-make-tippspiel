@@ -1,12 +1,13 @@
 <template>
   <img
-    v-if="imageSrc"
+    v-if="showImage"
     :src="imageSrc"
     :alt="name"
     class="user-avatar"
     :class="sizeClass"
     loading="lazy"
     decoding="async"
+    @error="onImageError"
   />
   <span
     v-else
@@ -19,7 +20,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { resolveAvatarColorStyle } from '../utils/avatarColors';
 import { resolveAvatarFaceEmoji } from '../utils/avatarFaces';
 
@@ -32,6 +33,16 @@ const props = defineProps({
   lastName: { type: String, default: '' },
   name: { type: String, default: '' },
   size: { type: String, default: 'md' },
+});
+
+const imageFailed = ref(false);
+
+watch(() => props.imageUrl, () => {
+  imageFailed.value = false;
+});
+
+watch(() => props.imageCache, () => {
+  imageFailed.value = false;
 });
 
 const displayName = computed(() => {
@@ -49,6 +60,8 @@ const imageSrc = computed(() => {
   return `${props.imageUrl}${separator}v=${props.imageCache}`;
 });
 
+const showImage = computed(() => !!imageSrc.value && !imageFailed.value);
+
 const faceEmoji = computed(() => resolveAvatarFaceEmoji(props.avatarEmoji));
 
 const initials = computed(() => {
@@ -65,6 +78,10 @@ const initials = computed(() => {
 const sizeClass = computed(() => `user-avatar-${props.size}`);
 
 const fallbackStyle = computed(() => resolveAvatarColorStyle(props.avatarColor));
+
+function onImageError() {
+  imageFailed.value = true;
+}
 </script>
 
 <style scoped>

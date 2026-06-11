@@ -15,6 +15,7 @@ export function useAdminNavLinks() {
     { to: '/admin/email', label: t('nav.email'), icon: 'mail' },
     { to: '/admin/users', label: t('nav.users'), icon: 'users' },
     { to: '/admin/teams', label: t('nav.teams'), icon: 'building' },
+    { to: '/admin/team-performance', label: t('nav.teamPerformance'), icon: 'users' },
     { to: '/admin/player-images', label: t('nav.playerImages'), icon: 'image' },
     { to: '/admin/predictions', label: t('nav.predictions'), icon: 'clipboard' },
     { to: '/admin/favorites', label: t('nav.favorites'), icon: 'star' },

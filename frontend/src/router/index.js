@@ -93,6 +93,7 @@ const routes = [
       { path: '', name: 'AdminDashboard', component: () => import('../views/admin/AdminDashboardView.vue') },
       { path: 'users', name: 'AdminUsers', component: () => import('../views/admin/AdminUsersView.vue') },
       { path: 'teams', name: 'AdminTeams', component: () => import('../views/admin/AdminTeamsView.vue') },
+      { path: 'team-performance', name: 'AdminTeamPerformance', component: () => import('../views/admin/AdminTeamPerformanceView.vue') },
       { path: 'player-images', name: 'AdminPlayerImages', component: () => import('../views/admin/AdminPlayerImagesView.vue') },
       { path: 'matches', name: 'AdminMatches', component: () => import('../views/admin/AdminMatchesView.vue') },
       { path: 'results', name: 'AdminResults', component: () => import('../views/admin/AdminResultsView.vue') },

@@ -27,6 +27,7 @@
   },
   "teamDashboard": {
     "title": "Takımım",
+    "teamPerformance": "Takım performansı",
     "fullRanking": "Takım sıralaması",
     "avgPoints": "Ort. puan",
     "totalPoints": "Takım puanı",
@@ -35,5 +36,31 @@
     "colleagues": "İş arkadaşları",
     "noTeam": "Henüz bir takıma atanmadınız.",
     "goToProfile": "Profilde takım seç"
+  },
+  "teamPerformance": {
+    "title": "Takım performansı",
+    "subtitle": "Takımında kim özellikle iyi tahmin yapıyor?",
+    "privacyHint": "Takım istatistikleri motivasyon için gösterilir. Maç başlamadan önce net skor tahminleri gösterilmez.",
+    "noTeam": "Henüz bir takıma atanmadınız.",
+    "goToProfile": "Profilde takım seç",
+    "teamRank": "Takım sırası: #{rank}",
+    "memberCount": "{count} üye",
+    "avgPoints": "Ort. puan",
+    "totalPoints": "Takım puanı",
+    "exactTips": "Tam isabet",
+    "completion": "Tamamlama",
+    "highlightsTitle": "Öne çıkanlar",
+    "membersTitle": "Takım üyeleri",
+    "noHighlights": "Henüz öne çıkan yok.",
+    "loadFailed": "Takım performansı yüklenemedi.",
+    "empty": "Henüz kayıt yok.",
+    "total": "Toplam",
+    "correct": "Doğru",
+    "highlightBestPointsTitle": "En yüksek puan",
+    "highlightBestPointsText": "{name}, {points} puanla lider.",
+    "highlightBestExactTitle": "En çok tam isabet",
+    "highlightBestExactText": "{name} {count} tam isabet yaptı.",
+    "highlightBestCorrectTitle": "En çok doğru tahmin",
+    "highlightBestCorrectText": "{name} {count} doğru tahmin yaptı."
   }
 }

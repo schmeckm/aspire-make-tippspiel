@@ -3,6 +3,17 @@ const path = require('path');
 
 const ALLOWED_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif']);
 
+function resolveUploadsFilePath(imageUrl) {
+  if (!imageUrl || typeof imageUrl !== 'string') return null;
+  const base = imageUrl.split('?')[0];
+  if (!base.startsWith('/uploads/')) return null;
+  const rel = base.replace(/^\/uploads\//, '');
+  if (!rel || rel.includes('..')) return null;
+  const parts = rel.split('/').filter(Boolean);
+  if (!parts.length) return null;
+  return path.join(__dirname, '..', 'uploads', ...parts);
+}
+
 function getUsersUploadDir() {
   const dir = path.join(__dirname, '..', 'uploads', 'users');
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -30,6 +41,11 @@ function withImageCacheBuster(imageUrl, updatedAt) {
   if (/^https?:\/\//i.test(imageUrl) || imageUrl.startsWith('blob:') || imageUrl.startsWith('data:')) {
     return imageUrl;
   }
+
+  // Avoid returning broken local upload URLs (prevents repeated 404s in the frontend).
+  const uploadsPath = resolveUploadsFilePath(imageUrl);
+  if (uploadsPath && !fs.existsSync(uploadsPath)) return null;
+
   const version = updatedAt ? new Date(updatedAt).getTime() : 0;
   if (!version) return imageUrl;
   const base = imageUrl.split('?')[0];

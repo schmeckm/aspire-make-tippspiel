@@ -1,4 +1,6 @@
 const { Setting } = require('../models');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const DEFAULT_SETTINGS = {
   appTitle: 'WM 2026 Tippspiel',
@@ -58,6 +60,9 @@ function sanitizePrizeImageUrl(url) {
   if (!url || typeof url !== 'string') return '';
   const trimmed = url.trim();
   if (!/^\/uploads\/prizes\/prize-[123]\.(jpg|jpeg|png|webp|gif)$/i.test(trimmed)) return '';
+  const rel = trimmed.replace(/^\/uploads\//, '');
+  const filePath = path.join(__dirname, '..', 'uploads', ...rel.split('/'));
+  if (!fs.existsSync(filePath)) return '';
   return trimmed.slice(0, 255);
 }
 
@@ -95,9 +100,12 @@ async function setSetting(key, value) {
   const isObject = typeof value === 'object' && value !== null;
   const useJsonStorage = isObject || (typeof value === 'string' && value.length > 255);
   const jsonValue = useJsonStorage ? JSON.stringify(value) : null;
-  const stringValue = useJsonStorage
-    ? null
-    : (typeof value === 'boolean' ? String(value) : (typeof value === 'string' ? value : String(value)));
+  let stringValue = null;
+  if (!useJsonStorage) {
+    if (typeof value === 'boolean') stringValue = String(value);
+    else if (typeof value === 'string') stringValue = value;
+    else stringValue = String(value);
+  }
 
   const [setting] = await Setting.findOrCreate({
     where: { key },
@@ -139,6 +147,10 @@ async function getAllSettings() {
       result[s.key] = s.value;
     }
   }
+
+  // Always re-normalize complex values from DB to enforce current validation rules.
+  result.prizes = normalizePrizes(result.prizes);
+
   return result;
 }
 

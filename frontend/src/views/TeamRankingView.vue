@@ -32,11 +32,10 @@
             <tbody>
               <tr
                 v-for="team in ranking"
-                :id="rowId(team.teamId)"
                 :key="team.teamId"
                 :class="{ 'my-team-row': isMyTeam(team) }"
               >
-                <td :class="rankClass(team.rank)">
+                <td :id="rowId(team.teamId, 'desktop')" :class="rankClass(team.rank)">
                   <span class="rank-cell">
                     <RankTrophyIcon v-if="showRankTrophy(team.rank)" :rank="team.rank" />
                     <span>{{ team.rank }}</span>
@@ -64,7 +63,7 @@
         <div class="team-ranking-mobile">
           <article
             v-for="team in ranking"
-            :id="rowId(team.teamId)"
+            :id="rowId(team.teamId, 'mobile')"
             :key="`mobile-${team.teamId}`"
             class="team-ranking-card"
             :class="{ 'my-team-card': isMyTeam(team) }"
@@ -125,15 +124,46 @@ function isMyTeam(team) {
   return !!authStore.user?.teamId && team?.teamId === authStore.user.teamId;
 }
 
-function rowId(teamId) {
-  return `team-ranking-${teamId}`;
+function rowId(teamId, variant = 'desktop') {
+  return `team-ranking-${variant}-${teamId}`;
 }
 
 function scrollToMyTeam() {
   const teamId = authStore.user?.teamId;
   if (!teamId) return;
-  const el = document.getElementById(rowId(teamId));
-  el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const desktopEl = document.getElementById(rowId(teamId, 'desktop'));
+  const mobileEl = document.getElementById(rowId(teamId, 'mobile'));
+
+  const isVisible = (el) => !!el && el.getClientRects().length > 0;
+  let target = null;
+  if (isVisible(mobileEl)) target = mobileEl;
+  else if (isVisible(desktopEl)) target = desktopEl;
+  if (!target) return;
+
+  const getScrollParent = (el) => {
+    let node = el?.parentElement || null;
+    while (node) {
+      const style = globalThis.getComputedStyle(node);
+      const overflowY = style.overflowY;
+      const isScrollable = (overflowY === 'auto' || overflowY === 'scroll') && node.scrollHeight > node.clientHeight;
+      if (isScrollable) return node;
+      node = node.parentElement;
+    }
+    return null;
+  };
+
+  const scrollParent = getScrollParent(target);
+  if (!scrollParent) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const parentRect = scrollParent.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
+  const currentTop = scrollParent.scrollTop;
+  const targetTopInParent = (targetRect.top - parentRect.top) + currentTop;
+  const centeredTop = targetTopInParent - (scrollParent.clientHeight / 2) + (targetRect.height / 2);
+  scrollParent.scrollTo({ top: centeredTop, behavior: 'smooth' });
 }
 
 async function loadRanking() {

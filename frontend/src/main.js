@@ -7,6 +7,7 @@ import i18n, { getStoredLocale, loadLocaleMessages } from './i18n';
 import './styles/main.css';
 import { useThemeStore } from './stores/themeStore';
 import { initSentry } from './sentry';
+import { useAuthStore } from './stores/authStore';
 
 registerSW({ immediate: true });
 
@@ -24,14 +25,14 @@ async function recoverFromStaleBuild() {
     await Promise.all(registrations.map((registration) => registration.unregister()));
   }
 
-  if ('caches' in window) {
-    const keys = await caches.keys();
-    await Promise.all(keys.map((key) => caches.delete(key)));
+  if ('caches' in globalThis) {
+    const keys = await globalThis.caches.keys();
+    await Promise.all(keys.map((key) => globalThis.caches.delete(key)));
   }
 
-  const url = new URL(window.location.href);
+  const url = new URL(globalThis.location.href);
   url.searchParams.set('_cb', String(Date.now()));
-  window.location.replace(url.toString());
+  globalThis.location.replace(url.toString());
 }
 
 function isChunkLoadError(message = '') {
@@ -39,7 +40,7 @@ function isChunkLoadError(message = '') {
     || message.includes('Importing a module script failed');
 }
 
-window.addEventListener('vite:preloadError', (event) => {
+globalThis.addEventListener('vite:preloadError', (event) => {
   event.preventDefault();
   recoverFromStaleBuild();
 });
@@ -50,25 +51,31 @@ router.onError((error) => {
   }
 });
 
-async function bootstrap() {
-  const storedLocale = getStoredLocale();
-  await loadLocaleMessages(storedLocale);
-  i18n.global.locale.value = storedLocale;
+const storedLocale = getStoredLocale();
+await loadLocaleMessages(storedLocale);
+i18n.global.locale.value = storedLocale;
 
-  const app = createApp(App);
-  const pinia = createPinia();
-  app.use(pinia);
-  app.use(i18n);
-  app.use(router);
-  useThemeStore().initTheme();
-  app.mount('#app');
+const app = createApp(App);
+const pinia = createPinia();
+app.use(pinia);
+app.use(i18n);
+app.use(router);
+useThemeStore().initTheme();
+app.mount('#app');
 
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(() => initSentry(app, router));
-  } else {
-    setTimeout(() => initSentry(app, router), 0);
+// Refresh persisted user payload (avoids stale localStorage image URLs → repeated 404s).
+const authStore = useAuthStore();
+if (authStore.isAuthenticated) {
+  try {
+    await authStore.fetchMe();
+  } catch {
+    // ignore
   }
-  sessionStorage.removeItem(CHUNK_RELOAD_KEY);
 }
 
-bootstrap();
+if ('requestIdleCallback' in globalThis) {
+  requestIdleCallback(() => initSentry(app, router));
+} else {
+  setTimeout(() => initSentry(app, router), 0);
+}
+sessionStorage.removeItem(CHUNK_RELOAD_KEY);
