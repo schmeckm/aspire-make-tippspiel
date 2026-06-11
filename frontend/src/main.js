@@ -51,31 +51,35 @@ router.onError((error) => {
   }
 });
 
-const storedLocale = getStoredLocale();
-await loadLocaleMessages(storedLocale);
-i18n.global.locale.value = storedLocale;
+async function bootstrap() {
+  const storedLocale = getStoredLocale();
+  await loadLocaleMessages(storedLocale);
+  i18n.global.locale.value = storedLocale;
 
-const app = createApp(App);
-const pinia = createPinia();
-app.use(pinia);
-app.use(i18n);
-app.use(router);
-useThemeStore().initTheme();
-app.mount('#app');
+  const app = createApp(App);
+  const pinia = createPinia();
+  app.use(pinia);
+  app.use(i18n);
+  app.use(router);
+  useThemeStore().initTheme();
+  app.mount('#app');
 
-// Refresh persisted user payload (avoids stale localStorage image URLs → repeated 404s).
-const authStore = useAuthStore();
-if (authStore.isAuthenticated) {
-  try {
-    await authStore.fetchMe();
-  } catch {
-    // ignore
+  // Refresh persisted user payload (avoids stale localStorage image URLs → repeated 404s).
+  const authStore = useAuthStore();
+  if (authStore.isAuthenticated) {
+    authStore.fetchMe().catch(() => {});
   }
+
+  if ('requestIdleCallback' in globalThis) {
+    requestIdleCallback(() => initSentry(app, router));
+  } else {
+    setTimeout(() => initSentry(app, router), 0);
+  }
+  sessionStorage.removeItem(CHUNK_RELOAD_KEY);
 }
 
-if ('requestIdleCallback' in globalThis) {
-  requestIdleCallback(() => initSentry(app, router));
-} else {
-  setTimeout(() => initSentry(app, router), 0);
-}
-sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+bootstrap().catch(() => {
+  // If bootstrapping fails (e.g., locale chunk fails), try the same recovery
+  // path as for chunk load errors.
+  recoverFromStaleBuild();
+});
