@@ -107,7 +107,10 @@
               <span class="wizard-vs">{{ t('common.vs') }}</span>
               <TeamFlag :name="currentWizardMatch.awayTeam" inline />
             </div>
-            <div class="wizard-kickoff text-muted">{{ formatTime(currentWizardMatch.kickoffTime) }}</div>
+            <div class="wizard-kickoff text-muted">
+              <span>{{ formatTime(currentWizardMatch.kickoffTime) }}</span>
+              <CountdownBadge :kickoff-time="currentWizardMatch.kickoffTime" :show-expired="false" />
+            </div>
 
             <div v-if="currentWizardMatch.prediction" class="tip-copilot-existing text-muted">
               {{ t('tipCopilot.currentTip', { score: `${currentWizardMatch.prediction.predictedHomeScore}:${currentWizardMatch.prediction.predictedAwayScore}` }) }}
@@ -145,7 +148,10 @@
         >
           <div class="tip-copilot-meta">
             <span class="match-ref">#{{ match.matchNumber }}</span>
-            <span class="tip-copilot-kickoff">{{ formatTime(match.kickoffTime) }}</span>
+            <span class="tip-copilot-kickoff-wrap">
+              <span class="tip-copilot-kickoff">{{ formatTime(match.kickoffTime) }}</span>
+              <CountdownBadge :kickoff-time="match.kickoffTime" :show-expired="false" />
+            </span>
           </div>
 
           <div class="tip-copilot-teams">
@@ -207,6 +213,7 @@ import LoadingSpinner from './LoadingSpinner.vue';
 import ErrorState from './ErrorState.vue';
 import EmptyState from './EmptyState.vue';
 import TeamFlag from './TeamFlag.vue';
+import CountdownBadge from './CountdownBadge.vue';
 import { useAuthStore } from '../stores/authStore';
 import { useFootballTeamStore } from '../stores/footballTeamStore';
 
@@ -247,7 +254,7 @@ function getDateStringInTimezone(date, timezone) {
   return new Intl.DateTimeFormat('en-CA', { timeZone: timezone }).format(date);
 }
 
-const timezone = 'Europe/Zurich';
+const timezone = import.meta.env.VITE_DEFAULT_TIMEZONE || 'Europe/Zurich';
 
 const openMatches = computed(() => matches.value.filter((m) => m.canPredict));
 const todayStr = computed(() => getDateStringInTimezone(new Date(), timezone));
@@ -589,9 +596,21 @@ onMounted(loadMatches);
 }
 
 .tip-copilot-kickoff {
-  margin-left: auto;
   font-size: 0.875rem;
   color: var(--color-text-muted);
+}
+
+.tip-copilot-kickoff-wrap {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.wizard-kickoff {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .tip-copilot-teams {

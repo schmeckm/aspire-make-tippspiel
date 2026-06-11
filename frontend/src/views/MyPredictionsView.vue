@@ -85,7 +85,19 @@
             </thead>
             <tbody>
               <tr v-for="pred in sortedItems" :key="pred.id">
-                <td class="col-date">{{ formatDate(pred.match?.kickoffTime) }}</td>
+                <td class="col-date">
+                  <div class="kickoff-cell">
+                    <div>{{ formatDate(pred.match?.kickoffTime) }}</div>
+                    <div class="kickoff-cell-sub text-muted">
+                      <span>{{ formatTime(pred.match?.kickoffTime) }}</span>
+                      <CountdownBadge
+                        v-if="pred.match?.status === 'scheduled'"
+                        :kickoff-time="pred.match.kickoffTime"
+                        :show-expired="false"
+                      />
+                    </div>
+                  </div>
+                </td>
                 <td class="col-round">{{ matchRoundLabel(pred.match) }}</td>
                 <td>
                   <div class="prediction-match-cell">
@@ -138,7 +150,14 @@
         <div class="predictions-mobile">
           <article v-for="pred in sortedItems" :key="`card-${pred.id}`" class="prediction-card">
             <div class="prediction-card-header">
-              <span class="text-muted">{{ formatDate(pred.match?.kickoffTime) }}</span>
+              <div class="prediction-card-kickoff">
+                <span class="text-muted">{{ formatDate(pred.match?.kickoffTime) }} · {{ formatTime(pred.match?.kickoffTime) }}</span>
+                <CountdownBadge
+                  v-if="pred.match?.status === 'scheduled'"
+                  :kickoff-time="pred.match.kickoffTime"
+                  :show-expired="false"
+                />
+              </div>
               <span :class="['badge', `badge-${pred.match?.status}`]">
                 {{ statusLabel(pred.match?.status) }}
               </span>
@@ -196,6 +215,7 @@ import SortableTh from '../components/SortableTh.vue';
 import TeamFlag from '../components/TeamFlag.vue';
 import MatchRefCell from '../components/MatchRefCell.vue';
 import PredictionForm from '../components/PredictionForm.vue';
+import CountdownBadge from '../components/CountdownBadge.vue';
 import { useFormatters } from '../composables/useFormatters';
 import { useMatchMeta } from '../composables/useMatchMeta';
 import { useTableSort } from '../composables/useTableSort';
@@ -342,6 +362,20 @@ onMounted(async () => {
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+}
+
+.kickoff-cell-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.prediction-card-kickoff {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .prediction-card-header {

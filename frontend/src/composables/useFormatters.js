@@ -12,11 +12,13 @@ export function useFormatters() {
   const { locale } = useI18n();
 
   const intlLocale = computed(() => INTL_LOCALES[locale.value] || INTL_LOCALES.de);
+  const defaultTimeZone = computed(() => import.meta.env.VITE_DEFAULT_TIMEZONE || 'Europe/Zurich');
 
   function formatDate(value, options = {}) {
     if (!value) return '–';
     const date = value instanceof Date ? value : new Date(value);
     return new Intl.DateTimeFormat(intlLocale.value, {
+      timeZone: defaultTimeZone.value,
       day: '2-digit', month: '2-digit', year: 'numeric', ...options,
     }).format(date);
   }
@@ -25,6 +27,7 @@ export function useFormatters() {
     if (!value) return '–';
     const date = value instanceof Date ? value : new Date(value);
     return new Intl.DateTimeFormat(intlLocale.value, {
+      timeZone: defaultTimeZone.value,
       hour: '2-digit', minute: '2-digit', ...options,
     }).format(date);
   }
@@ -33,6 +36,7 @@ export function useFormatters() {
     if (!value) return '–';
     const date = value instanceof Date ? value : new Date(value);
     return new Intl.DateTimeFormat(intlLocale.value, {
+      timeZone: defaultTimeZone.value,
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit', ...options,
     }).format(date);
@@ -53,6 +57,7 @@ export function useFormatters() {
 
   return {
     intlLocale,
+    defaultTimeZone,
     formatDate,
     formatTime,
     formatDateTime,
