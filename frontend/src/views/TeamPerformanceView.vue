@@ -80,17 +80,38 @@
               <h3>👥 {{ t('teamPerformance.membersTitle') }}</h3>
             </div>
             <div class="card-body">
+              <details class="card team-performance-columns-help">
+                <summary class="card-header team-performance-columns-help__summary">
+                  {{ t('help.sections.scoring.title') }}
+                </summary>
+                <div class="card-body">
+                  <ul class="team-performance-columns-help__list">
+                    <li>{{ t('help.scoring.exact', points) }}</li>
+                    <li>{{ t('help.scoring.goalDiff', points) }}</li>
+                    <li>{{ t('help.scoring.tendency', points) }}</li>
+                    <li class="text-muted">
+                      {{ t('leaderboard.correct') }} = {{ t('leaderboard.exact') }} + {{ t('leaderboard.goalDiff') }} + {{ t('leaderboard.tendency') }}
+                    </li>
+                  </ul>
+                  <router-link to="/rules-help" class="btn btn-secondary btn-sm">
+                    {{ t('help.title') }}
+                  </router-link>
+                </div>
+              </details>
+
               <div class="table-wrapper team-performance-desktop">
                 <table>
                   <thead>
                     <tr>
                       <th>{{ t('leaderboard.rank') }}</th>
                       <th>{{ t('leaderboard.name') }}</th>
-                      <th>{{ t('teamPerformance.total') }}</th>
-                      <th>{{ t('teamPerformance.correct') }}</th>
+                      <th>{{ t('leaderboard.total') }}</th>
+                      <th>{{ t('leaderboard.correct') }}</th>
                       <th>{{ t('leaderboard.exact') }}</th>
+                      <th>{{ t('leaderboard.goalDiff') }}</th>
                       <th>{{ t('leaderboard.tendency') }}</th>
                       <th>{{ t('leaderboard.tips') }}</th>
+                      <th>{{ t('leaderboard.completion') }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -117,11 +138,13 @@
                       <td><strong>{{ formatPoints(m.totalPoints) }}</strong></td>
                       <td>{{ formatNumber(m.correctTips) }}</td>
                       <td>{{ formatNumber(m.exactResults) }}</td>
+                      <td>{{ formatNumber(m.goalDifferences) }}</td>
                       <td>{{ formatNumber(m.tendencies) }}</td>
                       <td>{{ formatNumber(m.submittedPredictions) }}</td>
+                      <td>{{ m.completionPercentage != null ? `${formatPercent(m.completionPercentage)}%` : '–' }}</td>
                     </tr>
                     <tr v-if="members.length === 0">
-                      <td colspan="7" class="text-center text-muted">{{ t('teamPerformance.empty') }}</td>
+                      <td colspan="9" class="text-center text-muted">{{ t('teamPerformance.empty') }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -144,11 +167,13 @@
                     </div>
                   </div>
                   <dl class="member-card-fields">
-                    <dt>{{ t('teamPerformance.total') }}</dt><dd><strong>{{ formatPoints(m.totalPoints) }}</strong></dd>
-                    <dt>{{ t('teamPerformance.correct') }}</dt><dd>{{ formatNumber(m.correctTips) }}</dd>
+                    <dt>{{ t('leaderboard.total') }}</dt><dd><strong>{{ formatPoints(m.totalPoints) }}</strong></dd>
+                    <dt>{{ t('leaderboard.correct') }}</dt><dd>{{ formatNumber(m.correctTips) }}</dd>
                     <dt>{{ t('leaderboard.exact') }}</dt><dd>{{ formatNumber(m.exactResults) }}</dd>
+                    <dt>{{ t('leaderboard.goalDiff') }}</dt><dd>{{ formatNumber(m.goalDifferences) }}</dd>
                     <dt>{{ t('leaderboard.tendency') }}</dt><dd>{{ formatNumber(m.tendencies) }}</dd>
                     <dt>{{ t('leaderboard.tips') }}</dt><dd>{{ formatNumber(m.submittedPredictions) }}</dd>
+                    <dt>{{ t('leaderboard.completion') }}</dt><dd>{{ m.completionPercentage != null ? `${formatPercent(m.completionPercentage)}%` : '–' }}</dd>
                   </dl>
                 </article>
                 <p v-if="members.length === 0" class="text-center text-muted mb-0">{{ t('teamPerformance.empty') }}</p>
@@ -171,10 +196,12 @@ import TeamAvatar from '../components/TeamAvatar.vue';
 import UserAvatar from '../components/UserAvatar.vue';
 import { useAuthStore } from '../stores/authStore';
 import { useFormatters } from '../composables/useFormatters';
+import { useScoringRules } from '../composables/useScoringRules';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
-const { formatNumber, formatPoints } = useFormatters();
+const { formatNumber, formatPoints, formatPercent } = useFormatters();
+const { points } = useScoringRules();
 
 const loading = ref(true);
 const error = ref('');
@@ -356,5 +383,20 @@ onMounted(loadData);
   .team-performance-stats-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+.team-performance-columns-help {
+  margin-bottom: 0.75rem;
+}
+
+.team-performance-columns-help__summary {
+  cursor: pointer;
+  user-select: none;
+}
+
+.team-performance-columns-help__list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.25rem;
+  line-height: 1.6;
 }
 </style>

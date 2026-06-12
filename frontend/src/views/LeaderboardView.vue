@@ -7,6 +7,25 @@
       </div>
     </div>
 
+    <details class="card leaderboard-columns-help">
+      <summary class="card-header leaderboard-columns-help__summary">
+        {{ t('help.sections.scoring.title') }}
+      </summary>
+      <div class="card-body">
+        <ul class="leaderboard-columns-help__list">
+          <li>{{ t('help.scoring.exact', points) }}</li>
+          <li>{{ t('help.scoring.goalDiff', points) }}</li>
+          <li>{{ t('help.scoring.tendency', points) }}</li>
+          <li class="text-muted">
+            {{ t('leaderboard.correct') }} = {{ t('leaderboard.exact') }} + {{ t('leaderboard.goalDiff') }} + {{ t('leaderboard.tendency') }}
+          </li>
+        </ul>
+        <router-link to="/rules-help" class="btn btn-secondary btn-sm">
+          {{ t('help.title') }}
+        </router-link>
+      </div>
+    </details>
+
     <div class="filter-bar">
       <button
         v-for="f in filters"
@@ -38,11 +57,13 @@ import LeaderboardTable from '../components/LeaderboardTable.vue';
 import AILeaderboardSummary from '../components/AILeaderboardSummary.vue';
 import ErrorState from '../components/ErrorState.vue';
 import { useAuthStore } from '../stores/authStore';
+import { useScoringRules } from '../composables/useScoringRules';
 
 const authStore = useAuthStore();
 
 const { t } = useI18n();
 const toast = useToast();
+const { points } = useScoringRules();
 
 const filters = computed(() => [
   { value: 'overall', label: t('leaderboard.filters.overall') },
@@ -94,3 +115,20 @@ onMounted(() => {
 
 onUnmounted(() => unsub?.());
 </script>
+
+<style scoped>
+.leaderboard-columns-help {
+  margin-bottom: 1rem;
+}
+
+.leaderboard-columns-help__summary {
+  cursor: pointer;
+  user-select: none;
+}
+
+.leaderboard-columns-help__list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.25rem;
+  line-height: 1.6;
+}
+</style>

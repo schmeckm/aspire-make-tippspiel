@@ -11,6 +11,7 @@
             <th v-if="!compact">{{ t('leaderboard.matchPts') }}</th>
             <th v-if="!compact">{{ t('leaderboard.bonus') }}</th>
             <th>{{ t('leaderboard.total') }}</th>
+            <th v-if="!compact">{{ t('leaderboard.correct') }}</th>
             <th v-if="!compact">{{ t('leaderboard.exact') }}</th>
             <th v-if="!compact">{{ t('leaderboard.goalDiff') }}</th>
             <th v-if="!compact">{{ t('leaderboard.tendency') }}</th>
@@ -53,6 +54,7 @@
             <td v-if="!compact">{{ formatPoints(entry.matchPoints ?? entry.totalPoints) }}</td>
             <td v-if="!compact">{{ formatPoints(entry.bonusPoints ?? 0) }}</td>
             <td><strong>{{ formatPoints(entry.totalPoints) }}</strong></td>
+            <td v-if="!compact">{{ formatNumber(correctTips(entry)) }}</td>
             <td v-if="!compact">{{ formatNumber(entry.exactResults) }}</td>
             <td v-if="!compact">{{ formatNumber(entry.goalDifferences) }}</td>
             <td v-if="!compact">{{ formatNumber(entry.tendencies) }}</td>
@@ -120,10 +122,16 @@ const { t } = useI18n();
 const { formatNumber, formatPoints, formatPercent } = useFormatters();
 
 const colspan = computed(() => {
-  let cols = props.compact ? 4 : 11;
+  let cols = props.compact ? 4 : 12;
   if (props.showMovement) cols += 1;
   return cols;
 });
+
+function correctTips(entry) {
+  return Number(entry?.exactResults || 0)
+    + Number(entry?.goalDifferences || 0)
+    + Number(entry?.tendencies || 0);
+}
 
 function rankClass(rank) {
   const n = Number(rank);
