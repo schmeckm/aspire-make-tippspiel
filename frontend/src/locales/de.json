@@ -454,6 +454,49 @@
     "sent": "Danke! Dein Feedback wurde gesendet.",
     "failed": "Feedback konnte nicht gesendet werden."
   },
+  "challenges": {
+    "matchdayChampion": {
+      "title": "Challenge des Spieltags",
+      "subtitle": "Top-Performance über {count} beendete Spiele.",
+      "points": "{points} Pkt",
+      "exact": "{count} exakt",
+      "empty": "Für diesen Spieltag sind noch keine Spiele beendet.",
+      "loadFailed": "Challenge des Spieltags konnte nicht geladen werden."
+    }
+  },
+  "achievements": {
+    "streak": {
+      "title": "Serien",
+      "current": "Aktuelle Serie",
+      "best": "Beste Serie",
+      "hint": "Die Serie zählt aufeinanderfolgende beendete Spiele mit korrekter Tendenz.",
+      "loadFailed": "Serien konnten nicht geladen werden."
+    },
+    "streakBronze": {
+      "title": "Bronze-Serie",
+      "description": "Erreiche eine beste Serie von {threshold}."
+    },
+    "streakSilver": {
+      "title": "Silber-Serie",
+      "description": "Erreiche eine beste Serie von {threshold}."
+    },
+    "streakGold": {
+      "title": "Gold-Serie",
+      "description": "Erreiche eine beste Serie von {threshold}."
+    }
+  },
+  "activity": {
+    "title": "Aktivität",
+    "scopeTeam": "Mein Team",
+    "scopeGlobal": "Global",
+    "empty": "Noch keine Aktivität.",
+    "loadFailed": "Aktivität konnte nicht geladen werden.",
+    "unknown": "Aktualisierung",
+    "matchdayChampion": "{name} hat die Challenge des Spieltags gewonnen ({points} Pkt).",
+    "rankUp": "{name} ist ▲{delta} Plätze hoch auf Rang #{rank}.",
+    "rankDown": "{name} ist ▼{delta} Plätze runter auf Rang #{rank}.",
+    "badgeExact": "{count} exakt"
+  },
   "dashboard": {
     "welcome": "Willkommen, {name}!",
     "nextMatches": "Nächste Spiele",
@@ -672,7 +715,24 @@
     "viewCards": "Karten",
     "viewTable": "Tabelle",
     "lockWarningMissing": "Achtung: {count} offene Spiele sperren in weniger als 15 Minuten – Tipps fehlen noch!",
-    "lockWarningSoon": "Achtung: {count} Spiele starten in weniger als 15 Minuten – Tipps sperren bald."
+    "lockWarningSoon": "Achtung: {count} Spiele starten in weniger als 15 Minuten – Tipps sperren bald.",
+    "whatIf": {
+      "show": "What-if",
+      "hide": "What-if ausblenden",
+      "yourAlternativeTip": "Alternativen Tipp testen",
+      "home": "Heimtore",
+      "away": "Auswärtstore",
+      "simulate": "Simulieren",
+      "simulating": "Simuliere...",
+      "failed": "What-if konnte nicht simuliert werden.",
+      "pointsDelta": "Punkte-Änderung",
+      "rankChange": "Rang",
+      "vsTop10": "Vergleich mit Top 10",
+      "gapFootnote": "Abstand ist gegen deine simulierten Gesamtpunkte berechnet.",
+      "gapBehind": "{points} Pkt dahinter",
+      "gapAhead": "{points} Pkt davor",
+      "gapEven": "gleichauf"
+    }
   },
   "matchTable": {
     "number": "Nr.",

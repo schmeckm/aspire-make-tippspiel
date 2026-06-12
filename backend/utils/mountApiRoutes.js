@@ -24,6 +24,10 @@ function mountApiRoutes(app, basePath, routes) {
     displayRoutes,
     prizeRoutes,
     adminAiRoutes,
+    challengeRoutes,
+    achievementRoutes,
+    whatIfRoutes,
+    activityRoutes,
     feedbackRoutes,
     adminFeedbackRoutes,
     authMiddleware,
@@ -59,6 +63,10 @@ function mountApiRoutes(app, basePath, routes) {
   app.use(`${basePath}/display`, displayLimiter, displayRoutes);
   app.use(`${basePath}/admin/prizes`, prizeRoutes);
   app.use(`${basePath}/admin/ai`, adminAiRoutes);
+  app.use(`${basePath}/challenges`, challengeRoutes);
+  app.use(`${basePath}/achievements`, achievementRoutes);
+  app.use(`${basePath}/what-if`, whatIfRoutes);
+  app.use(`${basePath}/activity`, activityRoutes);
   app.use(`${basePath}/feedback`, feedbackRoutes);
   app.use(`${basePath}/admin/feedback`, adminFeedbackRoutes);
 }

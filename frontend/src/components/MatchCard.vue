@@ -79,6 +79,7 @@
     <div v-else-if="!match.hasPrediction" class="text-center text-muted">
       {{ t('matches.noTipGiven') }}
     </div>
+    <MatchWhatIfPanel v-if="match.status === 'finished'" :match="match" />
     <AIMatchPreview v-if="showAiPreview && !match.stadiumImageUrl" :match-id="match.id" />
     <MatchVenueModal
       :open="showVenueModal"
@@ -98,6 +99,7 @@ import CountdownBadge from './CountdownBadge.vue';
 import TeamFlag from './TeamFlag.vue';
 import AIMatchPreview from './AIMatchPreview.vue';
 import MatchVenueModal from './MatchVenueModal.vue';
+import MatchWhatIfPanel from './MatchWhatIfPanel.vue';
 import { useFormatters } from '../composables/useFormatters';
 import { useMatchMeta } from '../composables/useMatchMeta';
 import { getPredictionLockReason } from '../utils/predictionLockReason';

@@ -41,6 +41,10 @@ const playerImageRoutes = require('./routes/playerImageRoutes');
 const adminPlayerImageRoutes = require('./routes/adminPlayerImageRoutes');
 const displayRoutes = require('./routes/displayRoutes');
 const prizeRoutes = require('./routes/prizeRoutes');
+const challengeRoutes = require('./routes/challengeRoutes');
+const achievementRoutes = require('./routes/achievementRoutes');
+const whatIfRoutes = require('./routes/whatIfRoutes');
+const activityRoutes = require('./routes/activityRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
 const adminFeedbackRoutes = require('./routes/adminFeedbackRoutes');
 const authMiddleware = require('./middleware/authMiddleware');
@@ -188,6 +192,10 @@ const apiRouteBundle = {
   displayRoutes,
   prizeRoutes,
   adminAiRoutes,
+  challengeRoutes,
+  achievementRoutes,
+  whatIfRoutes,
+  activityRoutes,
   feedbackRoutes,
   adminFeedbackRoutes,
   authMiddleware,

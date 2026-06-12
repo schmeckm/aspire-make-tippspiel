@@ -65,6 +65,7 @@
     "userImageDeleteFailed": "Profilbild konnte nicht entfernt werden.",
     "matchesLoadFailed": "Spiele konnten nicht geladen werden.",
     "matchNotFound": "Spiel nicht gefunden.",
+    "matchNotFinished": "Spiel ist noch nicht beendet.",
     "matchHasPredictions": "Spiel kann nicht gelöscht werden – es gibt bereits {{count}} Tipp(s).",
     "matchLoadFailed": "Spiel konnte nicht geladen werden.",
     "matchCreateFailed": "Spiel konnte nicht erstellt werden.",

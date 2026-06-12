@@ -447,6 +447,49 @@
     "sent": "Thanks! Your feedback was submitted.",
     "failed": "Could not send feedback."
   },
+  "challenges": {
+    "matchdayChampion": {
+      "title": "Matchday challenge",
+      "subtitle": "Top performers across {count} finished matches.",
+      "points": "{points} pts",
+      "exact": "{count} exact",
+      "empty": "No finished matches for this matchday yet.",
+      "loadFailed": "Could not load the matchday challenge."
+    }
+  },
+  "achievements": {
+    "streak": {
+      "title": "Streaks",
+      "current": "Current streak",
+      "best": "Best streak",
+      "hint": "Streak counts consecutive finished matches with a correct tendency.",
+      "loadFailed": "Could not load streaks."
+    },
+    "streakBronze": {
+      "title": "Bronze streak",
+      "description": "Reach a best streak of {threshold}."
+    },
+    "streakSilver": {
+      "title": "Silver streak",
+      "description": "Reach a best streak of {threshold}."
+    },
+    "streakGold": {
+      "title": "Gold streak",
+      "description": "Reach a best streak of {threshold}."
+    }
+  },
+  "activity": {
+    "title": "Activity",
+    "scopeTeam": "My team",
+    "scopeGlobal": "Global",
+    "empty": "No activity yet.",
+    "loadFailed": "Could not load activity.",
+    "unknown": "Activity update",
+    "matchdayChampion": "{name} won the matchday challenge ({points} pts).",
+    "rankUp": "{name} moved up ▲{delta} to rank #{rank}.",
+    "rankDown": "{name} moved down ▼{delta} to rank #{rank}.",
+    "badgeExact": "{count} exact"
+  },
   "dashboard": {
     "welcome": "Welcome, {name}!",
     "nextMatches": "Upcoming matches",
@@ -665,7 +708,24 @@
     "viewCards": "Cards",
     "viewTable": "Table",
     "lockWarningMissing": "Warning: {count} open matches lock in less than 15 minutes – predictions still missing!",
-    "lockWarningSoon": "Warning: {count} matches start in less than 15 minutes – predictions lock soon."
+    "lockWarningSoon": "Warning: {count} matches start in less than 15 minutes – predictions lock soon.",
+    "whatIf": {
+      "show": "What-if",
+      "hide": "Hide what-if",
+      "yourAlternativeTip": "Try an alternative prediction",
+      "home": "Home goals",
+      "away": "Away goals",
+      "simulate": "Simulate",
+      "simulating": "Simulating...",
+      "failed": "Could not simulate what-if.",
+      "pointsDelta": "Points change",
+      "rankChange": "Rank",
+      "vsTop10": "Compared to Top 10",
+      "gapFootnote": "Gap is computed against your simulated total points.",
+      "gapBehind": "{points} pts behind",
+      "gapAhead": "{points} pts ahead",
+      "gapEven": "even"
+    }
   },
   "matchTable": {
     "number": "No.",

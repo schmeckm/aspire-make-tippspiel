@@ -29,6 +29,12 @@
 
       <AIInsightCard />
 
+      <MatchdayChallengeCard />
+
+      <StreakCard />
+
+      <ActivityFeedCard />
+
       <TeamDashboardCard />
 
       <div class="stats-grid">
@@ -101,6 +107,9 @@ import LoadingSpinner from '../components/LoadingSpinner.vue';
 import MatchCard from '../components/MatchCard.vue';
 import LeaderboardTable from '../components/LeaderboardTable.vue';
 import AIInsightCard from '../components/AIInsightCard.vue';
+import MatchdayChallengeCard from '../components/MatchdayChallengeCard.vue';
+import StreakCard from '../components/StreakCard.vue';
+import ActivityFeedCard from '../components/ActivityFeedCard.vue';
 import TeamDashboardCard from '../components/TeamDashboardCard.vue';
 import ErrorState from '../components/ErrorState.vue';
 import EmptyState from '../components/EmptyState.vue';

@@ -1,6 +1,6 @@
 {
   "name": "wm2026-tippspiel-backend",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Backend für WM 2026 Tippspiel v1.0.1",
   "main": "server.js",
   "scripts": {

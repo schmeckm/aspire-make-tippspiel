@@ -2,11 +2,19 @@ const { Op } = require('sequelize');
 const { User, Team, Prediction, Match, ScoringRule, BonusPrediction, BonusQuestion, LeaderboardSnapshot } = require('../models');
 const { teamsMatch } = require('../data/wm2026ScheduleLookup');
 const { calculatePoints, classifyPrediction } = require('./pointsCalculationService');
+const { ensureRedis, redisGet, redisSet } = require('./redisClient');
 const { getSetting } = require('./settingsService');
 const { withImageCacheBuster } = require('./userImageService');
 
 const CACHE_TTL_MS = parseInt(process.env.LEADERBOARD_CACHE_TTL_MS || '45000', 10);
 const leaderboardCache = new Map();
+let leaderboardCacheVersion = 1;
+
+const REDIS_VERSION_KEY = 'wm2026:leaderboard:version';
+const REDIS_CACHE_PREFIX = 'wm2026:leaderboard:cache:';
+const REDIS_VERSION_LOCAL_TTL_MS = 5000;
+let cachedRedisVersion = null;
+let cachedRedisVersionFetchedAt = 0;
 
 function buildCacheKey(options) {
   return JSON.stringify({
@@ -18,22 +26,72 @@ function buildCacheKey(options) {
   });
 }
 
-function getCachedLeaderboard(cacheKey) {
-  const entry = leaderboardCache.get(cacheKey);
-  if (!entry) return null;
-  if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
-    leaderboardCache.delete(cacheKey);
-    return null;
+async function getRedisCacheVersion() {
+  const now = Date.now();
+  if (cachedRedisVersion && now - cachedRedisVersionFetchedAt < REDIS_VERSION_LOCAL_TTL_MS) {
+    return cachedRedisVersion;
   }
-  return entry.data;
+
+  if (!(await ensureRedis())) return null;
+  const existing = await redisGet(REDIS_VERSION_KEY);
+  if (existing) {
+    cachedRedisVersion = existing;
+    cachedRedisVersionFetchedAt = now;
+    return existing;
+  }
+
+  const initial = String(now);
+  await redisSet(REDIS_VERSION_KEY, initial);
+  cachedRedisVersion = initial;
+  cachedRedisVersionFetchedAt = now;
+  return initial;
 }
 
-function setCachedLeaderboard(cacheKey, data) {
+async function bumpRedisCacheVersion() {
+  if (!(await ensureRedis())) return false;
+  const next = String(Date.now());
+  await redisSet(REDIS_VERSION_KEY, next);
+  cachedRedisVersion = next;
+  cachedRedisVersionFetchedAt = Date.now();
+  return true;
+}
+
+async function buildCacheKeyWithVersion(options) {
+  const base = buildCacheKey(options);
+  const redisVersion = await getRedisCacheVersion();
+  const version = redisVersion || String(leaderboardCacheVersion);
+  return `${version}:${base}`;
+}
+
+async function getCachedLeaderboard(cacheKey) {
+  const memEntry = leaderboardCache.get(cacheKey);
+  if (memEntry) {
+    if (Date.now() - memEntry.timestamp <= CACHE_TTL_MS) return memEntry.data;
+    leaderboardCache.delete(cacheKey);
+  }
+
+  if (!(await ensureRedis())) return null;
+  const raw = await redisGet(`${REDIS_CACHE_PREFIX}${cacheKey}`);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    leaderboardCache.set(cacheKey, { data: parsed, timestamp: Date.now() });
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+async function setCachedLeaderboard(cacheKey, data) {
   leaderboardCache.set(cacheKey, { data, timestamp: Date.now() });
+  if (!(await ensureRedis())) return;
+  await redisSet(`${REDIS_CACHE_PREFIX}${cacheKey}`, JSON.stringify(data), CACHE_TTL_MS);
 }
 
 function invalidateLeaderboardCache() {
   leaderboardCache.clear();
+  leaderboardCacheVersion += 1;
+  bumpRedisCacheVersion().catch(() => {});
 }
 
 function groupByUserId(items) {
@@ -81,7 +139,7 @@ async function getScoringRules() {
 async function getBonusPoints(userId) {
   const predictions = await BonusPrediction.findAll({
     where: { userId },
-    include: [{ model: BonusQuestion, as: 'bonusQuestion' }],
+    attributes: ['id', 'userId', 'points'],
   });
 
   return sumBonusPoints(predictions);
@@ -157,14 +215,24 @@ function buildUserLeaderboardEntryFromData(user, scoringRules, options = {}) {
 async function buildUserLeaderboardEntry(user, scoringRules, options = {}) {
   const { stageFilter = null, includeEmail = false } = options;
 
+  const stageWhere = buildStageWhere(stageFilter);
+  const matchWhere = Object.keys(stageWhere).length > 0 ? stageWhere : undefined;
+
   const predictions = await Prediction.findAll({
     where: { userId: user.id },
-    include: [{ model: Match, as: 'match' }],
+    attributes: ['id', 'userId', 'matchId', 'predictedHomeScore', 'predictedAwayScore', 'points'],
+    include: [{
+      model: Match,
+      as: 'match',
+      attributes: ['id', 'status', 'stage', 'homeScore', 'awayScore'],
+      ...(matchWhere ? { where: matchWhere } : {}),
+      required: true,
+    }],
   });
 
   const bonusPredictions = await BonusPrediction.findAll({
     where: { userId: user.id },
-    include: [{ model: BonusQuestion, as: 'bonusQuestion' }],
+    attributes: ['id', 'userId', 'points'],
   });
 
   const totalMatches = await Match.count({ where: buildStageWhere(stageFilter) });
@@ -207,7 +275,7 @@ async function getLeaderboard(options = {}) {
     ? includeAdmins
     : await getSetting('includeAdminsInLeaderboard', false);
 
-  const cacheKey = buildCacheKey({
+  const cacheKey = await buildCacheKeyWithVersion({
     filter,
     teamId,
     sortBy,
@@ -216,45 +284,45 @@ async function getLeaderboard(options = {}) {
   });
 
   if (!skipCache) {
-    const cached = getCachedLeaderboard(cacheKey);
+    const cached = await getCachedLeaderboard(cacheKey);
     if (cached) return cached;
   }
 
   const scoringRules = await getScoringRules();
   const stageFilter = filter === 'group' ? 'group' : filter === 'knockout' ? 'knockout' : null;
+  const stageWhere = buildStageWhere(stageFilter);
+  const matchWhere = Object.keys(stageWhere).length > 0 ? stageWhere : undefined;
+
+  const roleWhere = includeAdminsInLeaderboard
+    ? { [Op.in]: ['user', 'admin'] }
+    : 'user';
 
   const users = await User.findAll({
-    where: { role: 'user' },
+    where: {
+      role: roleWhere,
+      ...(teamId ? { teamId: parseInt(teamId, 10) } : {}),
+    },
     include: [{ model: Team, as: 'team' }],
   });
-
-  let allUsers = [...users];
-
-  if (includeAdminsInLeaderboard) {
-    const admins = await User.findAll({
-      where: { role: 'admin' },
-      include: [{ model: Team, as: 'team' }],
-    });
-    allUsers = [...allUsers, ...admins];
-  }
-
-  if (teamId) {
-    allUsers = allUsers.filter((u) => u.teamId === parseInt(teamId, 10));
-  }
-
-  const userIds = allUsers.map((u) => u.id);
-  const stageWhere = buildStageWhere(stageFilter);
+  const userIds = users.map((u) => u.id);
   const totalMatches = await Match.count({ where: stageWhere });
 
   const [allPredictions, allBonusPredictions] = userIds.length > 0
     ? await Promise.all([
       Prediction.findAll({
         where: { userId: { [Op.in]: userIds } },
-        include: [{ model: Match, as: 'match' }],
+        attributes: ['id', 'userId', 'matchId', 'predictedHomeScore', 'predictedAwayScore', 'points'],
+        include: [{
+          model: Match,
+          as: 'match',
+          attributes: ['id', 'status', 'stage', 'homeScore', 'awayScore'],
+          ...(matchWhere ? { where: matchWhere } : {}),
+          required: true,
+        }],
       }),
       BonusPrediction.findAll({
         where: { userId: { [Op.in]: userIds } },
-        include: [{ model: BonusQuestion, as: 'bonusQuestion' }],
+        attributes: ['id', 'userId', 'points'],
       }),
     ])
     : [[], []];
@@ -262,7 +330,7 @@ async function getLeaderboard(options = {}) {
   const predictionsByUser = groupByUserId(allPredictions);
   const bonusByUser = groupByUserId(allBonusPredictions);
 
-  let entries = allUsers.map((user) => buildUserLeaderboardEntryFromData(user, scoringRules, {
+  let entries = users.map((user) => buildUserLeaderboardEntryFromData(user, scoringRules, {
     stageFilter,
     includeEmail,
     predictions: predictionsByUser[user.id] || [],
@@ -299,7 +367,7 @@ async function getLeaderboard(options = {}) {
   });
 
   if (!skipCache) {
-    setCachedLeaderboard(cacheKey, leaderboard);
+    await setCachedLeaderboard(cacheKey, leaderboard);
   }
 
   return leaderboard;
