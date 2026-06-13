@@ -64,6 +64,7 @@
     "notifications": "Notifications",
     "profile": "Profile",
     "reportGap": "Report a gap",
+    "pricing": "Pricing",
     "adminDashboard": "Admin Dashboard",
     "aiAssistant": "AI Assistant",
     "sync": "Synchronization",
@@ -85,6 +86,84 @@
     "backToApp": "Back to App",
     "logout": "Sign out",
     "adminArea": "Admin Area"
+  },
+  "pricing": {
+    "title": "Pricing",
+    "subtitle": "Set up your company instance and start with a subscription.",
+    "cycle": {
+      "monthly": "Monthly",
+      "annual": "Annual",
+      "lifetime": "Lifetime"
+    },
+    "cycleSuffix": {
+      "monthly": "/ mo",
+      "annual": "/ yr",
+      "lifetime": "one-time"
+    },
+    "select": "Select",
+    "selected": "Selected",
+    "detailsTitle": "Instance details",
+    "detailsSubtitle": "These details help provision your tenant after payment.",
+    "plans": {
+      "free": {
+        "title": "Free Sports API",
+        "priceMonthly": "$0",
+        "priceAnnual": "$0",
+        "priceLifetime": "$0",
+        "f1": "Basic usage for evaluation",
+        "f2": "Limited data & requests",
+        "f3": "Manual setup by admin",
+        "f4": "Community support"
+      },
+      "developer": {
+        "title": "Single Developer",
+        "priceMonthly": "$9",
+        "priceAnnual": "$90",
+        "priceLifetime": "$199",
+        "f1": "Higher limits and quota",
+        "f2": "Full premium JSON data",
+        "f3": "Faster sync intervals",
+        "f4": "Email support"
+      },
+      "business": {
+        "title": "Small Business",
+        "badge": "Recommended",
+        "priceMonthly": "$20",
+        "priceAnnual": "$200",
+        "priceLifetime": "$499",
+        "f1": "No limits on returned data",
+        "f2": "Highest rate limits",
+        "f3": "Private API key support",
+        "f4": "Priority support"
+      }
+    },
+    "plan": {
+      "title": "Team plan",
+      "price": "Subscription (Stripe)"
+    },
+    "features": {
+      "users": "User management and teams",
+      "teams": "Leaderboards, challenges and streaks",
+      "sync": "Match sync (football-data.org) + admin tools",
+      "ai": "Optional AI assistant / coach"
+    },
+    "tenantName": "Company / organization name",
+    "tenantNamePlaceholder": "e.g. ACME Inc.",
+    "tenantSlug": "Tenant ID (URL)",
+    "tenantSlugHint": "This becomes your instance URL later (e.g. /t/acme/login). You can also leave it blank for now.",
+    "cta": "Continue to payment",
+    "redirecting": "Redirecting to payment…",
+    "note": "After payment, an admin can provision your instance.",
+    "alreadyHaveAccount": "Already have an account?",
+    "checkoutFailed": "Checkout could not be started."
+  },
+  "billing": {
+    "successTitle": "Payment received",
+    "successText": "Thanks! Your subscription is active. Next, your instance can be provisioned.",
+    "goToLogin": "Go to login",
+    "cancelTitle": "Payment cancelled",
+    "cancelText": "No worries — you can restart checkout anytime.",
+    "backToPricing": "Back to pricing"
   },
   "auth": {
     "welcomeBack": "World Cup 2026",
@@ -684,6 +763,8 @@
   },
   "matches": {
     "title": "Matches",
+    "highlights": "Highlights",
+    "highlightsInvalid": "Invalid highlights link.",
     "filters": {
       "all": "All matches",
       "open": "Open predictions",
@@ -1195,7 +1276,15 @@
         "homeTeam": "Home team",
         "awayTeam": "Away team",
         "stadium": "Stadium",
-        "city": "City"
+        "city": "City",
+        "highlightsUrl": "Highlights URL (YouTube)",
+        "searchYoutube": "Search YouTube",
+        "suggestYoutube": "Load suggestions",
+        "suggestionsTitle": "Suggested YouTube videos",
+        "useSuggestion": "Use",
+        "suggestionsFailed": "Could not load suggestions.",
+        "suggestionsEmpty": "No suggestions found.",
+        "suggestionsNeedSavedMatch": "Save the match first to load suggestions."
       }
     },
     "results": {

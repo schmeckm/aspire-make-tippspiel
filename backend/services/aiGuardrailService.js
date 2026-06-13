@@ -145,19 +145,51 @@ function getSuggestedCoachQuestions(locale = 'de') {
 const USER_PROMPTS = {
   de: {
     match_preview: 'Erstelle eine KI-Spielvorschau für dieses Spiel. Enthalte: Kurzvorschau, Storyline, mögliches Spielmuster, plausible Ergebnisbereiche. Maximal 200 Wörter.',
-    leaderboard_summary: 'Erstelle eine kurze Hitlisten-Zusammenfassung (max. 120 Wörter). Nenne: aktuellen Spitzenreiter, größten Aufsteiger, beste Exakt-Tipp-Leistung, Team-Highlight, abschließenden Satz.',
+    leaderboard_summary: [
+      'Erstelle einen kurzen KI-Rückblick zur Hitliste (max. 120 Wörter).',
+      'Nutze AUSSCHLIESSLICH die gelieferten Kontextdaten (top10, teamRankingTop5, biggestMovers, lastFinishedMatches).',
+      'Nenne nur Namen/Teams, die exakt in diesen Listen vorkommen. Erfinde keine Namen, Teams, Ränge oder Zahlen.',
+      'Nenne den Spitzenreiter ausschließlich als top10[0].name (falls vorhanden) und die Top-Teamwertung ausschließlich aus teamRankingTop5[0].teamName.',
+      'Erwähne NICHT den E-Mail-Empfänger oder dessen Team – auch nicht indirekt.',
+      'Wenn Daten fehlen (z.B. keine biggestMovers), schreibe das neutral.',
+      'Ausgabe: Fließtext, keine Bulletpoints.',
+    ].join(' '),
   },
   en: {
     match_preview: 'Create an AI match preview for this game. Include: short preview, storyline, possible match pattern, plausible score ranges. Maximum 200 words.',
-    leaderboard_summary: 'Create a short leaderboard summary (max. 120 words). Mention: current leader, biggest climber, best exact prediction performance, team highlight, closing sentence.',
+    leaderboard_summary: [
+      'Create a short AI recap of the leaderboard (max. 120 words).',
+      'Use ONLY the provided context fields (top10, teamRankingTop5, biggestMovers, lastFinishedMatches).',
+      'Only mention people/teams that appear in those lists exactly. Do not invent names, teams, ranks, or numbers.',
+      'Name the leader strictly as top10[0].name (if present) and the top team strictly as teamRankingTop5[0].teamName.',
+      'Do NOT mention the email recipient or their team.',
+      'If some data is missing (e.g. no movers), state that neutrally.',
+      'Output as plain prose (no bullet points).',
+    ].join(' '),
   },
   es: {
     match_preview: 'Crea una vista previa de IA para este partido. Incluye: vista previa corta, historia, posible patrón de juego, rangos de resultados plausibles. Máximo 200 palabras.',
-    leaderboard_summary: 'Crea un resumen corto de la clasificación (máx. 120 palabras). Menciona: líder actual, mayor ascenso, mejor rendimiento de pronósticos exactos, destacado del equipo, frase final.',
+    leaderboard_summary: [
+      'Crea un breve resumen de IA de la clasificación (máx. 120 palabras).',
+      'Usa SOLO los campos de contexto proporcionados (top10, teamRankingTop5, biggestMovers, lastFinishedMatches).',
+      'Menciona únicamente personas/equipos que aparezcan exactamente en esas listas. No inventes nombres, equipos, rangos ni números.',
+      'Nombra al líder estrictamente como top10[0].name (si existe) y al mejor equipo estrictamente como teamRankingTop5[0].teamName.',
+      'NO menciones al destinatario del email ni a su equipo.',
+      'Si faltan datos (p. ej. no hay movers), indícalo de forma neutral.',
+      'Salida: texto corrido (sin viñetas).',
+    ].join(' '),
   },
   fr: {
     match_preview: 'Créez un aperçu IA pour ce match. Incluez : aperçu court, storyline, schéma de jeu possible, fourchettes de scores plausibles. Maximum 200 mots.',
-    leaderboard_summary: 'Créez un bref résumé du classement (max. 120 mots). Mentionnez : leader actuel, plus grand grimpeur, meilleure performance de pronostics exacts, highlight d\'équipe, phrase de clôture.',
+    leaderboard_summary: [
+      'Créez un bref récap IA du classement (max. 120 mots).',
+      'Utilisez UNIQUEMENT les champs de contexte fournis (top10, teamRankingTop5, biggestMovers, lastFinishedMatches).',
+      'Ne mentionnez que des personnes/équipes présentes exactement dans ces listes. N\'inventez pas de noms, équipes, rangs ou chiffres.',
+      'Citez le leader uniquement comme top10[0].name (si présent) et l\'équipe n°1 uniquement comme teamRankingTop5[0].teamName.',
+      'Ne mentionnez PAS le destinataire de l\'email ni son équipe.',
+      'Si des données manquent (p. ex. pas de movers), dites-le de façon neutre.',
+      'Sortie : texte continu (pas de puces).',
+    ].join(' '),
   },
 };
 

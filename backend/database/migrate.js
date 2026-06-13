@@ -108,6 +108,18 @@ async function runMigrations(sequelize) {
     unique: true,
   });
 
+  let matchTableInfo;
+  try {
+    matchTableInfo = await queryInterface.describeTable('Matches');
+  } catch {
+    return;
+  }
+
+  await ensureColumn(queryInterface, matchTableInfo, 'Matches', 'highlightsUrl', {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  });
+
   await ensureIndexes(queryInterface);
 }
 

@@ -3,6 +3,22 @@ const { generateText, getSystemPrompt, checkAiAvailability } = require('./llmSer
 const { buildDisclaimer, getUserPrompt } = require('./aiGuardrailService');
 const { getCachedCommentary, saveCommentary, logInteraction } = require('./aiMatchPreviewService');
 
+function getDigestTimezone() {
+  return process.env.REMINDER_TIMEZONE
+    || process.env.DEFAULT_TIMEZONE
+    || process.env.SENTRY_CRON_TIMEZONE
+    || 'Europe/Zurich';
+}
+
+function getDateStringInTimezone(date, timezone) {
+  try {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: timezone }).format(date);
+  } catch {
+    // Fallback: server-local date string; still prevents unbounded cache growth.
+    return new Date(date).toISOString().slice(0, 10);
+  }
+}
+
 async function generateLeaderboardSummary(userId = null, { regenerate = false, language = 'de' } = {}) {
   const availability = checkAiAvailability('leaderboard_summary', language);
   if (!availability.available) {
@@ -46,9 +62,15 @@ async function getLatestLeaderboardSummary(userId = null, language = 'de') {
 
   const cached = await getCachedCommentary('leaderboard_summary', { language });
   if (cached) {
-    return { content: cached.content, disclaimer: buildDisclaimer('leaderboard_summary', language), cached: true, createdAt: cached.createdAt };
+    // Morning digest must be dynamic day-to-day: only reuse cache within the same day (digest timezone).
+    const tz = getDigestTimezone();
+    const cachedDay = getDateStringInTimezone(cached.createdAt, tz);
+    const today = getDateStringInTimezone(new Date(), tz);
+    if (cachedDay === today) {
+      return { content: cached.content, disclaimer: buildDisclaimer('leaderboard_summary', language), cached: true, createdAt: cached.createdAt };
+    }
   }
-  return generateLeaderboardSummary(userId, { language });
+  return generateLeaderboardSummary(userId, { language, regenerate: true });
 }
 
 module.exports = { generateLeaderboardSummary, getLatestLeaderboardSummary };

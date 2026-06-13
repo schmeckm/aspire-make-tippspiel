@@ -47,6 +47,7 @@ const whatIfRoutes = require('./routes/whatIfRoutes');
 const activityRoutes = require('./routes/activityRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
 const adminFeedbackRoutes = require('./routes/adminFeedbackRoutes');
+const billingRoutes = require('./routes/billingRoutes');
 const authMiddleware = require('./middleware/authMiddleware');
 const adminMiddleware = require('./middleware/adminMiddleware');
 const { localeMiddleware } = require('./middleware/localeMiddleware');
@@ -100,6 +101,11 @@ app.use(helmet({
 }));
 
 app.use(cors(getCorsOptions()));
+
+// Stripe webhook requires the raw request body for signature verification.
+// This middleware is path-scoped and runs before the global JSON parser.
+app.use(['/api/billing/webhook', '/api/v1/billing/webhook'], express.raw({ type: 'application/json' }));
+
 app.use(express.json({ limit: '100kb' }));
 app.use(express.urlencoded({ extended: true, limit: '100kb' }));
 
@@ -198,6 +204,7 @@ const apiRouteBundle = {
   activityRoutes,
   feedbackRoutes,
   adminFeedbackRoutes,
+  billingRoutes,
   authMiddleware,
   adminMiddleware,
   settingsUpdateHandler: settingsRoutes.updateSettings,

@@ -79,6 +79,11 @@
     <div v-else-if="!match.hasPrediction" class="text-center text-muted">
       {{ t('matches.noTipGiven') }}
     </div>
+    <div v-if="match.highlightsUrl" class="text-center" style="margin-top: 0.5rem;">
+      <button type="button" class="btn btn-secondary btn-sm" @click="openHighlights">
+        {{ t('matches.highlights') }}
+      </button>
+    </div>
     <MatchWhatIfPanel v-if="match.status === 'finished'" :match="match" />
     <AIMatchPreview v-if="showAiPreview && !match.stadiumImageUrl" :match-id="match.id" />
     <MatchVenueModal
@@ -87,6 +92,29 @@
       :show-ai="showAiPreview"
       @close="showVenueModal = false"
     />
+
+    <Teleport to="body">
+      <div v-if="showHighlightsModal" class="modal-overlay" @click.self="showHighlightsModal = false">
+        <div class="modal" role="dialog" aria-modal="true" :aria-label="t('matches.highlights')">
+          <div class="modal-header">
+            <h3>{{ t('matches.highlights') }}</h3>
+            <button type="button" class="modal-close" :aria-label="t('common.close')" @click="showHighlightsModal = false">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="video-wrap">
+              <iframe
+                v-if="embedUrl"
+                :src="embedUrl"
+                title="YouTube highlights"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              />
+              <p v-else class="text-muted">{{ t('matches.highlightsInvalid') }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -105,6 +133,7 @@ import { useMatchMeta } from '../composables/useMatchMeta';
 import { getPredictionLockReason } from '../utils/predictionLockReason';
 
 const showVenueModal = ref(false);
+const showHighlightsModal = ref(false);
 
 defineEmits(['saved']);
 
@@ -126,6 +155,37 @@ const lockTitle = computed(() => {
   }
   return t(key);
 });
+
+function extractYoutubeId(url) {
+  if (!url) return '';
+  const str = String(url).trim();
+  try {
+    const u = new URL(str);
+    if (u.hostname.includes('youtu.be')) {
+      return u.pathname.replace('/', '');
+    }
+    if (u.searchParams.get('v')) return u.searchParams.get('v');
+    const parts = u.pathname.split('/').filter(Boolean);
+    const embedIdx = parts.indexOf('embed');
+    if (embedIdx >= 0 && parts[embedIdx + 1]) return parts[embedIdx + 1];
+    const shortsIdx = parts.indexOf('shorts');
+    if (shortsIdx >= 0 && parts[shortsIdx + 1]) return parts[shortsIdx + 1];
+  } catch {
+    // ignore parse errors
+  }
+  const m = str.match(/(?:v=|\/embed\/|youtu\.be\/|\/shorts\/)([A-Za-z0-9_-]{6,})/);
+  return m?.[1] || '';
+}
+
+const embedUrl = computed(() => {
+  const id = extractYoutubeId(props.match?.highlightsUrl);
+  if (!id) return '';
+  return `https://www.youtube-nocookie.com/embed/${id}`;
+});
+
+function openHighlights() {
+  showHighlightsModal.value = true;
+}
 
 function shouldShowScore(match) {
   const hasScore = match.homeScore !== null && match.homeScore !== undefined
@@ -170,5 +230,23 @@ function scoreClass(match) {
 .match-lock-reason {
   margin-top: 0.35rem;
   font-size: 0.85rem;
+}
+
+.video-wrap {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm), var(--glow-card);
+}
+
+.video-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>

@@ -61,6 +61,21 @@ const routes = [
     children: [{ path: '', name: 'Privacy', component: () => import('../views/PrivacyPolicyView.vue'), meta: { guest: true } }],
   },
   {
+    path: '/pricing',
+    component: PublicLayout,
+    children: [{ path: '', name: 'Pricing', component: () => import('../views/PricingView.vue'), meta: { guest: true } }],
+  },
+  {
+    path: '/billing/success',
+    component: PublicLayout,
+    children: [{ path: '', name: 'BillingSuccess', component: () => import('../views/BillingSuccessView.vue'), meta: { guest: true } }],
+  },
+  {
+    path: '/billing/cancel',
+    component: PublicLayout,
+    children: [{ path: '', name: 'BillingCancel', component: () => import('../views/BillingCancelView.vue'), meta: { guest: true } }],
+  },
+  {
     path: '/',
     component: AppLayout,
     meta: { requiresAuth: true },

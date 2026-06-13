@@ -64,6 +64,7 @@
     "notifications": "Benachrichtigungen",
     "profile": "Profil",
     "reportGap": "Lücke melden",
+    "pricing": "Preise",
     "adminDashboard": "Admin Dashboard",
     "aiAssistant": "KI Assistent",
     "sync": "Synchronisierung",
@@ -85,6 +86,84 @@
     "backToApp": "Zur App",
     "logout": "Abmelden",
     "adminArea": "Admin-Bereich"
+  },
+  "pricing": {
+    "title": "Preise",
+    "subtitle": "Lege deine Unternehmens-Instanz an und starte mit einem Abo.",
+    "cycle": {
+      "monthly": "Monatlich",
+      "annual": "Jährlich",
+      "lifetime": "Lifetime"
+    },
+    "cycleSuffix": {
+      "monthly": "/ Mon",
+      "annual": "/ Jahr",
+      "lifetime": "einmalig"
+    },
+    "select": "Auswählen",
+    "selected": "Ausgewählt",
+    "detailsTitle": "Instanz-Details",
+    "detailsSubtitle": "Diese Angaben helfen beim Einrichten deines Tenants nach der Bezahlung.",
+    "plans": {
+      "free": {
+        "title": "Free Plan",
+        "priceMonthly": "0 €",
+        "priceAnnual": "0 €",
+        "priceLifetime": "0 €",
+        "f1": "Basisnutzung zum Evaluieren",
+        "f2": "Limitierte Daten & Requests",
+        "f3": "Einrichtung durch Admin",
+        "f4": "Community Support"
+      },
+      "developer": {
+        "title": "Single Developer",
+        "priceMonthly": "9 €",
+        "priceAnnual": "90 €",
+        "priceLifetime": "199 €",
+        "f1": "Höhere Limits & Quota",
+        "f2": "Premium JSON Daten",
+        "f3": "Schnellere Sync-Intervalle",
+        "f4": "E-Mail Support"
+      },
+      "business": {
+        "title": "Small Business",
+        "badge": "Empfohlen",
+        "priceMonthly": "20 €",
+        "priceAnnual": "200 €",
+        "priceLifetime": "499 €",
+        "f1": "Keine Limits bei Daten",
+        "f2": "Höchste Rate Limits",
+        "f3": "Private API-Key Unterstützung",
+        "f4": "Priority Support"
+      }
+    },
+    "plan": {
+      "title": "Team-Plan",
+      "price": "Abo (Stripe)"
+    },
+    "features": {
+      "users": "Benutzerverwaltung und Teams",
+      "teams": "Hitliste, Challenges und Serien",
+      "sync": "Match-Sync (football-data.org) + Admin-Tools",
+      "ai": "Optionaler AI Assistant / Coach"
+    },
+    "tenantName": "Firma / Organisation",
+    "tenantNamePlaceholder": "z.B. ACME GmbH",
+    "tenantSlug": "Tenant-ID (URL)",
+    "tenantSlugHint": "Wird später Teil der URL (z.B. /t/acme/login). Du kannst es auch leer lassen.",
+    "cta": "Weiter zur Bezahlung",
+    "redirecting": "Weiterleitung zur Bezahlung…",
+    "note": "Nach der Bezahlung kann ein Admin deine Instanz einrichten.",
+    "alreadyHaveAccount": "Du hast schon einen Account?",
+    "checkoutFailed": "Checkout konnte nicht gestartet werden."
+  },
+  "billing": {
+    "successTitle": "Bezahlung erhalten",
+    "successText": "Danke! Dein Abo ist aktiv. Als Nächstes kann die Instanz eingerichtet werden.",
+    "goToLogin": "Zum Login",
+    "cancelTitle": "Bezahlung abgebrochen",
+    "cancelText": "Kein Problem — du kannst jederzeit erneut starten.",
+    "backToPricing": "Zurück zu den Preisen"
   },
   "auth": {
     "welcomeBack": "WM 2026",
@@ -691,6 +770,8 @@
   },
   "matches": {
     "title": "Spiele",
+    "highlights": "Highlights",
+    "highlightsInvalid": "Ungültiger Highlights-Link.",
     "filters": {
       "all": "Alle Spiele",
       "open": "Offene Tipps",
@@ -1196,7 +1277,15 @@
         "homeTeam": "Heimteam",
         "awayTeam": "Auswärtsteam",
         "stadium": "Stadion",
-        "city": "Stadt"
+        "city": "Stadt",
+        "highlightsUrl": "Highlights-URL (YouTube)",
+        "searchYoutube": "YouTube suchen",
+        "suggestYoutube": "Vorschläge laden",
+        "suggestionsTitle": "YouTube-Vorschläge",
+        "useSuggestion": "Übernehmen",
+        "suggestionsFailed": "Vorschläge konnten nicht geladen werden.",
+        "suggestionsEmpty": "Keine Vorschläge gefunden.",
+        "suggestionsNeedSavedMatch": "Bitte Spiel zuerst speichern, um Vorschläge zu laden."
       }
     },
     "results": {

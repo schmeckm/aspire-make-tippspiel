@@ -30,6 +30,7 @@ function mountApiRoutes(app, basePath, routes) {
     activityRoutes,
     feedbackRoutes,
     adminFeedbackRoutes,
+    billingRoutes,
     authMiddleware,
     adminMiddleware,
     settingsUpdateHandler,
@@ -69,6 +70,7 @@ function mountApiRoutes(app, basePath, routes) {
   app.use(`${basePath}/activity`, activityRoutes);
   app.use(`${basePath}/feedback`, feedbackRoutes);
   app.use(`${basePath}/admin/feedback`, adminFeedbackRoutes);
+  app.use(`${basePath}/billing`, billingRoutes);
 }
 
 module.exports = { mountApiRoutes };

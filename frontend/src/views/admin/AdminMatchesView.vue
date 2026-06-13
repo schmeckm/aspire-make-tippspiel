@@ -71,6 +71,42 @@
                   <input v-model="form.city" class="form-control" />
                 </div>
               </div>
+              <div class="form-row">
+                <div class="form-group" style="flex: 1;">
+                  <label>{{ t('adminPages.matches.form.highlightsUrl') }}</label>
+                  <input v-model="form.highlightsUrl" type="url" class="form-control" placeholder="https://www.youtube.com/watch?v=…" />
+                </div>
+                <div class="form-group" style="align-self: end;">
+                  <button type="button" class="btn btn-secondary btn-sm" @click="openYoutubeSearch">
+                    {{ t('adminPages.matches.form.searchYoutube') }}
+                  </button>
+                </div>
+                <div class="form-group" style="align-self: end;">
+                  <button type="button" class="btn btn-secondary btn-sm" :disabled="loadingSuggestions" @click="loadYoutubeSuggestions">
+                    {{ loadingSuggestions ? t('common.loading') : t('adminPages.matches.form.suggestYoutube') }}
+                  </button>
+                </div>
+              </div>
+              <div v-if="suggestError" class="text-muted" style="margin-top: 0.5rem;">
+                {{ suggestError }}
+              </div>
+              <div v-else-if="youtubeSuggestions.length > 0" class="card" style="margin-top: 0.5rem;">
+                <div class="card-body" style="padding: 0.75rem;">
+                  <div class="text-muted" style="margin-bottom: 0.5rem;">{{ t('adminPages.matches.form.suggestionsTitle') }}</div>
+                  <div v-for="s in youtubeSuggestions" :key="s.videoId" style="display:flex; gap:0.75rem; align-items:center; margin-bottom:0.5rem;">
+                    <img v-if="s.thumbnailUrl" :src="s.thumbnailUrl" alt="" style="width: 72px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid var(--color-border);" />
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="font-weight: 600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ s.title }}</div>
+                      <div class="text-muted" style="font-size: 0.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                        {{ s.channelTitle }}<span v-if="s.viewCount"> · {{ formatViews(s.viewCount) }}</span>
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" @click="useSuggestion(s)">
+                      {{ t('adminPages.matches.form.useSuggestion') }}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" @click="closeModal">{{ t('common.cancel') }}</button>
@@ -117,6 +153,9 @@ const saving = ref(false);
 const message = ref('');
 const loadError = ref('');
 const error = ref('');
+const youtubeSuggestions = ref([]);
+const loadingSuggestions = ref(false);
+const suggestError = ref('');
 
 const form = ref({
   matchNumber: 1,
@@ -127,10 +166,13 @@ const form = ref({
   kickoffTime: '',
   stadium: '',
   city: '',
+  highlightsUrl: '',
 });
 
 function closeModal() {
   showModal.value = false;
+  youtubeSuggestions.value = [];
+  suggestError.value = '';
 }
 
 function onKeydown(event) {
@@ -160,6 +202,8 @@ function toLocalDatetime(dateStr) {
 
 function openCreate() {
   editingMatch.value = null;
+  youtubeSuggestions.value = [];
+  suggestError.value = '';
   form.value = {
     matchNumber: matches.value.length + 1,
     stage: 'Group Stage',
@@ -169,12 +213,15 @@ function openCreate() {
     kickoffTime: '',
     stadium: '',
     city: '',
+    highlightsUrl: '',
   };
   showModal.value = true;
 }
 
 function openEdit(match) {
   editingMatch.value = match;
+  youtubeSuggestions.value = [];
+  suggestError.value = '';
   form.value = {
     matchNumber: match.matchNumber,
     stage: match.stage,
@@ -184,8 +231,52 @@ function openEdit(match) {
     kickoffTime: toLocalDatetime(match.kickoffTime),
     stadium: match.stadium || '',
     city: match.city || '',
+    highlightsUrl: match.highlightsUrl || '',
   };
   showModal.value = true;
+}
+
+function openYoutubeSearch() {
+  const home = String(form.value.homeTeam || '').trim();
+  const away = String(form.value.awayTeam || '').trim();
+  const date = form.value.kickoffTime ? form.value.kickoffTime.slice(0, 10) : '';
+  const query = [home, away, date, 'highlights'].filter(Boolean).join(' ');
+  const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function formatViews(n) {
+  if (!Number.isFinite(n)) return '';
+  if (n >= 1_000_000) return `${Math.round(n / 100_000) / 10}M views`;
+  if (n >= 10_000) return `${Math.round(n / 1000)}K views`;
+  if (n >= 1000) return `${Math.round(n / 100) / 10}K views`;
+  return `${n} views`;
+}
+
+function useSuggestion(s) {
+  if (!s?.url) return;
+  form.value.highlightsUrl = s.url;
+}
+
+async function loadYoutubeSuggestions() {
+  if (!editingMatch.value?.id) {
+    suggestError.value = t('adminPages.matches.form.suggestionsNeedSavedMatch');
+    return;
+  }
+  loadingSuggestions.value = true;
+  suggestError.value = '';
+  youtubeSuggestions.value = [];
+  try {
+    const { data } = await api.get(`/matches/${editingMatch.value.id}/highlight-suggestions`);
+    youtubeSuggestions.value = Array.isArray(data?.items) ? data.items : [];
+    if (youtubeSuggestions.value.length === 0) {
+      suggestError.value = t('adminPages.matches.form.suggestionsEmpty');
+    }
+  } catch (err) {
+    suggestError.value = err.response?.data?.error || t('adminPages.matches.form.suggestionsFailed');
+  } finally {
+    loadingSuggestions.value = false;
+  }
 }
 
 async function handleSave() {
@@ -196,6 +287,7 @@ async function handleSave() {
       ...form.value,
       kickoffTime: new Date(form.value.kickoffTime).toISOString(),
       groupName: form.value.groupName || null,
+      highlightsUrl: form.value.highlightsUrl || null,
     };
 
     if (editingMatch.value) {

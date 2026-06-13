@@ -108,6 +108,8 @@
     "noBackupFile": "No backup file uploaded.",
     "invalidBackupFile": "Invalid backup file.",
     "backupRestoreFailed": "Restore failed.",
+    "saasDisabled": "SaaS mode is disabled.",
+    "billingNotConfigured": "Billing is not configured (Stripe keys missing).",
     "syncStatusLoadFailed": "Sync status could not be loaded.",
     "syncLogsLoadFailed": "Sync logs could not be loaded.",
     "syncErrorsLoadFailed": "Sync errors could not be loaded.",

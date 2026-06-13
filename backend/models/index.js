@@ -17,6 +17,8 @@ const PlayerImage = require('./PlayerImage');
 const RevokedToken = require('./RevokedToken');
 const RefreshToken = require('./RefreshToken');
 const Feedback = require('./Feedback');
+const Tenant = require('./Tenant');
+const TenantSubscription = require('./TenantSubscription');
 
 Team.hasMany(User, { foreignKey: 'teamId', as: 'users', onDelete: 'SET NULL' });
 User.belongsTo(Team, { foreignKey: 'teamId', as: 'team', onDelete: 'SET NULL' });
@@ -56,6 +58,9 @@ RefreshToken.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'CASC
 User.hasMany(Feedback, { foreignKey: 'userId', as: 'feedbacks', onDelete: 'CASCADE' });
 Feedback.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'CASCADE' });
 
+Tenant.hasMany(TenantSubscription, { foreignKey: 'tenantId', as: 'subscriptions', onDelete: 'CASCADE' });
+TenantSubscription.belongsTo(Tenant, { foreignKey: 'tenantId', as: 'tenant', onDelete: 'CASCADE' });
+
 module.exports = {
   sequelize,
   User,
@@ -76,4 +81,6 @@ module.exports = {
   RevokedToken,
   RefreshToken,
   Feedback,
+  Tenant,
+  TenantSubscription,
 };

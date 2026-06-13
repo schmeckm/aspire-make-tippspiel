@@ -108,6 +108,8 @@
     "noBackupFile": "Keine Backup-Datei hochgeladen.",
     "invalidBackupFile": "Ungültige Backup-Datei.",
     "backupRestoreFailed": "Wiederherstellung fehlgeschlagen.",
+    "saasDisabled": "SaaS-Modus ist deaktiviert.",
+    "billingNotConfigured": "Bezahlung ist nicht konfiguriert (Stripe Keys fehlen).",
     "syncStatusLoadFailed": "Sync-Status konnte nicht geladen werden.",
     "syncLogsLoadFailed": "Sync-Logs konnten nicht geladen werden.",
     "syncErrorsLoadFailed": "Sync-Fehler konnten nicht geladen werden.",

@@ -128,11 +128,27 @@ router.get('/:id', authMiddleware, async (req, res) => {
   }
 });
 
+router.get('/:id/highlight-suggestions', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const match = await Match.findByPk(req.params.id);
+    if (!match) return sendError(res, req, 404, 'errors.matchNotFound');
+
+    const { searchMatchHighlights } = require('../services/youtubeHighlightsService');
+    const result = await searchMatchHighlights(match.toJSON(), { maxResults: 6 });
+    res.json(result);
+  } catch (error) {
+    if (error?.code === 'YOUTUBE_API_KEY_MISSING') {
+      return sendError(res, req, 503, 'errors.actionFailed');
+    }
+    return sendError(res, req, 500, 'errors.actionFailed');
+  }
+});
+
 router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const {
       matchNumber, stage, groupName, homeTeam, awayTeam,
-      kickoffTime, stadium, city,
+      kickoffTime, stadium, city, highlightsUrl,
     } = req.body;
 
     if (!matchNumber || !stage || !homeTeam || !awayTeam || !kickoffTime) {
@@ -148,6 +164,7 @@ router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
       kickoffTime,
       stadium: stadium || null,
       city: city || null,
+      highlightsUrl: highlightsUrl || null,
     });
 
     res.status(201).json(match);
@@ -168,7 +185,7 @@ router.put('/:id', authMiddleware, adminMiddleware, async (req, res) => {
 
     const fields = [
       'matchNumber', 'stage', 'groupName', 'homeTeam', 'awayTeam',
-      'kickoffTime', 'stadium', 'city', 'homeScore', 'awayScore', 'status', 'isManuallyLocked',
+      'kickoffTime', 'stadium', 'city', 'homeScore', 'awayScore', 'status', 'isManuallyLocked', 'highlightsUrl',
     ];
 
     fields.forEach((field) => {
