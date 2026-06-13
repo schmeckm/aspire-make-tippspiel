@@ -98,7 +98,12 @@
               </div>
               <div v-else-if="youtubeSuggestions.length > 0" class="card" style="margin-top: 0.5rem;">
                 <div class="card-body" style="padding: 0.75rem;">
-                  <div class="text-muted" style="margin-bottom: 0.5rem;">{{ t('adminPages.matches.form.suggestionsTitle') }}</div>
+                  <div class="text-muted" style="margin-bottom: 0.5rem;">
+                    {{ t('adminPages.matches.form.suggestionsTitle') }}
+                    <span v-if="suggestionMeta.regionCode" style="margin-left: 0.5rem;">
+                      · {{ t('adminPages.matches.form.regionFilterLabel') }}: <strong>{{ suggestionMeta.regionCode }}</strong>
+                    </span>
+                  </div>
                   <div v-for="s in youtubeSuggestions" :key="s.videoId" style="display:flex; gap:0.75rem; align-items:center; margin-bottom:0.5rem;">
                     <img v-if="s.thumbnailUrl" :src="s.thumbnailUrl" alt="" style="width: 72px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid var(--color-border);" />
                     <div style="flex: 1; min-width: 0;">
@@ -175,6 +180,7 @@ const youtubeSuggestions = ref([]);
 const loadingSuggestions = ref(false);
 const suggestError = ref('');
 const highlightsInput = ref(null);
+const suggestionMeta = ref({ regionCode: '' });
 
 const form = ref({
   matchNumber: 1,
@@ -301,9 +307,11 @@ async function loadYoutubeSuggestions() {
   loadingSuggestions.value = true;
   suggestError.value = '';
   youtubeSuggestions.value = [];
+  suggestionMeta.value = { regionCode: '' };
   try {
     const { data } = await api.get(`/matches/${editingMatch.value.id}/highlight-suggestions`);
     youtubeSuggestions.value = Array.isArray(data?.items) ? data.items : [];
+    suggestionMeta.value = { regionCode: String(data?.regionCode || '').trim() };
     if (youtubeSuggestions.value.length === 0) {
       suggestError.value = t('adminPages.matches.form.suggestionsEmpty');
     }

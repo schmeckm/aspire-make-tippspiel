@@ -176,7 +176,7 @@ async function searchMatchHighlights(match, { maxResults = 6 } = {}) {
     .filter((row) => !shouldSkipVideo(row))
     .filter((row) => !row.blockedInRegion)
     .slice(0, desired);
-  if (strict.length > 0) return { query, items: strict };
+  if (strict.length > 0) return { query, regionCode, items: strict };
 
   // 2) Fallback: still skip FIFA channels, but allow non-embeddable videos so admins can
   // at least pick a "watch on YouTube" link instead of getting an empty list.
@@ -184,7 +184,7 @@ async function searchMatchHighlights(match, { maxResults = 6 } = {}) {
     .filter((row) => !shouldSkipVideo(row))
     .filter((row) => !row.blockedInRegion)
     .slice(0, desired);
-  return { query, items: relaxed };
+  return { query, regionCode, items: relaxed };
 }
 
 module.exports = { searchMatchHighlights };

@@ -1310,6 +1310,7 @@
         "searchYoutube": "YouTube suchen",
         "suggestYoutube": "Vorschläge laden",
         "suggestionsTitle": "YouTube-Vorschläge",
+        "regionFilterLabel": "Länderfilter",
         "useSuggestion": "Übernehmen",
         "suggestionsFailed": "Vorschläge konnten nicht geladen werden.",
         "suggestionsEmpty": "Keine Vorschläge gefunden.",

@@ -1309,6 +1309,7 @@
         "searchYoutube": "Search YouTube",
         "suggestYoutube": "Load suggestions",
         "suggestionsTitle": "Suggested YouTube videos",
+        "regionFilterLabel": "Country filter",
         "useSuggestion": "Use",
         "suggestionsFailed": "Could not load suggestions.",
         "suggestionsEmpty": "No suggestions found.",
